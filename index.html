@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سرویس های ما - دانلود اپلیکیشن</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px; /* فضا برای نوار پایین */
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .app-download {
+            margin-bottom: 40px;
+        }
+        
+        .app-download h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .app-download p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background-color: #ff6b6b;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .download-btn:hover {
+            background-color: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        .telegram-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .telegram-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .telegram-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #0088cc;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .telegram-link:hover {
+            background-color: #006da3;
+            transform: translateY(-3px);
+        }
+        
+        .telegram-link i {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* نوار ناوبری پایین */
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+            padding: 12px 0;
+            z-index: 1000;
+        }
+        
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            padding: 5px 15px;
+            border-radius: 15px;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(106, 17, 203, 0.1);
+            color: #6a11cb;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .ad-section {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .ad-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        /* رسپانسیو برای موبایل */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 25px;
+            }
+            
+            .nav-item {
+                font-size: 0.7rem;
+                padding: 5px 10px;
+            }
+            
+            .nav-item i {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>سرویس های متنوع برای هر نیاز</h1>
+            <p>با اپلیکیشن ما، به راحتی به تمام خدمات مورد نیاز خود دسترسی داشته باشید</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="app-download">
+                <h2>دانلود اپلیکیشن</h2>
+                <p>اپلیکیشن را دانلود کنید و از بخش سیگنال رایگان، راه کسب درآمد واقعی آنلاین، سلامت و بخش های متنوع کاربردی آشنا بشید. در دنیای واقعی کسب درآمد کنید!</p>
+                <a href="m.apk" class="download-btn">
+                    <i class="fas fa-download"></i> دانلود اپلیکیشن (m.apk)
+                </a>
+            </div>
+            
+            <div class="telegram-section">
+                <h3>برای ارتباط با ما به تلگرام بپیوندید</h3>
+                <a href="https://t.me/Mortzayar" class="telegram-link" target="_blank">
+                    <i class="fab fa-telegram-plane"></i> پیوستن به کانال
+                </a>
+            </div>
+            
+            <div class="ad-section">
+                <h3>فضای تبلیغاتی</h3>
+                <p>برای تبلیغات کسب و کار خود در اینجا، با ما از طریق تلگرام در ارتباط باشید.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نوار ناوبری پایین -->
+    <nav class="bottom-navbar">
+        <div class="nav-items">
+            <a href="m1.html" class="nav-item">
+                <i class="fas fa-utensils"></i>
+                <span>کار در رستوران</span>
+            </a>
+            <a href="m1.html" class="nav-item">
+                <i class="fas fa-cut"></i>
+                <span>خیاطی</span>
+            </a>
+            <a href="m1.html" class="nav-item">
+                <i class="fas fa-headset"></i>
+                <span>پشتیبانی</span>
+            </a>
+            <a href="m1.html" class="nav-item">
+                <i class="fas fa-ellipsis-h"></i>
+                <span>سایر</span>
+            </a>
+            <a href="m1.html" class="nav-item">
+                <i class="fas fa-code"></i>
+                <span>برنامه نویسی</span>
+            </a>
+        </div>
+    </nav>
+</body>
+</html>
