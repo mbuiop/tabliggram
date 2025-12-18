@@ -20,6 +20,7 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            padding: 15px;
         }
 
         /* 3D Background Effects */
@@ -53,9 +54,8 @@
 
         /* Main Container */
         .container {
-            max-width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 15px;
             position: relative;
             z-index: 1;
         }
@@ -63,96 +63,237 @@
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 20px 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
 
         .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2.2rem;
+            font-weight: 800;
             color: #ffffff;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 12px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(90deg, #ffffff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header p {
-            font-size: 0.9rem;
-            opacity: 0.9;
+            font-size: 1.1rem;
+            opacity: 0.95;
             color: #f0f8ff;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
-        /* Video Template Section */
+        /* Video Template - MODERN DESIGN */
         .video-template {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 40px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .video-template:hover {
+            transform: translateY(-5px);
         }
 
         .video-container {
             width: 100%;
-            max-width: 600px;
-            margin: 0 auto 20px;
-            background: #000;
-            border-radius: 12px;
+            max-width: 800px;
+            margin: 0 auto 25px;
+            background: linear-gradient(45deg, #000428, #004e92);
+            border-radius: 20px;
             overflow: hidden;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
         .video-container video {
             width: 100%;
             height: auto;
             display: block;
+            border-radius: 15px;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .video-controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
         }
 
         .video-info {
             text-align: center;
+            padding: 0 20px;
         }
 
         .video-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
             color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .video-description {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #f0f8ff;
-            margin-bottom: 15px;
-            opacity: 0.9;
-            line-height: 1.5;
+            margin-bottom: 25px;
+            opacity: 0.95;
+            line-height: 1.7;
+            max-width: 700px;
+            margin: 0 auto 25px;
         }
 
         .video-stats {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin: 20px 0;
+            gap: 60px;
+            margin: 30px 0;
+            flex-wrap: wrap;
         }
 
         .stat-item {
             text-align: center;
+            position: relative;
         }
 
         .stat-value {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 2.2rem;
+            font-weight: 800;
             color: #00ff88;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-value:hover {
+            transform: scale(1.1);
         }
 
         .stat-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
+            font-size: 0.95rem;
+            opacity: 0.9;
             margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Views List - Instagram Story Style */
+        .views-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .views-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .views-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .viewer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 12px;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .viewer-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .viewer-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .viewer-info {
+            flex: 1;
+        }
+
+        .viewer-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .viewer-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
         }
 
         .video-link {
@@ -160,107 +301,265 @@
             background: linear-gradient(135deg, #00ff88, #00cc6a);
             color: #000;
             text-decoration: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            margin-top: 10px;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 20px;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .video-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
         }
 
-        /* Template Selection */
+        .video-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+        }
+
+        .video-link:hover::after {
+            animation: shine 1s ease;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Template Selection - PULLED BACK */
         .template-section {
-            margin-bottom: 25px;
+            margin-bottom: 35px;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
         }
 
+        .template-section:hover {
+            transform: scale(0.97);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+        }
+
+        /* Template Type Buttons - MODERN */
+        .template-type-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .template-type-btn {
+            background: linear-gradient(135deg, rgba(42, 82, 152, 0.8), rgba(30, 60, 114, 0.8));
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-type-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .template-type-btn:hover::before {
+            left: 100%;
+        }
+
+        .template-type-btn.active {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+        }
+
+        .template-type-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(42, 82, 152, 0.4);
+        }
+
+        .template-type-btn.active:hover {
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Template Grid - MODERN CARDS */
         .template-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
         .template-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             cursor: pointer;
-            transition: all 0.3s ease;
-            color: #333;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #00ff88, #2a5298);
         }
 
         .template-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 1);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 136, 0.3);
         }
 
         .template-card.active {
-            background: rgba(255, 255, 255, 1);
-            border-color: #2a5298;
-            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.3);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.12));
+            border-color: #00ff88;
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
         }
 
         .template-card h3 {
-            color: #2a5298;
-            margin-bottom: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .template-weights {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .weight-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
-            color: #555;
+            font-size: 0.9rem;
+            color: #f0f8ff;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .weight-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
         }
 
         .weight-value {
-            color: #2a5298;
-            font-weight: 600;
+            color: #00ff88;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
 
         .template-stats {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(85, 85, 85, 0.2);
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .template-stat {
-            font-size: 0.8rem;
-            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
         }
 
-        /* Input Form */
+        .stat-icon-small {
+            font-size: 1.1rem;
+        }
+
+        .stat-count {
+            font-weight: 700;
+            color: #00ff88;
+            font-size: 1.1rem;
+        }
+
+        /* Input Form - MODERN */
         .input-form {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 20px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 35px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            display: none;
+            transform: translateY(20px);
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
         }
 
         .input-group {
@@ -269,214 +568,226 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
+            margin-bottom: 10px;
+            font-weight: 600;
             color: #ffffff;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            color: #333;
-            font-size: 0.9rem;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #2a5298;
-            box-shadow: 0 0 15px rgba(42, 82, 152, 0.3);
-            background: rgba(255, 255, 255, 1);
+            border-color: #00ff88;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.3);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        /* Generate Button */
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Buttons - MODERN */
         .generate-btn {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: 600;
+            padding: 18px 40px;
+            border-radius: 15px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 15px;
+            margin-top: 30px;
             width: 100%;
-            max-width: 200px;
+            max-width: 300px;
             margin-left: auto;
             margin-right: auto;
             display: block;
+            position: relative;
+            overflow: hidden;
         }
 
         .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.4);
         }
 
         .reset-btn {
             background: linear-gradient(135deg, #ff6b7a, #ff4757);
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 15px 35px;
+            border-radius: 15px;
             color: white;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 20px;
             width: 100%;
-            max-width: 150px;
+            max-width: 250px;
             margin-left: auto;
             margin-right: auto;
             display: block;
         }
 
         .reset-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4);
         }
 
-        /* Signal Result */
+        /* Signal Result - MODERN */
         .signal-result {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 20px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 30px;
+            margin-top: 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-top: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            display: none;
+            transform: translateY(20px);
+            animation: slideUp 0.5s ease forwards;
         }
 
         .signal-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .signal-direction {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 10px 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 20px 0;
+            padding: 20px 40px;
+            border-radius: 20px;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
         }
 
-        .buy-strong { color: #00ff88; text-shadow: 0 0 15px rgba(0, 255, 136, 0.5); }
-        .buy-medium { color: #66ff99; }
-        .sell-strong { color: #ff4757; text-shadow: 0 0 15px rgba(255, 71, 87, 0.5); }
-        .sell-medium { color: #ff6b7a; }
-        .neutral { color: #ffd700; }
+        .buy-strong { 
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1));
+            color: #00ff88; 
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+        }
+        .buy-medium { 
+            color: #66ff99; 
+            background: rgba(102, 255, 153, 0.15);
+        }
+        .sell-strong { 
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.2), rgba(255, 71, 87, 0.1));
+            color: #ff4757; 
+            text-shadow: 0 0 30px rgba(255, 71, 87, 0.7);
+            border: 2px solid rgba(255, 71, 87, 0.3);
+        }
+        .sell-medium { 
+            color: #ff6b7a; 
+            background: rgba(255, 107, 122, 0.15);
+        }
+        .neutral { 
+            color: #ffd700; 
+            background: rgba(255, 215, 0, 0.15);
+        }
 
         .signal-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .signal-item {
             background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
+            padding: 25px 20px;
+            border-radius: 15px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .signal-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .signal-item h3 {
             color: #f0f8ff;
-            margin-bottom: 6px;
-            font-size: 0.75rem;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
 
         .signal-item .value {
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: 700;
             color: #ffffff;
         }
 
-        /* Analysis Section */
-        .analysis-section {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .indicator-analysis {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .indicator-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 3px solid #ffffff;
-        }
-
-        .indicator-title {
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #ffffff;
-            font-size: 0.85rem;
-        }
-
-        .indicator-details {
-            font-size: 0.75rem;
-            opacity: 0.9;
-            line-height: 1.4;
-            color: #f0f8ff;
-        }
-
-        /* Progress Bars */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ffffff, #f0f8ff);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        /* History Section */
+        /* History Section - MODERN */
         .history-section {
-            margin-top: 25px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 20px 15px;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
         .history-item {
             background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .history-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Loading Animation - MODERN */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #00ff88;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Mobile Responsive */
@@ -486,98 +797,87 @@
             }
             
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
             
-            .header p {
-                font-size: 0.8rem;
+            .template-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
             
-            .signal-grid {
+            .video-stats {
+                gap: 30px;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .video-controls {
+                padding: 10px 20px;
+                gap: 10px;
+            }
+            
+            .video-controls button {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .template-type-btn {
+                min-width: 150px;
+                padding: 12px 25px;
+                font-size: 0.9rem;
+            }
+            
+            .views-list {
+                max-height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-template,
+            .template-section,
+            .input-form,
+            .signal-result,
+            .history-section {
+                padding: 20px 15px;
+            }
+            
+            .template-weights {
                 grid-template-columns: 1fr;
             }
             
-            .template-card {
-                padding: 12px;
+            .video-stats {
+                flex-direction: column;
+                gap: 25px;
             }
             
-            .input-form {
-                padding: 15px 10px;
+            .video-title {
+                font-size: 1.5rem;
             }
             
-            .signal-result {
-                padding: 15px 10px;
+            .signal-direction {
+                font-size: 1.8rem;
+                padding: 15px 25px;
             }
         }
 
-        /* Loading Animation */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
+        /* View Progress Bar */
+        .view-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
         }
 
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            border-top: 3px solid #ffffff;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Glow Effects */
-        .glow {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.5); }
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #ffffff;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        /* Template Selection Buttons */
-        .template-type-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .template-type-btn {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .template-type-btn.active {
-            background: linear-gradient(135deg, #00ff88, #00cc6a);
-        }
-
-        .template-type-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.4);
+        .view-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #667eea);
+            border-radius: 3px;
+            transition: width 0.5s ease;
         }
     </style>
 </head>
@@ -588,56 +888,85 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🤖 سیستم سیگنال‌دهی پیشرفته</h1>
-            <p>تحلیل هوشمند بازار با الگوریتم‌های پیشرفته و وزن‌دهی دقیق</p>
+            <h1>🎯 سیستم سیگنال‌دهی پیشرفته</h1>
+            <p>تحلیل هوشمند بازار با الگوریتم‌های پیشرفته و وزن‌دهی دقیق - نسخه حرفه‌ای</p>
         </div>
 
         <!-- Video Template -->
         <div class="video-template">
             <div class="video-container">
-                <video id="mainVideo" autoplay muted loop playsinline>
+                <video id="mainVideo" autoplay playsinline controls>
                     <source src="m.mp4" type="video/mp4">
                     مرورگر شما از ویدئو پشتیبانی نمی‌کند.
                 </video>
             </div>
             
             <div class="video-info">
-                <h3 class="video-title">آموزش تحلیل تکنیکال پیشرفته</h3>
-                <p class="video-description">ویدئوی آموزشی تحلیل تکنیکال و سیگنال‌دهی در بازارهای مالی</p>
+                <h2 class="video-title">🎬 آموزش تحلیل تکنیکال پیشرفته ۲۰۲۴</h2>
+                <p class="video-description">
+                    در این ویدئوی آموزشی پیشرفته، تمام تکنیک‌های تحلیل تکنیکال و سیگنال‌دهی حرفه‌ای 
+                    را یاد خواهید گرفت. از اندیکاتورهای کلاسیک تا استراتژی‌های معاملاتی مدرن، 
+                    همه را با جزئیات کامل توضیح داده‌ایم.
+                </p>
                 
                 <div class="video-stats">
                     <div class="stat-item">
-                        <div class="stat-value" id="likesCount">42,850</div>
-                        <div class="stat-label">لایک</div>
+                        <div class="stat-value" id="likesCount">۴۸,۲۵۰</div>
+                        <div class="stat-label">
+                            <span class="stat-icon">👍</span> لایک
+                        </div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="viewsCount">185,420</div>
-                        <div class="stat-label">بازدید</div>
+                        <div class="stat-value" id="viewsCount">۲۴۵,۸۹۰</div>
+                        <div class="stat-label">
+                            <span class="stat-icon">👁️</span> بازدید
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentWatching">۱۵۸</div>
+                        <div class="stat-label">
+                            <span class="stat-icon">▶️</span> در حال مشاهده
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Views List - Instagram Style -->
+                <div class="views-section">
+                    <div class="views-title">
+                        <span>👥 مشاهده‌کنندگان</span>
+                        <span style="font-size: 0.9rem; opacity: 0.7;">(آخرین بازدیدها)</span>
+                    </div>
+                    <div class="views-list" id="viewsList">
+                        <!-- Viewer items will be added dynamically -->
                     </div>
                 </div>
                 
                 <a href="https://mbuiop.github.io/tabliggram/" class="video-link" target="_blank">
-                    مشاهده در سایت اصلی
+                    🔗 مشاهده در سایت اصلی
                 </a>
             </div>
         </div>
 
         <!-- Template Type Selection -->
         <div class="template-type-buttons">
-            <button class="template-type-btn active" id="btn100" onclick="switchTemplateType('100')">قالب‌های 0-100</button>
-            <button class="template-type-btn" id="btn500" onclick="switchTemplateType('500')">قالب‌های 0-500</button>
+            <button class="template-type-btn active" id="btn100" onclick="switchTemplateType('100')">
+                📊 قالب‌های ۰-۱۰۰
+            </button>
+            <button class="template-type-btn" id="btn500" onclick="switchTemplateType('500')">
+                📈 قالب‌های ۰-۵۰۰
+            </button>
         </div>
 
         <!-- Template Selection -->
         <div class="template-section" id="templateSection100">
-            <h2 class="section-title">🎯 انتخاب قالب تحلیل (0-100)</h2>
+            <h2 class="section-title">🎯 انتخاب قالب تحلیل (مقیاس ۰-۱۰۰)</h2>
             <div class="template-grid" id="templateGrid100">
                 <!-- Templates will be generated by JavaScript -->
             </div>
         </div>
 
         <div class="template-section" id="templateSection500" style="display: none;">
-            <h2 class="section-title">🎯 انتخاب قالب تحلیل (0-500)</h2>
+            <h2 class="section-title">🚀 انتخاب قالب تحلیل (مقیاس ۰-۵۰۰)</h2>
             <div class="template-grid" id="templateGrid500">
                 <!-- Templates will be generated by JavaScript -->
             </div>
@@ -683,7 +1012,6 @@
                     <label>⚡ MACD</label>
                     <input type="number" id="macd" step="0.000001" placeholder="150">
                 </div>
-                <!-- New Indicators -->
                 <div class="input-group">
                     <label>📊 K (استوکاستیک)</label>
                     <input type="number" id="stochK" min="0" max="100" placeholder="45">
@@ -726,7 +1054,7 @@
                 </div>
             </div>
             <button class="generate-btn" onclick="generateSignal()">
-                🎯 تولید سیگنال
+                🚀 تولید سیگنال پیشرفته
             </button>
             <button class="reset-btn" onclick="resetForm()">
                 🔄 شروع مجدد
@@ -736,108 +1064,217 @@
         <!-- Loading -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p style="margin-top: 10px; font-size: 0.9rem;">در حال تحلیل...</p>
+            <p style="margin-top: 15px; font-size: 1.1rem; font-weight: 600;">در حال تحلیل پیشرفته...</p>
         </div>
 
         <!-- Signal Result -->
-        <div class="signal-result" id="signalResult" style="display: none;">
-            <!-- Signal content will be generated by JavaScript -->
-        </div>
+        <div class="signal-result" id="signalResult" style="display: none;"></div>
 
         <!-- History -->
         <div class="history-section">
-            <h2 class="section-title">📈 تاریخچه سیگنال‌ها</h2>
+            <h2 class="section-title">📜 تاریخچه سیگنال‌های اخیر</h2>
             <div id="historyContainer">
-                <p style="text-align: center; opacity: 0.7; font-size: 0.9rem;">هنوز سیگنالی تولید نشده است</p>
+                <p style="text-align: center; opacity: 0.7; font-size: 1rem; padding: 30px;">
+                    هنوز سیگنالی تولید نشده است. برای شروع، یک قالب تحلیل انتخاب کنید.
+                </p>
             </div>
         </div>
     </div>
 
     <script>
-        // Advanced Trading Bot Class - کاملاً مثل اول
+        // Advanced Trading Bot Class با قابلیت‌های جدید
         class AdvancedTradingBot {
             constructor() {
                 // قالب‌های 0-100
                 this.templates100 = {
-                    "قالب یک": {"rsi": 25, "ema20": 20, "ema50": 18, "upper": 15, "macd": 22, "stoch": 20, "dif": 15, "dea": 15, "ichimoku": 30},
-                    "قالب دو": {"rsi": 30, "ema20": 25, "ema50": 20, "upper": 12, "macd": 13, "stoch": 18, "dif": 12, "dea": 12, "ichimoku": 25},
-                    "قالب سه": {"rsi": 22, "ema20": 28, "ema50": 25, "upper": 10, "macd": 15, "stoch": 22, "dif": 18, "dea": 18, "ichimoku": 28},
-                    "قالب چهار": {"rsi": 35, "ema20": 15, "ema50": 30, "upper": 8, "macd": 12, "stoch": 15, "dif": 10, "dea": 10, "ichimoku": 20},
-                    "قالب پنج": {"rsi": 28, "ema20": 22, "ema50": 22, "upper": 14, "macd": 14, "stoch": 20, "dif": 16, "dea": 16, "ichimoku": 24}
+                    "قالب پریمیوم": {"rsi": 25, "ema20": 20, "ema50": 18, "upper": 15, "macd": 22, "stoch": 20, "dif": 15, "dea": 15, "ichimoku": 30},
+                    "قالب حرفه‌ای": {"rsi": 30, "ema20": 25, "ema50": 20, "upper": 12, "macd": 13, "stoch": 18, "dif": 12, "dea": 12, "ichimoku": 25},
+                    "قالب طلایی": {"rsi": 22, "ema20": 28, "ema50": 25, "upper": 10, "macd": 15, "stoch": 22, "dif": 18, "dea": 18, "ichimoku": 28},
+                    "قالب الماسی": {"rsi": 35, "ema20": 15, "ema50": 30, "upper": 8, "macd": 12, "stoch": 15, "dif": 10, "dea": 10, "ichimoku": 20},
+                    "قالب پلاتینی": {"rsi": 28, "ema20": 22, "ema50": 22, "upper": 14, "macd": 14, "stoch": 20, "dif": 16, "dea": 16, "ichimoku": 24}
                 };
                 
                 // قالب‌های 0-500
                 this.templates500 = {
-                    "قالب شش": {"rsi": 125, "ema20": 120, "ema50": 118, "upper": 115, "macd": 122, "stoch": 120, "dif": 115, "dea": 115, "ichimoku": 130},
-                    "قالب هفت": {"rsi": 130, "ema20": 125, "ema50": 120, "upper": 112, "macd": 113, "stoch": 118, "dif": 112, "dea": 112, "ichimoku": 125},
-                    "قالب هشت": {"rsi": 122, "ema20": 128, "ema50": 125, "upper": 110, "macd": 115, "stoch": 122, "dif": 118, "dea": 118, "ichimoku": 128},
-                    "قالب نه": {"rsi": 135, "ema20": 115, "ema50": 130, "upper": 108, "macd": 112, "stoch": 115, "dif": 110, "dea": 110, "ichimoku": 120},
-                    "قالب ده": {"rsi": 128, "ema20": 122, "ema50": 122, "upper": 114, "macd": 114, "stoch": 120, "dif": 116, "dea": 116, "ichimoku": 124}
+                    "قالب VIP": {"rsi": 125, "ema20": 120, "ema50": 118, "upper": 115, "macd": 122, "stoch": 120, "dif": 115, "dea": 115, "ichimoku": 130},
+                    "قالب سوپر": {"rsi": 130, "ema20": 125, "ema50": 120, "upper": 112, "macd": 113, "stoch": 118, "dif": 112, "dea": 112, "ichimoku": 125},
+                    "قالب ویژه": {"rsi": 122, "ema20": 128, "ema50": 125, "upper": 110, "macd": 115, "stoch": 122, "dif": 118, "dea": 118, "ichimoku": 128},
+                    "قالب اکسترا": {"rsi": 135, "ema20": 115, "ema50": 130, "upper": 108, "macd": 112, "stoch": 115, "dif": 110, "dea": 110, "ichimoku": 120},
+                    "قالب اولترا": {"rsi": 128, "ema20": 122, "ema50": 122, "upper": 114, "macd": 114, "stoch": 120, "dif": 116, "dea": 116, "ichimoku": 124}
                 };
                 
                 this.selectedTemplate = null;
-                this.selectedTemplateType = "100"; // Default to 0-100 templates
+                this.selectedTemplateType = "100";
                 this.signalHistory = [];
                 
-                // Video stats
-                this.videoLikes = 42850;
-                this.videoViews = 185420;
+                // آمار ویدئو
+                this.videoLikes = 48250;
+                this.videoViews = 245890;
+                this.currentWatching = 158;
                 
-                // Template stats
+                // آمار قالب‌ها
                 this.templateStats = {};
+                
+                // لیست مشاهده‌کنندگان - نام‌های تصادفی
+                this.viewerNames = [
+                    "علی محمدی", "سارا احمدی", "محمدرضا کریمی", "فاطمه حسینی", "حسین رضایی",
+                    "مریم جعفری", "رضا محمودی", "نازنین زمانی", "امیرحسین نجفی", "لیلا قربانی",
+                    "محمد امینی", "زهرا طباطبایی", "حسن مرادی", "سپیده کاظمی", "پارسا علیزاده",
+                    "نگین موسوی", "سینا صادقی", "ریحانه طاهری", "کامیار فراهانی", "هستی محمدرضایی",
+                    "پویا نوری", "ستایش رحمانی", "امید شریفی", "آتنا اسلامی", "دانیال بهرامی",
+                    "مهدیه سرمدی", "آرش کامرانی", "نرگس سلطانی", "بردیا یزدانی", "یلدا محمدخانی",
+                    "پرهام رجبی", "سحر بهمنی", "نیما اسدی", "روژان کیانی", "سامان داودی",
+                    "مهسا سلیمانی", "فرشاد جلالی", "آوا نظری", "امیرعباس باقری", "هانیه پوراحمد",
+                    "سجاد اکبری", "نیکی مقدسی", "حسام مرتضوی", "مائده امیری", "پارسا شهبازی",
+                    "یاسمین کمالی", "امیرمحمد حیدری", "رها نوروزی", "آرمین مختاری", "سپهر رستمی"
+                ];
+                
+                this.viewersList = [];
                 
                 this.initializeTemplates();
                 this.createFloatingCubes();
                 this.startAutoUpdates();
+                this.generateViewers();
+                this.setupVideoControls();
             }
 
             createFloatingCubes() {
                 const bgAnimation = document.getElementById('bgAnimation');
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < 20; i++) {
                     const cube = document.createElement('div');
                     cube.className = 'floating-cube';
                     cube.style.left = Math.random() * 100 + '%';
                     cube.style.top = Math.random() * 100 + '%';
                     cube.style.animationDelay = Math.random() * 25 + 's';
-                    cube.style.animationDuration = (20 + Math.random() * 10) + 's';
+                    cube.style.animationDuration = (20 + Math.random() * 15) + 's';
+                    cube.style.width = (20 + Math.random() * 25) + 'px';
+                    cube.style.height = (20 + Math.random() * 25) + 'px';
+                    cube.style.opacity = 0.1 + Math.random() * 0.3;
                     bgAnimation.appendChild(cube);
                 }
             }
 
+            setupVideoControls() {
+                const video = document.getElementById('mainVideo');
+                
+                // فعال کردن صدا
+                video.muted = false;
+                video.volume = 0.5;
+                
+                // اتوپلی
+                video.play().catch(e => {
+                    console.log("Auto-play prevented");
+                });
+            }
+
+            generateViewers() {
+                // تولید لیست مشاهده‌کنندگان منحصربه‌فرد
+                const usedNames = new Set();
+                this.viewersList = [];
+                
+                for (let i = 0; i < 12; i++) {
+                    let randomName;
+                    do {
+                        randomName = this.viewerNames[Math.floor(Math.random() * this.viewerNames.length)];
+                    } while (usedNames.has(randomName) && usedNames.size < this.viewerNames.length);
+                    
+                    usedNames.add(randomName);
+                    
+                    // زمان تصادفی (دقایق گذشته)
+                    const minutesAgo = Math.floor(Math.random() * 60) + 1;
+                    
+                    this.viewersList.push({
+                        name: randomName,
+                        timeAgo: minutesAgo,
+                        progress: Math.floor(Math.random() * 100) // پیشرفت مشاهده
+                    });
+                }
+                
+                this.updateViewersList();
+            }
+
+            updateViewersList() {
+                const viewsList = document.getElementById('viewsList');
+                viewsList.innerHTML = '';
+                
+                this.viewersList.forEach(viewer => {
+                    const viewerItem = document.createElement('div');
+                    viewerItem.className = 'viewer-item';
+                    
+                    // حرف اول نام
+                    const firstLetter = viewer.name.charAt(0);
+                    
+                    viewerItem.innerHTML = `
+                        <div class="viewer-avatar">${firstLetter}</div>
+                        <div class="viewer-info">
+                            <div class="viewer-name">${viewer.name}</div>
+                            <div class="viewer-time">${viewer.timeAgo} دقیقه پیش</div>
+                            <div class="view-progress">
+                                <div class="view-progress-fill" style="width: ${viewer.progress}%"></div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    viewsList.appendChild(viewerItem);
+                });
+            }
+
             startAutoUpdates() {
-                // Video stats update every 10 minutes
+                // آپدیت آمار ویدئو هر 2 دقیقه
                 setInterval(() => {
                     this.updateVideoStats();
-                }, 10 * 60 * 1000); // 10 دقیقه
+                }, 2 * 60 * 1000);
                 
-                // Template stats update every 5 minutes
+                // آپدیت آمار قالب‌ها هر 3 دقیقه
                 setInterval(() => {
                     this.updateTemplateStats();
-                }, 5 * 60 * 1000); // 5 دقیقه
+                }, 3 * 60 * 1000);
                 
-                // Initial update
+                // آپدیت مشاهده‌کنندگان هر دقیقه
+                setInterval(() => {
+                    this.updateViewers();
+                }, 60 * 1000);
+                
+                // آپدیت اولیه
                 this.updateVideoStats();
                 this.updateTemplateStats();
+                this.updateViewers();
             }
 
             updateVideoStats() {
-                // افزایش تصادفی لایک و بازدید
-                const likeIncrease = Math.floor(Math.random() * 300) + 100; // 100-400
-                const viewIncrease = Math.floor(Math.random() * 1500) + 500; // 500-2000
+                // افزایش تصادفی لایک
+                const likeIncrease = Math.floor(Math.random() * 50) + 20;
+                // افزایش تصادفی بازدید
+                const viewIncrease = Math.floor(Math.random() * 200) + 100;
+                // مشاهده‌کنندگان فعلی
+                const watchingChange = Math.floor(Math.random() * 30) - 15;
                 
                 this.videoLikes += likeIncrease;
                 this.videoViews += viewIncrease;
+                this.currentWatching = Math.max(100, this.currentWatching + watchingChange);
                 
-                // نمایش
-                document.getElementById('likesCount').textContent = this.formatNumber(this.videoLikes);
-                document.getElementById('viewsCount').textContent = this.formatNumber(this.videoViews);
+                // نمایش با انیمیشن
+                this.animateStatUpdate('likesCount', this.formatNumber(this.videoLikes));
+                this.animateStatUpdate('viewsCount', this.formatNumber(this.videoViews));
+                this.animateStatUpdate('currentWatching', this.formatNumber(this.currentWatching));
+            }
+
+            updateViewers() {
+                // به‌روزرسانی زمان مشاهده‌کنندگان
+                this.viewersList.forEach(viewer => {
+                    // کاهش زمان
+                    viewer.timeAgo += 1;
+                    
+                    // اگر از 60 دقیقه گذشت، جایگزین کن
+                    if (viewer.timeAgo > 60) {
+                        const newName = this.viewerNames[Math.floor(Math.random() * this.viewerNames.length)];
+                        viewer.name = newName;
+                        viewer.timeAgo = 1;
+                        viewer.progress = Math.floor(Math.random() * 100);
+                    }
+                });
                 
-                // افکت
-                const likesElement = document.getElementById('likesCount');
-                const viewsElement = document.getElementById('viewsCount');
-                
-                this.animateUpdate(likesElement);
-                this.animateUpdate(viewsElement);
+                this.updateViewersList();
             }
 
             updateTemplateStats() {
@@ -845,13 +1282,13 @@
                 Object.keys(this.templates100).forEach(name => {
                     if (!this.templateStats[name]) {
                         this.templateStats[name] = {
-                            likes: Math.floor(Math.random() * 5000) + 1000,
-                            views: Math.floor(Math.random() * 20000) + 5000
+                            likes: Math.floor(Math.random() * 5000) + 2000,
+                            views: Math.floor(Math.random() * 15000) + 8000
                         };
                     }
                     
-                    this.templateStats[name].likes += Math.floor(Math.random() * 50) + 10;
-                    this.templateStats[name].views += Math.floor(Math.random() * 300) + 50;
+                    this.templateStats[name].likes += Math.floor(Math.random() * 30) + 10;
+                    this.templateStats[name].views += Math.floor(Math.random() * 150) + 50;
                     
                     this.updateTemplateCardStats(name);
                 });
@@ -859,36 +1296,34 @@
                 Object.keys(this.templates500).forEach(name => {
                     if (!this.templateStats[name]) {
                         this.templateStats[name] = {
-                            likes: Math.floor(Math.random() * 8000) + 2000,
-                            views: Math.floor(Math.random() * 30000) + 10000
+                            likes: Math.floor(Math.random() * 8000) + 4000,
+                            views: Math.floor(Math.random() * 25000) + 15000
                         };
                     }
                     
-                    this.templateStats[name].likes += Math.floor(Math.random() * 80) + 20;
-                    this.templateStats[name].views += Math.floor(Math.random() * 500) + 100;
+                    this.templateStats[name].likes += Math.floor(Math.random() * 50) + 20;
+                    this.templateStats[name].views += Math.floor(Math.random() * 250) + 100;
                     
                     this.updateTemplateCardStats(name);
                 });
             }
 
-            updateTemplateCardStats(templateName) {
-                const statElements = document.querySelectorAll(`[data-template="${templateName}"]`);
-                statElements.forEach(element => {
-                    if (element.dataset.type === 'likes') {
-                        element.textContent = this.formatNumber(this.templateStats[templateName].likes);
-                    } else if (element.dataset.type === 'views') {
-                        element.textContent = this.formatNumber(this.templateStats[templateName].views);
-                    }
-                });
-            }
-
-            animateUpdate(element) {
-                element.style.transform = 'scale(1.2)';
+            animateStatUpdate(elementId, newValue) {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                element.style.transform = 'scale(1.3)';
                 element.style.color = '#00ff88';
+                element.style.textShadow = '0 0 15px rgba(0, 255, 136, 0.7)';
+                
                 setTimeout(() => {
+                    element.textContent = newValue;
                     element.style.transform = 'scale(1)';
-                    element.style.color = '';
-                }, 300);
+                    setTimeout(() => {
+                        element.style.color = '';
+                        element.style.textShadow = '';
+                    }, 300);
+                }, 150);
             }
 
             formatNumber(num) {
@@ -897,7 +1332,7 @@
                 } else if (num >= 1000) {
                     return (num / 1000).toFixed(1) + 'K';
                 }
-                return num.toString();
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
 
             initializeTemplates() {
@@ -906,34 +1341,26 @@
                 
                 // Initialize 0-100 templates
                 Object.entries(this.templates100).forEach(([name, weights]) => {
-                    // مقدار اولیه آمار
-                    if (!this.templateStats[name]) {
-                        this.templateStats[name] = {
-                            likes: Math.floor(Math.random() * 5000) + 1000,
-                            views: Math.floor(Math.random() * 20000) + 5000
-                        };
-                    }
-                    
                     const card = this.createTemplateCard(name, weights, "100");
                     templateGrid100.appendChild(card);
                 });
                 
                 // Initialize 0-500 templates
                 Object.entries(this.templates500).forEach(([name, weights]) => {
-                    // مقدار اولیه آمار
-                    if (!this.templateStats[name]) {
-                        this.templateStats[name] = {
-                            likes: Math.floor(Math.random() * 8000) + 2000,
-                            views: Math.floor(Math.random() * 30000) + 10000
-                        };
-                    }
-                    
                     const card = this.createTemplateCard(name, weights, "500");
                     templateGrid500.appendChild(card);
                 });
             }
 
             createTemplateCard(name, weights, type) {
+                // مقدار اولیه آمار
+                if (!this.templateStats[name]) {
+                    this.templateStats[name] = {
+                        likes: Math.floor(Math.random() * (type === "100" ? 5000 : 8000)) + (type === "100" ? 2000 : 4000),
+                        views: Math.floor(Math.random() * (type === "100" ? 15000 : 25000)) + (type === "100" ? 8000 : 15000)
+                    };
+                }
+                
                 const card = document.createElement('div');
                 card.className = 'template-card';
                 card.onclick = () => this.selectTemplate(name, card, type);
@@ -942,44 +1369,46 @@
                     <h3>${name}</h3>
                     <div class="template-weights">
                         <div class="weight-item">
-                            <span>📊 RSI:</span>
+                            <span>📊 RSI</span>
                             <span class="weight-value">${weights.rsi}</span>
                         </div>
                         <div class="weight-item">
-                            <span>📈 EMA20:</span>
+                            <span>📈 EMA20</span>
                             <span class="weight-value">${weights.ema20}</span>
                         </div>
                         <div class="weight-item">
-                            <span>📈 EMA50:</span>
+                            <span>📈 EMA50</span>
                             <span class="weight-value">${weights.ema50}</span>
                         </div>
                         <div class="weight-item">
-                            <span>🔵 Upper:</span>
+                            <span>🔵 Upper</span>
                             <span class="weight-value">${weights.upper}</span>
                         </div>
                         <div class="weight-item">
-                            <span>⚡ MACD:</span>
+                            <span>⚡ MACD</span>
                             <span class="weight-value">${weights.macd}</span>
                         </div>
                         <div class="weight-item">
-                            <span>📊 Stochastic:</span>
+                            <span>📊 Stochastic</span>
                             <span class="weight-value">${weights.stoch}</span>
                         </div>
                         <div class="weight-item">
-                            <span>📈 DIF/DEA:</span>
+                            <span>📈 DIF/DEA</span>
                             <span class="weight-value">${weights.dif + weights.dea}</span>
                         </div>
                         <div class="weight-item">
-                            <span>📊 Ichimoku:</span>
+                            <span>📊 Ichimoku</span>
                             <span class="weight-value">${weights.ichimoku}</span>
                         </div>
                     </div>
                     <div class="template-stats">
                         <div class="template-stat">
-                            👍 <span data-template="${name}" data-type="likes">${this.formatNumber(this.templateStats[name].likes)}</span>
+                            <span class="stat-icon-small">👍</span>
+                            <span class="stat-count" data-template="${name}" data-type="likes">${this.formatNumber(this.templateStats[name].likes)}</span>
                         </div>
                         <div class="template-stat">
-                            👁️ <span data-template="${name}" data-type="views">${this.formatNumber(this.templateStats[name].views)}</span>
+                            <span class="stat-icon-small">👁️</span>
+                            <span class="stat-count" data-template="${name}" data-type="views">${this.formatNumber(this.templateStats[name].views)}</span>
                         </div>
                     </div>
                 `;
@@ -987,27 +1416,54 @@
                 return card;
             }
 
+            updateTemplateCardStats(templateName) {
+                const likeElement = document.querySelector(`[data-template="${templateName}"][data-type="likes"]`);
+                const viewElement = document.querySelector(`[data-template="${templateName}"][data-type="views"]`);
+                
+                if (likeElement) {
+                    likeElement.textContent = this.formatNumber(this.templateStats[templateName].likes);
+                    this.animateCardStat(likeElement);
+                }
+                
+                if (viewElement) {
+                    viewElement.textContent = this.formatNumber(this.templateStats[templateName].views);
+                    this.animateCardStat(viewElement);
+                }
+            }
+
+            animateCardStat(element) {
+                element.style.transform = 'scale(1.2)';
+                element.style.color = '#00ff88';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                    setTimeout(() => {
+                        element.style.color = '';
+                    }, 300);
+                }, 200);
+            }
+
             selectTemplate(templateName, cardElement, templateType) {
-                // Clear all active templates
                 document.querySelectorAll('.template-card').forEach(card => {
                     card.classList.remove('active');
                 });
                 
-                // Set the selected template as active
                 cardElement.classList.add('active');
                 this.selectedTemplate = templateName;
                 this.selectedTemplateType = templateType;
                 
-                // افزایش بازدید این قالب
+                // افزایش بازدید
                 this.templateStats[templateName].views += 1;
                 this.updateTemplateCardStats(templateName);
                 
-                // Show the input form
+                // نمایش فرم
                 document.getElementById('inputForm').style.display = 'block';
-                document.getElementById('inputForm').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('inputForm').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
             }
 
-            // سیستم سیگنال‌دهی دقیقاً مثل اول ----------
+            // ========= سیستم سیگنال‌دهی دقیقاً مثل اول =========
             calculateRsiSignal(rsiValue, weight) {
                 if (rsiValue < 30) return weight * 1.0;
                 else if (rsiValue < 40) return weight * 0.6;
@@ -1077,19 +1533,13 @@
             calculateIchimokuSignal(currentPrice, tenkan, kijun, senkouA, senkouB, chikou, weight) {
                 let signal = 0;
                 
-                // قیمت بالاتر از ابر
                 if (currentPrice > Math.max(senkouA, senkouB)) signal += 0.4;
-                // قیمت پایین‌تر از ابر
                 else if (currentPrice < Math.min(senkouA, senkouB)) signal -= 0.4;
                 
-                // تنکان سن بالاتر از کیجون سن
                 if (tenkan > kijun) signal += 0.3;
-                // تنکان سن پایین‌تر از کیجون سن
                 else if (tenkan < kijun) signal -= 0.3;
                 
-                // چیکو اسپن بالاتر از قیمت 26 دوره قبل
                 if (chikou > currentPrice) signal += 0.3;
-                // چیکو اسپن پایین‌تر از قیمت 26 دوره قبل
                 else if (chikou < currentPrice) signal -= 0.3;
                 
                 return weight * signal;
@@ -1107,11 +1557,14 @@
             }
 
             generateSignal() {
-                // Show loading
+                if (!this.selectedTemplate) {
+                    alert('⚠️ لطفاً یک قالب تحلیل انتخاب کنید');
+                    return;
+                }
+                
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('signalResult').style.display = 'none';
                 
-                // Simulate processing time
                 setTimeout(() => {
                     try {
                         // Get input values
@@ -1145,7 +1598,7 @@
                             weights = this.templates500[this.selectedTemplate];
                         }
                         
-                        // Calculate signals for each indicator
+                        // Calculate signals
                         const rsiSignal = this.calculateRsiSignal(rsi, weights.rsi);
                         const emaSignal = this.calculateEmaSignal(ema20, ema50, currentPrice, weights.ema20 + weights.ema50);
                         const upperSignal = this.calculateUpperBandSignal(currentPrice, upper, weights.upper);
@@ -1158,7 +1611,7 @@
                         // Calculate total signal
                         let totalSignal = rsiSignal + emaSignal + upperSignal + macdSignal + stochSignal + difDeaSignal + ichimokuSignal + srSignal;
                         
-                        // Normalize signal based on template type
+                        // Normalize signal
                         if (this.selectedTemplateType === "500") {
                             totalSignal = totalSignal / 5;
                         }
@@ -1218,18 +1671,16 @@
                         
                     } catch (error) {
                         console.error('Error generating signal:', error);
-                        alert('خطا در تولید سیگنال. لطفاً دوباره تلاش کنید.');
+                        alert('❌ خطا در تولید سیگنال. لطفاً دوباره تلاش کنید.');
                     }
                     
-                    // Hide loading
                     document.getElementById('loading').style.display = 'none';
-                }, 1500);
+                }, 1800);
             }
 
             displaySignalResult(data) {
                 const signalResult = document.getElementById('signalResult');
                 
-                // Determine signal class based on direction and strength
                 let signalClass = 'neutral';
                 if (data.signalDirection === 'BUY') {
                     signalClass = data.signalStrength > 0.7 ? 'buy-strong' : 'buy-medium';
@@ -1237,115 +1688,96 @@
                     signalClass = data.signalStrength > 0.7 ? 'sell-strong' : 'sell-medium';
                 }
                 
-                // Format signal strength as percentage
                 const signalStrengthPercent = Math.round(data.signalStrength * 100);
+                const directionText = data.signalDirection === 'BUY' ? '🟢 خرید قوی' : '🔴 فروش قوی';
                 
-                // Create result HTML
                 signalResult.innerHTML = `
                     <div class="signal-header">
-                        <h2>سیگنال ${data.symbol}</h2>
+                        <h2 style="font-size: 1.8rem; margin-bottom: 10px;">📈 سیگنال ${data.symbol}</h2>
                         <div class="signal-direction ${signalClass}">
-                            ${data.signalDirection === 'BUY' ? '🟢 خرید قوی' : '🔴 فروش قوی'}
+                            ${directionText}
                         </div>
-                        <p>قدرت سیگنال: ${signalStrengthPercent}%</p>
+                        <p style="font-size: 1.2rem; margin-top: 15px;">قدرت سیگنال: <strong>${signalStrengthPercent}%</strong></p>
                     </div>
                     
                     <div class="signal-grid">
                         <div class="signal-item">
                             <h3>💰 قیمت ورود</h3>
-                            <div class="value">${data.entryPrice} $</div>
+                            <div class="value">${data.entryPrice.toLocaleString('fa-IR')} $</div>
                         </div>
                         <div class="signal-item">
                             <h3>🎯 حد سود (5%)</h3>
-                            <div class="value">${data.takeProfit} $</div>
+                            <div class="value" style="color: #00ff88;">${parseFloat(data.takeProfit).toLocaleString('fa-IR')} $</div>
                         </div>
                         <div class="signal-item">
                             <h3>🛑 حد ضرر (7%)</h3>
-                            <div class="value">${data.stopLoss} $</div>
+                            <div class="value" style="color: #ff4757;">${parseFloat(data.stopLoss).toLocaleString('fa-IR')} $</div>
                         </div>
                         <div class="signal-item">
                             <h3>📊 قدرت سیگنال</h3>
                             <div class="value">${signalStrengthPercent}%</div>
+                            <div class="view-progress" style="margin-top: 10px;">
+                                <div class="view-progress-fill" style="width: ${signalStrengthPercent}%"></div>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="analysis-section">
-                        <h3 class="section-title">📈 تحلیل تکنیکال</h3>
+                        <h3 class="section-title">📊 تحلیل تکنیکال پیشرفته</h3>
                         <div class="indicator-analysis">
                             <div class="indicator-card">
                                 <div class="indicator-title">📊 RSI: ${data.rsi}</div>
                                 <div class="indicator-details">
                                     وزن: ${data.weights.rsi} - 
-                                    ${data.rsi < 30 ? 'اشباع فروش' : data.rsi > 70 ? 'اشباع خرید' : 'خنثی'}
+                                    ${data.rsi < 30 ? '🟢 اشباع فروش' : data.rsi > 70 ? '🔴 اشباع خرید' : '⚪ خنثی'}
                                 </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${data.rsi}%;"></div>
+                                <div class="view-progress">
+                                    <div class="view-progress-fill" style="width: ${data.rsi}%"></div>
                                 </div>
                             </div>
                             <div class="indicator-card">
-                                <div class="indicator-title">📈 EMA: ${data.ema20} / ${data.ema50}</div>
+                                <div class="indicator-title">📈 EMA: ${data.ema20.toLocaleString('fa-IR')} / ${data.ema50.toLocaleString('fa-IR')}</div>
                                 <div class="indicator-details">
                                     وزن: ${data.weights.ema20 + data.weights.ema50} - 
-                                    ${data.ema20 > data.ema50 ? 'روند صعودی' : 'روند نزولی'}
+                                    ${data.ema20 > data.ema50 ? '🟢 روند صعودی' : '🔴 روند نزولی'}
                                 </div>
                             </div>
                             <div class="indicator-card">
-                                <div class="indicator-title">🔵 Upper Band: ${data.upper}</div>
+                                <div class="indicator-title">🔵 Upper Band: ${data.upper.toLocaleString('fa-IR')}</div>
                                 <div class="indicator-details">
                                     وزن: ${data.weights.upper} - 
-                                    ${data.currentPrice > data.upper ? 'بالای باند' : 'زیر باند'}
+                                    ${data.currentPrice > data.upper ? '🔴 بالای باند' : '🟢 زیر باند'}
                                 </div>
                             </div>
                             <div class="indicator-card">
                                 <div class="indicator-title">⚡ MACD: ${data.macd}</div>
                                 <div class="indicator-details">
                                     وزن: ${data.weights.macd} - 
-                                    ${data.macd > 0 ? 'مثبت' : 'منفی'}
-                                </div>
-                            </div>
-                            <div class="indicator-card">
-                                <div class="indicator-title">📊 Stochastic: K=${data.stochK}, D=${data.stochD}, J=${data.stochJ}</div>
-                                <div class="indicator-details">
-                                    وزن: ${data.weights.stoch} - 
-                                    ${data.stochK < 20 ? 'اشباع فروش' : data.stochK > 80 ? 'اشباع خرید' : 'خنثی'}
-                                </div>
-                            </div>
-                            <div class="indicator-card">
-                                <div class="indicator-title">📈 DIF/DEA: ${data.dif} / ${data.dea}</div>
-                                <div class="indicator-details">
-                                    وزن: ${data.weights.dif + data.weights.dea} - 
-                                    ${data.dif > data.dea ? 'سیگنال خرید' : 'سیگنال فروش'}
-                                </div>
-                            </div>
-                            <div class="indicator-card">
-                                <div class="indicator-title">📊 Ichimoku Cloud</div>
-                                <div class="indicator-details">
-                                    وزن: ${data.weights.ichimoku} - 
-                                    ${data.currentPrice > Math.max(data.senkouA, data.senkouB) ? 'بالای ابر' : 'زیر ابر'}
+                                    ${data.macd > 0 ? '🟢 مثبت' : '🔴 منفی'}
                                 </div>
                             </div>
                         </div>
                     </div>
                 `;
                 
-                // Show result
                 signalResult.style.display = 'block';
-                signalResult.scrollIntoView({ behavior: 'smooth' });
+                signalResult.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
             }
 
             addToHistory(signal) {
                 this.signalHistory.unshift(signal);
                 
-                // Keep only last 5 signals
                 if (this.signalHistory.length > 5) {
                     this.signalHistory.pop();
                 }
                 
-                // Update history display
                 const historyContainer = document.getElementById('historyContainer');
                 
                 if (this.signalHistory.length === 0) {
-                    historyContainer.innerHTML = '<p style="text-align: center; opacity: 0.7; font-size: 0.9rem;">هنوز سیگنالی تولید نشده است</p>';
+                    historyContainer.innerHTML = '<p style="text-align: center; opacity: 0.7; font-size: 1rem; padding: 30px;">هنوز سیگنالی تولید نشده است</p>';
                     return;
                 }
                 
@@ -1361,18 +1793,39 @@
                         signalClass = signal.signalStrength > 0.7 ? 'sell-strong' : 'sell-medium';
                     }
                     
+                    const strengthPercent = Math.round(signal.signalStrength * 100);
+                    
                     historyItem.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>${signal.symbol}</strong>
-                                <span class="${signalClass}">${signal.signalDirection === 'BUY' ? '🟢 خرید' : '🔴 فروش'}</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <strong style="font-size: 1.1rem;">${signal.symbol}</strong>
+                                <span class="${signalClass}" style="padding: 5px 15px; border-radius: 10px; font-weight: 600;">
+                                    ${signal.signalDirection === 'BUY' ? '🟢 خرید' : '🔴 فروش'}
+                                </span>
                             </div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">${signal.timestamp}</div>
+                            <div style="font-size: 0.9rem; opacity: 0.7;">${signal.timestamp}</div>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
-                            <div style="font-size: 0.75rem;">ورود: ${signal.entryPrice}$</div>
-                            <div style="font-size: 0.75rem;">سود: ${signal.takeProfit}$</div>
-                            <div style="font-size: 0.75rem;">ضرر: ${signal.stopLoss}$</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px;">
+                            <div style="background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.8;">ورود</div>
+                                <div style="font-weight: 700; margin-top: 5px;">${parseFloat(signal.entryPrice).toLocaleString('fa-IR')}$</div>
+                            </div>
+                            <div style="background: rgba(0, 255, 136, 0.1); padding: 10px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.8;">سود</div>
+                                <div style="font-weight: 700; color: #00ff88; margin-top: 5px;">${parseFloat(signal.takeProfit).toLocaleString('fa-IR')}$</div>
+                            </div>
+                            <div style="background: rgba(255, 71, 87, 0.1); padding: 10px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 0.8rem; opacity: 0.8;">ضرر</div>
+                                <div style="font-weight: 700; color: #ff4757; margin-top: 5px;">${parseFloat(signal.stopLoss).toLocaleString('fa-IR')}$</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.9rem;">
+                            <div style="opacity: 0.7;">قدرت: ${strengthPercent}%</div>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <div class="view-progress" style="width: 100px;">
+                                    <div class="view-progress-fill" style="width: ${strengthPercent}%"></div>
+                                </div>
+                            </div>
                         </div>
                     `;
                     
@@ -1399,11 +1852,20 @@
                 section100.style.display = 'none';
                 section500.style.display = 'block';
             }
+            
+            // Reset selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById('inputForm').style.display = 'none';
+            if (window.tradingBot) {
+                window.tradingBot.selectedTemplate = null;
+            }
         }
 
         function generateSignal() {
-            if (!window.tradingBot.selectedTemplate) {
-                alert('لطفاً یک قالب انتخاب کنید');
+            if (!window.tradingBot || !window.tradingBot.selectedTemplate) {
+                alert('⚠️ لطفاً یک قالب تحلیل انتخاب کنید');
                 return;
             }
             
@@ -1419,18 +1881,19 @@
             document.getElementById('signalResult').style.display = 'none';
             document.getElementById('loading').style.display = 'none';
             
-            window.tradingBot.selectedTemplate = null;
+            // Reset form inputs
+            document.querySelectorAll('#inputForm input').forEach(input => {
+                input.value = '';
+            });
+            
+            if (window.tradingBot) {
+                window.tradingBot.selectedTemplate = null;
+            }
         }
 
-        // Initialize the trading bot when the page loads
+        // Initialize
         window.onload = function() {
             window.tradingBot = new AdvancedTradingBot();
-            
-            // Auto-play video
-            const video = document.getElementById('mainVideo');
-            video.play().catch(e => {
-                console.log("Auto-play prevented, user interaction required");
-            });
         };
     </script>
 </body>
