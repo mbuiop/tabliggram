@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فاکتورساز حرفه‌ای | ساخت فاکتور زیبا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧾</text></svg>">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo-area">
+                <div class="logo">
+                    <i class="fas fa-file-invoice"></i>
+                    <div>
+                        <h1>فاکتورساز <span class="highlight">پیشرفته</span></h1>
+                        <p class="tagline">ساخت فاکتور حرفه‌ای در ۲ دقیقه • کاملاً <strong>رایگان برای همیشه</strong></p>
+                    </div>
+                </div>
+                <div class="quality-badge">
+                    <i class="fas fa-crown"></i>
+                    کیفیت بالا
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container main-content">
+        <!-- App Layout -->
+        <div class="app-grid">
+            <!-- Left Panel: Settings -->
+            <section class="panel settings-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-sliders-h"></i> تنظیمات فاکتور</h2>
+                    <p>ظاهر فاکتور خود را شخصی‌سازی کنید</p>
+                </div>
+
+                <!-- Template Selection -->
+                <div class="setting-group">
+                    <h3><i class="fas fa-palette"></i> انتخاب قالب</h3>
+                    <div class="template-grid">
+                        <div class="template-card active" data-template="modern" data-color="#4361ee">
+                            <div class="template-preview" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);"></div>
+                            <div class="template-info">
+                                <h4>مدرن</h4>
+                                <p>طراحی امروزی و شیک</p>
+                            </div>
+                        </div>
+                        <div class="template-card" data-template="classic" data-color="#7209b7">
+                            <div class="template-preview" style="background: linear-gradient(135deg, #7209b7, #560bad);"></div>
+                            <div class="template-info">
+                                <h4>کلاسیک</h4>
+                                <p>سنتی و رسمی</p>
+                            </div>
+                        </div>
+                        <div class="template-card" data-template="minimal" data-color="#4cc9f0">
+                            <div class="template-preview" style="background: linear-gradient(135deg, #4cc9f0, #4895ef);"></div>
+                            <div class="template-info">
+                                <h4>مینیمال</h4>
+                                <p>ساده و تمیز</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Selection -->
+                <div class="setting-group">
+                    <h3><i class="fas fa-fill-drip"></i> رنگ اصلی</h3>
+                    <div class="color-grid">
+                        <div class="color-option active" style="background-color: #4361ee;" data-color="#4361ee" data-name="آبی جذاب"></div>
+                        <div class="color-option" style="background-color: #f72585;" data-color="#f72585" data-name="صورتی"></div>
+                        <div class="color-option" style="background-color: #2a9d8f;" data-color="#2a9d8f" data-name="سبز دریایی"></div>
+                        <div class="color-option" style="background-color: #e9c46a;" data-color="#e9c46a" data-name="طلایی"></div>
+                        <div class="color-option" style="background-color: #e76f51;" data-color="#e76f51" data-name="نارنجی"></div>
+                        <div class="color-option" style="background-color: #9d4edd;" data-color="#9d4edd" data-name="بنفش"></div>
+                        <div class="color-option" style="background-color: #ff6d00;" data-color="#ff6d00" data-name="نارنجی روشن"></div>
+                        <div class="color-option" style="background-color: #0077b6;" data-color="#0077b6" data-name="آبی دریایی"></div>
+                        <div class="color-option" style="background-color: #38b000;" data-color="#38b000" data-name="سبز روشن"></div>
+                        <div class="color-option" style="background-color: #ff0054;" data-color="#ff0054" data-name="قرمز"></div>
+                        <div class="color-option" style="background-color: #7209b7;" data-color="#7209b7" data-name="بنفش تیره"></div>
+                        <div class="color-option" style="background-color: #00bbf9;" data-color="#00bbf9" data-name="آبی آسمانی"></div>
+                    </div>
+                    <div class="color-picker-container">
+                        <label for="customColor">رنگ دلخواه:</label>
+                        <input type="color" id="customColor" value="#4361ee">
+                        <span id="currentColorName">آبی جذاب</span>
+                    </div>
+                </div>
+
+                <!-- Date Format -->
+                <div class="setting-group">
+                    <h3><i class="fas fa-calendar-alt"></i> فرمت تاریخ</h3>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="dateFormat" value="jalali" checked>
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">شمسی (۱۴۰۳/۰۱/۱۵)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="dateFormat" value="gregorian">
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">میلادی (2024/04/04)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="dateFormat" value="both">
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">هر دو فرمت</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Font Size -->
+                <div class="setting-group">
+                    <h3><i class="fas fa-text-height"></i> اندازه فونت</h3>
+                    <input type="range" id="fontSize" min="12" max="20" value="16">
+                    <div class="range-values">
+                        <span>کوچک</span>
+                        <span id="currentFontSize">۱۶px</span>
+                        <span>بزرگ</span>
+                    </div>
+                </div>
+
+                <!-- Support Section -->
+                <div class="support-section">
+                    <div class="support-header">
+                        <i class="fas fa-heart"></i>
+                        <h3>حمایت داوطلبانه</h3>
+                    </div>
+                    <div class="support-content">
+                        <p class="support-text">
+                            این سرویس برای همیشه <strong>رایگان</strong> خواهد ماند. 
+                            برای ادامه توسعه و پشتیبانی، می‌توانید حمایت مالی داوطلبانه داشته باشید.
+                        </p>
+                        <div class="card-info">
+                            <div class="card-header">
+                                <i class="fas fa-credit-card"></i>
+                                <span>شماره کارت</span>
+                            </div>
+                            <div class="card-number">
+                                <code>5892 1011 8732 2777</code>
+                                <button class="copy-btn" data-text="5892101187322777">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <p class="card-note">بانک سپه به نام مرتضی نیکخو خنجری</p>
+                        </div>
+                        <div class="support-usage">
+                            <h4>کاربرد کمک‌های مالی:</h4>
+                            <ul>
+                                <li><i class="fas fa-server"></i> هزینه سرور و هاستینگ</li>
+                                <li><i class="fas fa-code"></i> توسعه ویژگی‌های جدید</li>
+                                <li><i class="fas fa-shield-alt"></i> امنیت و بروزرسانی</li>
+                                <li><i class="fas fa-bolt"></i> افزایش سرعت سایت</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Middle Panel: Invoice Preview -->
+            <section class="panel preview-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-eye"></i> پیش‌نمایش فاکتور</h2>
+                    <div class="preview-actions">
+                        <button class="btn btn-secondary" id="resetBtn">
+                            <i class="fas fa-redo"></i> بازنشانی
+                        </button>
+                        <button class="btn btn-primary" id="downloadBtn">
+                            <i class="fas fa-download"></i> دانلود با کیفیت بالا
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="invoice-preview-container">
+                    <div id="invoicePreview" class="invoice-preview">
+                        <!-- Invoice will be generated here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <div>
+                            <h4>فاکتور ایجاد شده</h4>
+                            <p class="stat-value" id="invoiceCount">۱</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <h4>کاربران امروز</h4>
+                            <p class="stat-value">۲۴۷</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <div>
+                            <h4>حامیان</h4>
+                            <p class="stat-value">۸۹</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Data Entry -->
+            <section class="panel data-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-edit"></i> اطلاعات فاکتور</h2>
+                    <p>اطلاعات فروشنده و خریدار را وارد کنید</p>
+                </div>
+
+                <!-- Seller Info -->
+                <div class="data-group">
+                    <h3><i class="fas fa-store"></i> اطلاعات فروشنده</h3>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="sellerName">نام فروشنده</label>
+                            <input type="text" id="sellerName" value="فروشگاه موبایل پارسیان" placeholder="نام کسب‌وکار شما">
+                        </div>
+                        <div class="input-group">
+                            <label for="sellerPhone">تلفن</label>
+                            <input type="tel" id="sellerPhone" value="021-12345678" placeholder="شماره تماس">
+                        </div>
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="sellerAddress">آدرس</label>
+                        <input type="text" id="sellerAddress" value="تهران، خیابان ولیعصر، پلاک ۲۴۰" placeholder="آدرس کامل">
+                    </div>
+                </div>
+
+                <!-- Buyer Info -->
+                <div class="data-group">
+                    <h3><i class="fas fa-user"></i> اطلاعات خریدار</h3>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="buyerName">نام خریدار</label>
+                            <input type="text" id="buyerName" value="سعید کنانی" placeholder="نام مشتری">
+                        </div>
+                        <div class="input-group">
+                            <label for="buyerPhone">تلفن</label>
+                            <input type="tel" id="buyerPhone" value="09137657870" placeholder="شماره همراه">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Details -->
+                <div class="data-group">
+                    <h3><i class="fas fa-receipt"></i> جزئیات فاکتور</h3>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="invoiceNumber">شماره فاکتور</label>
+                            <input type="text" id="invoiceNumber" value="INV-1403-001" placeholder="مثلاً INV-001">
+                        </div>
+                        <div class="input-group">
+                            <label for="invoiceDate">تاریخ (اختیاری)</label>
+                            <input type="text" id="invoiceDate" placeholder="خودکار پر می‌شود">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Items -->
+                <div class="data-group items-group">
+                    <div class="group-header">
+                        <h3><i class="fas fa-shopping-cart"></i> آیتم‌های فاکتور</h3>
+                        <button class="btn btn-sm" id="addItemBtn">
+                            <i class="fas fa-plus"></i> افزودن
+                        </button>
+                    </div>
+                    
+                    <div class="items-header">
+                        <span>شرح کالا</span>
+                        <span>تعداد</span>
+                        <span>قیمت واحد</span>
+                        <span>تخفیف %</span>
+                        <span>جمع</span>
+                        <span></span>
+                    </div>
+                    
+                    <div id="itemsContainer">
+                        <!-- Items will be added here -->
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="totals-section">
+                        <div class="total-row">
+                            <span>جمع کل:</span>
+                            <span id="subtotal">۰ ریال</span>
+                        </div>
+                        <div class="total-row">
+                            <span>تخفیف:</span>
+                            <span id="discountAmount">۰ ریال</span>
+                        </div>
+                        <div class="total-row">
+                            <span>مالیات (۹٪):</span>
+                            <span id="taxAmount">۰ ریال</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span>مبلغ قابل پرداخت:</span>
+                            <span id="totalAmount">۰ ریال</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4><i class="fas fa-info-circle"></i> درباره سرویس</h4>
+                    <p>فاکتورساز پیشرفته یک سرویس کاملاً رایگان برای ساخت فاکتورهای حرفه‌ای است. ما تضمین می‌کنیم این سرویس برای همیشه رایگان بماند.</p>
+                </div>
+                <div class="footer-section">
+                    <h4><i class="fas fa-shield-alt"></i> تضمین‌ها</h4>
+                    <ul>
+                        <li>بدون نیاز به ثبت‌نام</li>
+                        <li>بدون محدودیت استفاده</li>
+                        <li>بدون تبلیغات اجباری</li>
+                        <li>حریم خصوصی محفوظ</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4><i class="fas fa-envelope"></i> ارتباط با ما</h4>
+                    <p>برای پیشنهادات و گزارش مشکلات:</p>
+                    <div class="contact-links">
+                        <a href="morteza.yari1377m@gmail.com"><i class="fas fa-envelope"></i> ایمیل</a>
+                        <a href="t.me/shahraghee13"><i class="fab fa-telegram"></i> تلگرام</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© ۱۴۰۳ - فاکتورساز پیشرفته | طراحی شده با <i class="fas fa-heart" style="color:#f72585;"></i> برای کسب‌وکارهای ایرانی</p>
+                <p class="version">نسخه ۲.۰ | آخرین بروزرسانی: بهمن ۱۴۰۳</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Scripts -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+                              </html>
