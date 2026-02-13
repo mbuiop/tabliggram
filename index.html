@@ -3,457 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>چت شیمی</title>
+    <title>دستیار شیمی</title>
     <style>
-        /* ریست کامل */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background-color: #f7f7f8;
+            background: #f0f2f5;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
 
-        /* کانتینر اصلی - دقیقاً مثل خودت */
-        .main-chat {
+        .chat-container {
             width: 100vw;
             height: 100vh;
-            background-color: #ffffff;
+            background: white;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
 
-        /* هدر - کپی از خودت */
-        .chat-header {
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
-            padding: 16px 20px;
-            background-color: #ffffff;
-            border-bottom: 1px solid #e5e5e5;
             gap: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .header-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: #10a37f;
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: #34495e;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 20px;
+            font-size: 24px;
         }
 
-        .header-info {
+        .info {
             flex: 1;
         }
 
-        .header-name {
+        .name {
             font-weight: 600;
-            color: #2d2d2d;
-            font-size: 16px;
+            font-size: 18px;
             margin-bottom: 4px;
         }
 
-        .header-status {
+        .status {
             font-size: 13px;
-            color: #6e6e80;
+            color: #a0b9d4;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .status-dot {
+        .dot {
             width: 8px;
             height: 8px;
-            background: #10a37f;
+            background: #2ecc71;
             border-radius: 50%;
-            display: inline-block;
         }
 
-        .header-icons {
-            display: flex;
-            gap: 20px;
-            color: #6e6e80;
-            font-size: 20px;
-        }
-
-        /* منطقه پیام‌ها - دقیقاً مثل خودت */
-        .messages-region {
+        .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 24px 20px;
-            background-color: #ffffff;
+            padding: 24px;
+            background: #f8fafd;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
 
-        /* گروه پیام */
-        .message-group {
+        .row {
             display: flex;
             width: 100%;
         }
 
-        .message-group.user {
+        .row.user {
             justify-content: flex-end;
         }
 
-        .message-group.assistant {
+        .row.bot {
             justify-content: flex-start;
         }
 
-        /* محتوای پیام */
-        .message-block {
-            max-width: 75%;
+        .bubble-wrapper {
+            max-width: 70%;
             display: flex;
             flex-direction: column;
         }
 
-        .user .message-block {
-            align-items: flex-end;
-        }
-
-        .assistant .message-block {
-            align-items: flex-start;
-        }
-
-        .message-author {
-            font-size: 13px;
-            color: #6e6e80;
-            margin-bottom: 5px;
-            margin-right: 10px;
-        }
-
-        .message-bubble {
+        .bubble {
             padding: 14px 20px;
             border-radius: 22px;
             font-size: 15px;
             line-height: 1.7;
             white-space: pre-wrap;
             word-break: break-word;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
-        .user .message-bubble {
-            background-color: #10a37f;
+        .user .bubble {
+            background: #2c3e50;
             color: white;
-            border-bottom-right-radius: 5px;
+            border-bottom-right-radius: 6px;
         }
 
-        .assistant .message-bubble {
-            background-color: #f7f7f8;
-            color: #2d2d2d;
-            border-bottom-left-radius: 5px;
+        .bot .bubble {
+            background: white;
+            color: #1e293b;
+            border-bottom-left-radius: 6px;
+            border: 1px solid #e9eef2;
         }
 
-        .message-time {
-            font-size: 12px;
-            color: #acacbe;
+        .time {
+            font-size: 11px;
+            color: #94a3b8;
             margin-top: 6px;
-            margin-right: 10px;
+            margin-right: 12px;
         }
 
-        /* تایپ کردن - مثل خودت */
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
+        .typing {
+            background: white;
             padding: 14px 20px;
-            background-color: #f7f7f8;
             border-radius: 22px;
-            border-bottom-left-radius: 5px;
-            width: fit-content;
+            border-bottom-left-radius: 6px;
+            border: 1px solid #e9eef2;
+            display: inline-flex;
+            gap: 5px;
         }
 
-        .typing-indicator span {
+        .typing span {
             width: 8px;
             height: 8px;
-            background-color: #acacbe;
+            background: #94a3b8;
             border-radius: 50%;
-            animation: typingAnimation 1.5s infinite;
+            animation: wave 1.4s infinite;
         }
 
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
 
-        @keyframes typingAnimation {
+        @keyframes wave {
             0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
             30% { transform: translateY(-8px); opacity: 1; }
         }
 
-        /* نوار پایین - دقیقاً مثل خودت */
-        .input-footer {
-            border-top: 1px solid #e5e5e5;
-            padding: 20px 20px 24px 20px;
-            background-color: #ffffff;
+        .footer {
+            background: white;
+            border-top: 1px solid #e9eef2;
+            padding: 18px 24px;
         }
 
-        .input-wrapper {
+        .input-group {
             display: flex;
-            align-items: center;
             gap: 12px;
-            background-color: #f7f7f8;
-            border: 1px solid #e5e5e5;
-            border-radius: 24px;
+            align-items: center;
+            background: #f8fafd;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
             padding: 4px 4px 4px 20px;
-            transition: all 0.2s;
         }
 
-        .input-wrapper:focus-within {
-            border-color: #10a37f;
-            background-color: #ffffff;
-            box-shadow: 0 2px 20px rgba(16, 163, 127, 0.08);
+        .input-group:focus-within {
+            border-color: #2c3e50;
+            background: white;
         }
 
-        #messageField {
+        #userInput {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 14px 0;
+            padding: 16px 0;
             font-size: 15px;
             outline: none;
-            color: #2d2d2d;
         }
 
-        #messageField::placeholder {
-            color: #acacbe;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            border: none;
-            background: transparent;
-            border-radius: 50%;
-            color: #6e6e80;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .icon-btn:hover {
-            background-color: #e5e5e5;
-            color: #2d2d2d;
+        #userInput::placeholder {
+            color: #94a3b8;
         }
 
         .send-btn {
-            width: 42px;
-            height: 42px;
+            width: 52px;
+            height: 52px;
             border: none;
-            background-color: #10a37f;
+            background: #2c3e50;
             color: white;
-            border-radius: 50%;
-            font-size: 18px;
+            border-radius: 30px;
+            font-size: 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
         .send-btn:hover {
-            background-color: #0e8a6b;
-        }
-
-        /* اسکرول - مثل خودت */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+            background: #1e2b3a;
+            transform: scale(1.02);
         }
     </style>
 </head>
 <body>
-    <div class="main-chat">
-        <!-- هدر -->
-        <div class="chat-header">
-            <div class="header-avatar">⚗️</div>
-            <div class="header-info">
-                <div class="header-name">دستیار شیمی</div>
-                <div class="header-status">
-                    <span class="status-dot"></span>
-                    <span>آفلاین · دانش محلی</span>
-                </div>
-            </div>
-            <div class="header-icons">
-                <span>⋯</span>
-            </div>
-        </div>
-
-        <!-- منطقه پیام‌ها -->
-        <div class="messages-region" id="messagesRegion">
-            <div class="message-group assistant">
-                <div class="message-block">
-                    <div class="message-bubble">سلام! من دستیار شیمی هستم. چطور می‌تونم کمکت کنم؟</div>
-                    <div class="message-time">الان</div>
+    <div class="chat-container">
+        <div class="header">
+            <div class="avatar">🧪</div>
+            <div class="info">
+                <div class="name">دستیار شیمی</div>
+                <div class="status">
+                    <span class="dot"></span>
+                    <span>آنلاین · متصل به Gemini</span>
                 </div>
             </div>
         </div>
 
-        <!-- نوار پایین -->
-        <div class="input-footer">
-            <div class="input-wrapper">
-                <input type="text" id="messageField" placeholder="پیام به دستیار شیمی..." autocomplete="off">
-                <div class="action-buttons">
-                    <button class="icon-btn">📎</button>
-                    <button class="send-btn" onclick="sendMsg()">📤</button>
+        <div class="messages" id="messages">
+            <div class="row bot">
+                <div class="bubble-wrapper">
+                    <div class="bubble">سلام! من دستیار شیمی هستم. هر سوالی داری بپرس.</div>
+                    <div class="time">الان</div>
                 </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="سوال شیمی خود را بنویس..." autocomplete="off">
+                <button class="send-btn" onclick="sendMessage()">📤</button>
             </div>
         </div>
     </div>
 
-    <!-- پایگاه دانش مخفی -->
     <script>
-        window.knowledge = [];
+        const messages = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
         
-        // لود فایل‌ها
-        for (let i = 1; i <= 100; i++) {
-            (function(idx) {
-                let script = document.createElement('script');
-                script.src = `m${idx}.js`;
-                script.onload = function() {
-                    if (window[`data_${idx}`]) {
-                        window.knowledge.push(...window[`data_${idx}`]);
-                    }
-                };
-                document.head.appendChild(script);
-            })(i);
-        }
-    </script>
+        // ========== اینجا کلید تو رو بزن ==========
+        const GEMINI_KEY = 'AIzaSyBc9...'; // ←←←← کلیدتو جای این بذار
+        
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`;
 
-    <!-- منطق چت -->
-    <script>
-        const region = document.getElementById('messagesRegion');
-        const field = document.getElementById('messageField');
+        function addMessage(text, sender) {
+            const row = document.createElement('div');
+            row.className = `row ${sender}`;
 
-        // اضافه کردن پیام
-        function addMsg(text, role) {
-            const group = document.createElement('div');
-            group.className = `message-group ${role}`;
-
-            const block = document.createElement('div');
-            block.className = 'message-block';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bubble-wrapper';
 
             const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
+            bubble.className = 'bubble';
             bubble.innerText = text;
 
             const time = document.createElement('div');
-            time.className = 'message-time';
+            time.className = 'time';
             const now = new Date();
             time.innerText = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-            block.appendChild(bubble);
-            block.appendChild(time);
-            group.appendChild(block);
-            region.appendChild(group);
-            region.scrollTop = region.scrollHeight;
+            wrapper.appendChild(bubble);
+            wrapper.appendChild(time);
+            row.appendChild(wrapper);
+            messages.appendChild(row);
+            messages.scrollTop = messages.scrollHeight;
         }
 
-        // تایپ
         function showTyping() {
             const typingDiv = document.createElement('div');
-            typingDiv.className = 'message-group assistant';
-            typingDiv.id = 'typingStatus';
+            typingDiv.className = 'row bot';
+            typingDiv.id = 'typing';
             typingDiv.innerHTML = `
-                <div class="message-block">
-                    <div class="typing-indicator">
+                <div class="bubble-wrapper">
+                    <div class="typing">
                         <span></span><span></span><span></span>
                     </div>
                 </div>
             `;
-            region.appendChild(typingDiv);
-            region.scrollTop = region.scrollHeight;
+            messages.appendChild(typingDiv);
+            messages.scrollTop = messages.scrollHeight;
         }
 
         function hideTyping() {
-            const typing = document.getElementById('typingStatus');
+            const typing = document.getElementById('typing');
             if (typing) typing.remove();
         }
 
-        // جواب دادن
-        function getAnswer(question) {
-            if (!window.knowledge || window.knowledge.length === 0) {
-                return "❌ هنوز دانشی به من یاد ندادین. لطفاً فایل‌های m1.js تا m100.js رو بسازین.";
-            }
+        async function sendMessage() {
+            const msg = userInput.value.trim();
+            if (!msg) return;
 
-            const q = question.toLowerCase().trim();
-            let best = null;
-            let bestScore = 0;
-
-            for (const item of window.knowledge) {
-                if (!item.q || !item.a) continue;
-                
-                const qText = item.q.toLowerCase();
-                let score = 0;
-                
-                const words = q.split(/\s+/).filter(w => w.length > 1);
-                for (const w of words) {
-                    if (qText.includes(w)) score++;
-                }
-                
-                if (qText.includes(q)) score += 5;
-                
-                if (score > bestScore) {
-                    bestScore = score;
-                    best = item.a;
-                }
-            }
-
-            return best && bestScore > 0 ? best : "❌ نتونستم پیدا کنم. یه جور دیگه بپرس.";
-        }
-
-        // ارسال
-        function sendMsg() {
-            const msg = field.value.trim();
-            if (msg === '') return;
-
-            addMsg(msg, 'user');
-            field.value = '';
-
+            addMessage(msg, 'user');
+            userInput.value = '';
             showTyping();
 
-            setTimeout(() => {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: msg }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                const reply = data.candidates[0].content.parts[0].text;
+                
                 hideTyping();
-                const reply = getAnswer(msg);
-                addMsg(reply, 'assistant');
-            }, 800);
+                addMessage(reply, 'bot');
+
+            } catch (error) {
+                hideTyping();
+                addMessage('❌ خطا: ' + error.message, 'bot');
+            }
         }
 
-        field.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMsg();
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
         });
-    </script>
 
-    <!-- فایل‌های دانش - m1.js تا m100.js -->
+        // فوکوس خودکار روی اینپوت
+        userInput.focus();
+    </script>
 </body>
 </html>
