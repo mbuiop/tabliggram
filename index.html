@@ -2,426 +2,458 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>پایگاه دانش هوشمند</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت شیمی</title>
     <style>
+        /* ریست کامل */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .chat {
-            width: 100%;
-            height: 100%;
+        body {
+            background-color: #f7f7f8;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            background: white;
-        }
-
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .message {
-            max-width: 85%;
-            animation: fade 0.2s ease;
-        }
-
-        @keyframes fade {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .user {
-            align-self: flex-end;
-        }
-
-        .bot {
-            align-self: flex-start;
-        }
-
-        .bubble {
-            padding: 12px 18px;
-            border-radius: 20px;
-            line-height: 1.7;
-            font-size: 1rem;
-            color: black;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .user .bubble {
-            background: #e3f2fd;
-            border-bottom-left-radius: 6px;
-        }
-
-        .bot .bubble {
-            background: #f5f5f5;
-            border-bottom-right-radius: 6px;
-        }
-
-        .bot .bubble a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        .bot .bubble a:hover {
-            text-decoration: underline;
-        }
-
-        .time {
-            font-size: 0.65rem;
-            color: #999;
-            margin-top: 4px;
-            margin-right: 10px;
-        }
-
-        .typing {
-            padding: 15px 20px;
-            background: white;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
+            justify-content: center;
             align-items: center;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
 
-        .input-wrapper {
-            flex: 1;
-            background: #f5f5f5;
-            border-radius: 30px;
-            padding: 0 18px;
-            border: 1px solid #ddd;
+        /* کانتینر اصلی - دقیقاً مثل خودت */
+        .main-chat {
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
-        .input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 14px 0;
-            color: black;
-            font-size: 1rem;
-            direction: rtl;
+        /* هدر - کپی از خودت */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
+            gap: 12px;
         }
 
-        .input:focus {
-            outline: none;
-        }
-
-        .input::placeholder {
-            color: #aaa;
-        }
-
-        .send-btn {
-            width: 48px;
-            height: 48px;
-            background: #006d77;
-            border: none;
+        .header-avatar {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
+            background: #10a37f;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
+            color: white;
+            font-size: 20px;
         }
 
-        .send-btn:active {
-            transform: scale(0.95);
-            background: #00838f;
+        .header-info {
+            flex: 1;
         }
 
-        .send-btn svg {
-            width: 22px;
-            height: 22px;
-            fill: white;
+        .header-name {
+            font-weight: 600;
+            color: #2d2d2d;
+            font-size: 16px;
+            margin-bottom: 4px;
         }
 
+        .header-status {
+            font-size: 13px;
+            color: #6e6e80;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10a37f;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 20px;
+            color: #6e6e80;
+            font-size: 20px;
+        }
+
+        /* منطقه پیام‌ها - دقیقاً مثل خودت */
+        .messages-region {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 20px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* گروه پیام */
+        .message-group {
+            display: flex;
+            width: 100%;
+        }
+
+        .message-group.user {
+            justify-content: flex-end;
+        }
+
+        .message-group.assistant {
+            justify-content: flex-start;
+        }
+
+        /* محتوای پیام */
+        .message-block {
+            max-width: 75%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user .message-block {
+            align-items: flex-end;
+        }
+
+        .assistant .message-block {
+            align-items: flex-start;
+        }
+
+        .message-author {
+            font-size: 13px;
+            color: #6e6e80;
+            margin-bottom: 5px;
+            margin-right: 10px;
+        }
+
+        .message-bubble {
+            padding: 14px 20px;
+            border-radius: 22px;
+            font-size: 15px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .user .message-bubble {
+            background-color: #10a37f;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .assistant .message-bubble {
+            background-color: #f7f7f8;
+            color: #2d2d2d;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #acacbe;
+            margin-top: 6px;
+            margin-right: 10px;
+        }
+
+        /* تایپ کردن - مثل خودت */
         .typing-indicator {
             display: flex;
-            gap: 4px;
-            padding: 5px 10px;
+            gap: 5px;
+            padding: 14px 20px;
+            background-color: #f7f7f8;
+            border-radius: 22px;
+            border-bottom-left-radius: 5px;
+            width: fit-content;
         }
 
         .typing-indicator span {
             width: 8px;
             height: 8px;
-            background: #999;
+            background-color: #acacbe;
             border-radius: 50%;
-            animation: typing 1.4s infinite;
+            animation: typingAnimation 1.5s infinite;
         }
 
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
-            30% { transform: translateY(-5px); opacity: 1; }
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        /* نوار پایین - دقیقاً مثل خودت */
+        .input-footer {
+            border-top: 1px solid #e5e5e5;
+            padding: 20px 20px 24px 20px;
+            background-color: #ffffff;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #f7f7f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 24px;
+            padding: 4px 4px 4px 20px;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #10a37f;
+            background-color: #ffffff;
+            box-shadow: 0 2px 20px rgba(16, 163, 127, 0.08);
+        }
+
+        #messageField {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 14px 0;
+            font-size: 15px;
+            outline: none;
+            color: #2d2d2d;
+        }
+
+        #messageField::placeholder {
+            color: #acacbe;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            color: #6e6e80;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: #e5e5e5;
+            color: #2d2d2d;
+        }
+
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            background-color: #10a37f;
+            color: white;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: #0e8a6b;
+        }
+
+        /* اسکرول - مثل خودت */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
     </style>
 </head>
 <body>
-    <div class="chat">
-        <div class="messages" id="messages">
-            <div class="message bot">
-                <div class="bubble">📚 پایگاه دانش هوشمند فعال شد. هر سوالی داری بپرس تا داخل فایل‌ها بگردم.</div>
-                <div class="time">الآن</div>
+    <div class="main-chat">
+        <!-- هدر -->
+        <div class="chat-header">
+            <div class="header-avatar">⚗️</div>
+            <div class="header-info">
+                <div class="header-name">دستیار شیمی</div>
+                <div class="header-status">
+                    <span class="status-dot"></span>
+                    <span>آفلاین · دانش محلی</span>
+                </div>
+            </div>
+            <div class="header-icons">
+                <span>⋯</span>
             </div>
         </div>
-        
-        <div class="typing">
-            <div class="input-wrapper">
-                <input type="text" class="input" id="input" placeholder="سوال خود را بنویسید..." autocomplete="off">
+
+        <!-- منطقه پیام‌ها -->
+        <div class="messages-region" id="messagesRegion">
+            <div class="message-group assistant">
+                <div class="message-block">
+                    <div class="message-bubble">سلام! من دستیار شیمی هستم. چطور می‌تونم کمکت کنم؟</div>
+                    <div class="message-time">الان</div>
+                </div>
             </div>
-            <button class="send-btn" id="sendBtn">
-                <svg viewBox="0 0 24 24">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                </svg>
-            </button>
+        </div>
+
+        <!-- نوار پایین -->
+        <div class="input-footer">
+            <div class="input-wrapper">
+                <input type="text" id="messageField" placeholder="پیام به دستیار شیمی..." autocomplete="off">
+                <div class="action-buttons">
+                    <button class="icon-btn">📎</button>
+                    <button class="send-btn" onclick="sendMsg()">📤</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- پایگاه دانش مخفی -->
     <script>
-        // ==================== ۱. بارگذاری پویای فایل‌ها ====================
-        let knowledgeBase = {};
-        let fileContents = [];
-        let filesLoaded = false;
-        let totalFiles = 100;
-
-        // بارگذاری فایل‌ها قبل از شروع چت
-        async function loadAllFiles() {
-            const loadPromises = [];
-            
-            for (let i = 1; i <= totalFiles; i++) {
-                loadPromises.push(loadSingleFile(i));
-            }
-            
-            try {
-                await Promise.all(loadPromises);
-                filesLoaded = true;
-                
-                // جمع‌آوری تمام محتواها از فایل‌ها
-                for (let i = 1; i <= totalFiles; i++) {
-                    const varName = `m${i}`;
-                    if (window[varName] && typeof window[varName] === 'object') {
-                        fileContents.push(window[varName]);
-                        knowledgeBase = {...knowledgeBase, ...window[varName]};
+        window.knowledge = [];
+        
+        // لود فایل‌ها
+        for (let i = 1; i <= 100; i++) {
+            (function(idx) {
+                let script = document.createElement('script');
+                script.src = `m${idx}.js`;
+                script.onload = function() {
+                    if (window[`data_${idx}`]) {
+                        window.knowledge.push(...window[`data_${idx}`]);
                     }
-                }
-                
-                console.log(`✅ ${fileContents.length} فایل با ${Object.keys(knowledgeBase).length} سوال بارگذاری شد`);
-            } catch (error) {
-                console.log('⚠️ برخی فایل‌ها بارگذاری نشدند، اما چت با داده‌های موجود کار می‌کند');
-            }
-        }
-
-        function loadSingleFile(fileNumber) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = `m${fileNumber}.js`;
-                script.async = true;
-                
-                script.onload = resolve;
-                script.onerror = () => {
-                    console.log(`فایل m${fileNumber}.js موجود نیست`);
-                    resolve(); // ریجکت نمی‌کنیم تا بقیه فایل‌ها بارگذاری شوند
                 };
-                
                 document.head.appendChild(script);
-            });
+            })(i);
         }
-
-        // ==================== ۲. موتور جستجوی پیشرفته (جستجو در محتوا) ====================
-        function searchInContent(question) {
-            question = question.trim().toLowerCase();
-            
-            // حذف کلمات اضافی
-            let searchTerms = question.split(' ')
-                .filter(word => word.length > 1)
-                .map(word => word.replace(/[؟?!.\s]/g, ''));
-            
-            let results = [];
-            
-            // جستجو در تمام محتوای فایل‌ها
-            for (let fileIndex = 0; fileIndex < fileContents.length; fileIndex++) {
-                const file = fileContents[fileIndex];
-                
-                for (let [key, value] of Object.entries(file)) {
-                    let score = 0;
-                    
-                    // جستجو در سوال (key)
-                    let keyLower = key.toLowerCase();
-                    for (let term of searchTerms) {
-                        if (keyLower.includes(term)) {
-                            score += 3; // امتیاز بیشتر برای تطابق در سوال
-                        }
-                    }
-                    
-                    // جستجو در پاسخ (value) - اگه پاسخ هم متن داشته باشه
-                    let valueLower = value.toLowerCase();
-                    for (let term of searchTerms) {
-                        if (valueLower.includes(term)) {
-                            score += 2; // امتیاز برای تطابق در پاسخ
-                        }
-                    }
-                    
-                    // تطابق دقیق چند کلمه
-                    let exactMatchCount = 0;
-                    for (let term of searchTerms) {
-                        if (keyLower.includes(term) || valueLower.includes(term)) {
-                            exactMatchCount++;
-                        }
-                    }
-                    
-                    if (exactMatchCount === searchTerms.length && searchTerms.length > 1) {
-                        score += 5; // امتیاز ویژه برای تطابق همه کلمات
-                    }
-                    
-                    if (score > 0) {
-                        results.push({
-                            question: key,
-                            answer: value,
-                            score: score,
-                            fileNum: fileIndex + 1
-                        });
-                    }
-                }
-            }
-            
-            // مرتب‌سازی بر اساس امتیاز
-            results.sort((a, b) => b.score - a.score);
-            
-            return results;
-        }
-
-        // ==================== ۳. پیدا کردن بهترین پاسخ ====================
-        function findBestAnswer(question) {
-            if (!filesLoaded) {
-                return "⏳ در حال بارگذاری پایگاه دانش... لطفاً چند لحظه صبر کنید.";
-            }
-            
-            let results = searchInContent(question);
-            
-            if (results.length === 0) {
-                return "❌ موردی پیدا نشد. میشه سوال رو واضح‌تر بپرسی؟";
-            }
-            
-            // بهترین نتیجه با بالاترین امتیاز
-            let bestResult = results[0];
-            
-            // اگه چند نتیجه خوب داشتیم، ترکیبی نشون میدیم
-            if (results.length > 1 && results[0].score - results[1].score < 2) {
-                let combinedAnswer = `🔍 چند مورد مرتبط پیدا شد:\n\n`;
-                combinedAnswer += `📌 بهترین گزینه:\n${bestResult.answer}\n\n`;
-                combinedAnswer += `📌 موارد مشابه:\n`;
-                
-                for (let i = 1; i < Math.min(3, results.length); i++) {
-                    combinedAnswer += `• ${results[i].question}: ${results[i].answer.substring(0, 50)}...\n`;
-                }
-                
-                return combinedAnswer;
-            }
-            
-            return bestResult.answer;
-        }
-
-        // ==================== ۴. مدیریت چت ====================
-        let messagesDiv = document.getElementById('messages');
-        let inputField = document.getElementById('input');
-        let sendButton = document.getElementById('sendBtn');
-        let isTyping = false;
-
-        function addMessage(text, sender) {
-            let messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            
-            let bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.textContent = text;
-            
-            let timeDiv = document.createElement('div');
-            timeDiv.className = 'time';
-            let now = new Date();
-            timeDiv.textContent = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
-            
-            messageDiv.appendChild(bubble);
-            messageDiv.appendChild(timeDiv);
-            messagesDiv.appendChild(messageDiv);
-            
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function showTypingIndicator() {
-            if (isTyping) return;
-            isTyping = true;
-            
-            let typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot';
-            typingDiv.id = 'typing-indicator';
-            
-            let bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
-            
-            typingDiv.appendChild(bubble);
-            messagesDiv.appendChild(typingDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function hideTypingIndicator() {
-            let typingDiv = document.getElementById('typing-indicator');
-            if (typingDiv) {
-                typingDiv.remove();
-            }
-            isTyping = false;
-        }
-
-        async function sendMessage() {
-            let question = inputField.value.trim();
-            if (question === '') return;
-            
-            addMessage(question, 'user');
-            inputField.value = '';
-            
-            showTypingIndicator();
-            
-            // شبیه‌سازی تاخیر برای جستجو
-            setTimeout(() => {
-                hideTypingIndicator();
-                let answer = findBestAnswer(question);
-                addMessage(answer, 'bot');
-            }, 600);
-        }
-
-        // ==================== ۵. رویدادها ====================
-        sendButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            sendMessage();
-        });
-
-        inputField.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // ==================== ۶. شروع ====================
-        loadAllFiles(); // بارگذاری فایل‌ها در پس‌زمینه
-        inputField.focus();
     </script>
+
+    <!-- منطق چت -->
+    <script>
+        const region = document.getElementById('messagesRegion');
+        const field = document.getElementById('messageField');
+
+        // اضافه کردن پیام
+        function addMsg(text, role) {
+            const group = document.createElement('div');
+            group.className = `message-group ${role}`;
+
+            const block = document.createElement('div');
+            block.className = 'message-block';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerText = text;
+
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            const now = new Date();
+            time.innerText = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+            block.appendChild(bubble);
+            block.appendChild(time);
+            group.appendChild(block);
+            region.appendChild(group);
+            region.scrollTop = region.scrollHeight;
+        }
+
+        // تایپ
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message-group assistant';
+            typingDiv.id = 'typingStatus';
+            typingDiv.innerHTML = `
+                <div class="message-block">
+                    <div class="typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            region.appendChild(typingDiv);
+            region.scrollTop = region.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingStatus');
+            if (typing) typing.remove();
+        }
+
+        // جواب دادن
+        function getAnswer(question) {
+            if (!window.knowledge || window.knowledge.length === 0) {
+                return "❌ هنوز دانشی به من یاد ندادین. لطفاً فایل‌های m1.js تا m100.js رو بسازین.";
+            }
+
+            const q = question.toLowerCase().trim();
+            let best = null;
+            let bestScore = 0;
+
+            for (const item of window.knowledge) {
+                if (!item.q || !item.a) continue;
+                
+                const qText = item.q.toLowerCase();
+                let score = 0;
+                
+                const words = q.split(/\s+/).filter(w => w.length > 1);
+                for (const w of words) {
+                    if (qText.includes(w)) score++;
+                }
+                
+                if (qText.includes(q)) score += 5;
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = item.a;
+                }
+            }
+
+            return best && bestScore > 0 ? best : "❌ نتونستم پیدا کنم. یه جور دیگه بپرس.";
+        }
+
+        // ارسال
+        function sendMsg() {
+            const msg = field.value.trim();
+            if (msg === '') return;
+
+            addMsg(msg, 'user');
+            field.value = '';
+
+            showTyping();
+
+            setTimeout(() => {
+                hideTyping();
+                const reply = getAnswer(msg);
+                addMsg(reply, 'assistant');
+            }, 800);
+        }
+
+        field.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMsg();
+        });
+    </script>
+
+    <!-- فایل‌های دانش - m1.js تا m100.js -->
 </body>
 </html>
