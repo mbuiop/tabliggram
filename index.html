@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دستیار شیمی</title>
     <style>
+        /* همه استایل‌ها مثل قبل */
         * {
             margin: 0;
             padding: 0;
@@ -245,10 +246,12 @@
         const messages = document.getElementById('messages');
         const userInput = document.getElementById('userInput');
         
-        // ========== اینجا کلید تو رو بزن ==========
-        const GEMINI_KEY = 'AIzaSyBt64suioEmwlczwVr4ZVXrjP6lTQsEbC0'; // ←←←← کلیدتو جای این بذار
+        // ========== کلید تو اینجا ==========
+        const GEMINI_KEY = 'AIzaSyBc9...'; // کلیدتو جای این بذار
         
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`;
+        // ========== این دو خط رو اضافه کن ==========
+        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+        const API_URL = PROXY_URL + 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + GEMINI_KEY;
 
         function addMessage(text, sender) {
             const row = document.createElement('div');
@@ -304,7 +307,10 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                     body: JSON.stringify({
                         contents: [{
                             parts: [{ text: msg }]
@@ -313,14 +319,19 @@
                 });
 
                 const data = await response.json();
-                const reply = data.candidates[0].content.parts[0].text;
                 
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+                
+                const reply = data.candidates[0].content.parts[0].text;
                 hideTyping();
                 addMessage(reply, 'bot');
 
             } catch (error) {
                 hideTyping();
                 addMessage('❌ خطا: ' + error.message, 'bot');
+                console.error('Error:', error);
             }
         }
 
@@ -328,7 +339,6 @@
             if (e.key === 'Enter') sendMessage();
         });
 
-        // فوکوس خودکار روی اینپوت
         userInput.focus();
     </script>
 </body>
