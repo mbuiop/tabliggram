@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>پایگاه دانش عظیم | ۱۰۰ فایل</title>
+    <title>پایگاه دانش هوشمند</title>
     <style>
         * {
             margin: 0;
@@ -74,6 +74,15 @@
             border-bottom-right-radius: 6px;
         }
 
+        .bot .bubble a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .bot .bubble a:hover {
+            text-decoration: underline;
+        }
+
         .time {
             font-size: 0.65rem;
             color: #999;
@@ -141,16 +150,26 @@
             fill: white;
         }
 
-        .stats {
-            position: fixed;
-            bottom: 80px;
-            left: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
             padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            z-index: 1000;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-5px); opacity: 1; }
         }
     </style>
 </head>
@@ -158,14 +177,14 @@
     <div class="chat">
         <div class="messages" id="messages">
             <div class="message bot">
-                <div class="bubble">📚 پایگاه دانش ۱۰۰ فایلی فعال شد. هر سوالی داری بپرس.</div>
+                <div class="bubble">📚 پایگاه دانش هوشمند فعال شد. هر سوالی داری بپرس تا داخل فایل‌ها بگردم.</div>
                 <div class="time">الآن</div>
             </div>
         </div>
         
         <div class="typing">
             <div class="input-wrapper">
-                <input type="text" class="input" id="input" placeholder="..." autocomplete="off">
+                <input type="text" class="input" id="input" placeholder="سوال خود را بنویسید..." autocomplete="off">
             </div>
             <button class="send-btn" id="sendBtn">
                 <svg viewBox="0 0 24 24">
@@ -175,153 +194,155 @@
         </div>
     </div>
 
-    <div class="stats" id="stats">در حال بارگذاری...</div>
-
     <script>
-        // ==================== ۱. داده‌های نمونه (در صورت نبود فایل) ====================
-        // این داده‌ها به عنوان fallback استفاده می‌شوند
-        const sampleData = {
-            "سلام": "سلام! چطور می‌توانم کمک کنم؟",
-            "خداحافظ": "خداحافظ! موفق باشید.",
-            "چطوری": "من خوبم، ممنون! شما چطورید؟",
-            "اسمت چیه": "من یک دستیار هوشمند هستم.",
-            "چه کاری میتونی بکنی": "می‌توانم به سوالات شما پاسخ دهم.",
-            "ممنون": "خواهش می‌کنم!",
-            "مرسی": "قابل شما را ندارد.",
-            "سپاس": "افتخار کردید."
-        };
-
-        // ==================== ۲. بارگذاری پویای فایل‌ها ====================
-        let knowledgeBase = {...sampleData}; // شروع با داده‌های نمونه
-        let loadedFiles = 0;
+        // ==================== ۱. بارگذاری پویای فایل‌ها ====================
+        let knowledgeBase = {};
+        let fileContents = [];
+        let filesLoaded = false;
         let totalFiles = 100;
-        let failedFiles = 0;
 
-        function loadAllFiles() {
-            const statsElement = document.getElementById('stats');
-            statsElement.innerHTML = `📊 در حال بارگذاری ۱۰۰ فایل دانش... (0/${totalFiles})`;
+        // بارگذاری فایل‌ها قبل از شروع چت
+        async function loadAllFiles() {
+            const loadPromises = [];
             
-            // تلاش برای بارگذاری هر فایل
             for (let i = 1; i <= totalFiles; i++) {
-                loadSingleFile(i);
+                loadPromises.push(loadSingleFile(i));
+            }
+            
+            try {
+                await Promise.all(loadPromises);
+                filesLoaded = true;
+                
+                // جمع‌آوری تمام محتواها از فایل‌ها
+                for (let i = 1; i <= totalFiles; i++) {
+                    const varName = `m${i}`;
+                    if (window[varName] && typeof window[varName] === 'object') {
+                        fileContents.push(window[varName]);
+                        knowledgeBase = {...knowledgeBase, ...window[varName]};
+                    }
+                }
+                
+                console.log(`✅ ${fileContents.length} فایل با ${Object.keys(knowledgeBase).length} سوال بارگذاری شد`);
+            } catch (error) {
+                console.log('⚠️ برخی فایل‌ها بارگذاری نشدند، اما چت با داده‌های موجود کار می‌کند');
             }
         }
 
         function loadSingleFile(fileNumber) {
-            const script = document.createElement('script');
-            script.src = `m${fileNumber}.js`; // مسیر فایل‌ها
-            script.async = true;
-            
-            script.onload = function() {
-                loadedFiles++;
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = `m${fileNumber}.js`;
+                script.async = true;
                 
-                // اگر متغیر m1, m2, ... وجود داشته باشد
-                const variableName = `m${fileNumber}`;
-                if (window[variableName] && typeof window[variableName] === 'object') {
-                    knowledgeBase = {...knowledgeBase, ...window[variableName]};
-                }
+                script.onload = resolve;
+                script.onerror = () => {
+                    console.log(`فایل m${fileNumber}.js موجود نیست`);
+                    resolve(); // ریجکت نمی‌کنیم تا بقیه فایل‌ها بارگذاری شوند
+                };
                 
-                updateStats();
-            };
-            
-            script.onerror = function() {
-                loadedFiles++;
-                failedFiles++;
-                console.log(`❌ فایل m${fileNumber}.js یافت نشد یا خطا در بارگذاری`);
-                updateStats();
-            };
-            
-            document.head.appendChild(script);
+                document.head.appendChild(script);
+            });
         }
 
-        function updateStats() {
-            const statsElement = document.getElementById('stats');
-            
-            if (loadedFiles < totalFiles) {
-                statsElement.innerHTML = `📊 در حال بارگذاری: ${loadedFiles}/${totalFiles} فایل...`;
-            } else {
-                const totalQuestions = Object.keys(knowledgeBase).length;
-                statsElement.innerHTML = `📊 ${totalQuestions} سوال در ${totalFiles - failedFiles} فایل فعال (${failedFiles} فایل缺失)`;
-                console.log('✅ پایگاه دانش بارگذاری شد:', totalQuestions, 'مورد');
-            }
-        }
-
-        // ==================== ۳. موتور جستجوی پیشرفته ====================
-        function findBestAnswer(question) {
+        // ==================== ۲. موتور جستجوی پیشرفته (جستجو در محتوا) ====================
+        function searchInContent(question) {
             question = question.trim().toLowerCase();
             
-            // حذف کلمات اضافی و نرمال‌سازی
-            let cleanQuestion = question.replace(/[؟?!\s]/g, ' ').trim();
+            // حذف کلمات اضافی
+            let searchTerms = question.split(' ')
+                .filter(word => word.length > 1)
+                .map(word => word.replace(/[؟?!.\s]/g, ''));
             
-            // ۱. جستجوی دقیق
-            if (knowledgeBase[cleanQuestion]) {
-                return knowledgeBase[cleanQuestion];
-            }
+            let results = [];
             
-            // ۲. جستجوی包含
-            for (let key in knowledgeBase) {
-                if (cleanQuestion.includes(key) || key.includes(cleanQuestion)) {
-                    return knowledgeBase[key];
-                }
-            }
-            
-            // ۳. جستجوی کلمات کلیدی با امتیازدهی
-            let bestMatch = null;
-            let bestScore = 0;
-            let questionWords = cleanQuestion.split(' ').filter(w => w.length > 1);
-            
-            for (let key in knowledgeBase) {
-                let score = 0;
-                let keyWords = key.split(' ');
+            // جستجو در تمام محتوای فایل‌ها
+            for (let fileIndex = 0; fileIndex < fileContents.length; fileIndex++) {
+                const file = fileContents[fileIndex];
                 
-                for (let qWord of questionWords) {
-                    for (let kWord of keyWords) {
-                        // تطابق دقیق کلمه
-                        if (kWord === qWord) {
-                            score += 5;
-                        }
-                        // تطابق جزئی
-                        else if (kWord.includes(qWord) || qWord.includes(kWord)) {
-                            score += 2;
-                        }
-                        // شباهت ۳ کاراکتر اول
-                        else if (qWord.length >= 3 && kWord.length >= 3 && 
-                                 qWord.substring(0, 3) === kWord.substring(0, 3)) {
-                            score += 1;
+                for (let [key, value] of Object.entries(file)) {
+                    let score = 0;
+                    
+                    // جستجو در سوال (key)
+                    let keyLower = key.toLowerCase();
+                    for (let term of searchTerms) {
+                        if (keyLower.includes(term)) {
+                            score += 3; // امتیاز بیشتر برای تطابق در سوال
                         }
                     }
+                    
+                    // جستجو در پاسخ (value) - اگه پاسخ هم متن داشته باشه
+                    let valueLower = value.toLowerCase();
+                    for (let term of searchTerms) {
+                        if (valueLower.includes(term)) {
+                            score += 2; // امتیاز برای تطابق در پاسخ
+                        }
+                    }
+                    
+                    // تطابق دقیق چند کلمه
+                    let exactMatchCount = 0;
+                    for (let term of searchTerms) {
+                        if (keyLower.includes(term) || valueLower.includes(term)) {
+                            exactMatchCount++;
+                        }
+                    }
+                    
+                    if (exactMatchCount === searchTerms.length && searchTerms.length > 1) {
+                        score += 5; // امتیاز ویژه برای تطابق همه کلمات
+                    }
+                    
+                    if (score > 0) {
+                        results.push({
+                            question: key,
+                            answer: value,
+                            score: score,
+                            fileNum: fileIndex + 1
+                        });
+                    }
+                }
+            }
+            
+            // مرتب‌سازی بر اساس امتیاز
+            results.sort((a, b) => b.score - a.score);
+            
+            return results;
+        }
+
+        // ==================== ۳. پیدا کردن بهترین پاسخ ====================
+        function findBestAnswer(question) {
+            if (!filesLoaded) {
+                return "⏳ در حال بارگذاری پایگاه دانش... لطفاً چند لحظه صبر کنید.";
+            }
+            
+            let results = searchInContent(question);
+            
+            if (results.length === 0) {
+                return "❌ موردی پیدا نشد. میشه سوال رو واضح‌تر بپرسی؟";
+            }
+            
+            // بهترین نتیجه با بالاترین امتیاز
+            let bestResult = results[0];
+            
+            // اگه چند نتیجه خوب داشتیم، ترکیبی نشون میدیم
+            if (results.length > 1 && results[0].score - results[1].score < 2) {
+                let combinedAnswer = `🔍 چند مورد مرتبط پیدا شد:\n\n`;
+                combinedAnswer += `📌 بهترین گزینه:\n${bestResult.answer}\n\n`;
+                combinedAnswer += `📌 موارد مشابه:\n`;
+                
+                for (let i = 1; i < Math.min(3, results.length); i++) {
+                    combinedAnswer += `• ${results[i].question}: ${results[i].answer.substring(0, 50)}...\n`;
                 }
                 
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMatch = knowledgeBase[key];
-                }
+                return combinedAnswer;
             }
             
-            if (bestScore >= 2) {
-                return bestMatch;
-            }
-            
-            // ۴. جستجوی کلمات پرتکرار (پاسخ‌های پیشنهادی)
-            let suggestions = [];
-            for (let key in knowledgeBase) {
-                if (key.includes(question.substring(0, 3))) {
-                    suggestions.push(key);
-                    if (suggestions.length >= 3) break;
-                }
-            }
-            
-            if (suggestions.length > 0) {
-                return `❓ سوال دقیق‌تری بپرسید. شاید این‌ها مد نظر شما باشد:\n${suggestions.map(s => '• ' + s).join('\n')}`;
-            }
-            
-            return "❌ این سوال رو توی پایگاه دانش ندارم. میشه واضح‌تر بپرسی؟";
+            return bestResult.answer;
         }
 
         // ==================== ۴. مدیریت چت ====================
         let messagesDiv = document.getElementById('messages');
         let inputField = document.getElementById('input');
         let sendButton = document.getElementById('sendBtn');
+        let isTyping = false;
 
         function addMessage(text, sender) {
             let messageDiv = document.createElement('div');
@@ -343,17 +364,46 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        function sendMessage() {
+        function showTypingIndicator() {
+            if (isTyping) return;
+            isTyping = true;
+            
+            let typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            
+            let bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            
+            typingDiv.appendChild(bubble);
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            let typingDiv = document.getElementById('typing-indicator');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+            isTyping = false;
+        }
+
+        async function sendMessage() {
             let question = inputField.value.trim();
             if (question === '') return;
             
             addMessage(question, 'user');
             inputField.value = '';
             
+            showTypingIndicator();
+            
+            // شبیه‌سازی تاخیر برای جستجو
             setTimeout(() => {
+                hideTypingIndicator();
                 let answer = findBestAnswer(question);
                 addMessage(answer, 'bot');
-            }, 400);
+            }, 600);
         }
 
         // ==================== ۵. رویدادها ====================
@@ -370,7 +420,7 @@
         });
 
         // ==================== ۶. شروع ====================
-        loadAllFiles(); // بارگذاری فایل‌ها
+        loadAllFiles(); // بارگذاری فایل‌ها در پس‌زمینه
         inputField.focus();
     </script>
 </body>
