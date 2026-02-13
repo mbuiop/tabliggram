@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دستیار شیمی</title>
     <style>
-        /* همه استایل‌ها مثل قبل */
         * {
             margin: 0;
             padding: 0;
@@ -246,12 +245,8 @@
         const messages = document.getElementById('messages');
         const userInput = document.getElementById('userInput');
         
-        // ========== کلید تو اینجا ==========
-        const GEMINI_KEY = 'AIzaSyBt64suioEmwlczwVr4ZVXrjP6lTQsEbC0'; // کلیدتو جای این بذار
-        
-        // ========== این دو خط رو اضافه کن ==========
-        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-        const API_URL = PROXY_URL + 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + GEMINI_KEY;
+        // ========== اینجا آدرس Worker خودتو بذار ==========
+        const WORKER_URL = 'https://tabliggram.milad-yari1377m.workers.dev';
 
         function addMessage(text, sender) {
             const row = document.createElement('div');
@@ -305,28 +300,20 @@
             showTyping();
 
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(WORKER_URL, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: msg }]
-                        }]
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
                 });
 
                 const data = await response.json();
                 
                 if (data.error) {
-                    throw new Error(data.error.message);
+                    throw new Error(data.error);
                 }
                 
-                const reply = data.candidates[0].content.parts[0].text;
                 hideTyping();
-                addMessage(reply, 'bot');
+                addMessage(data.reply, 'bot');
 
             } catch (error) {
                 hideTyping();
