@@ -177,147 +177,80 @@
 
     <div class="stats" id="stats">در حال بارگذاری...</div>
 
-    <!-- ===== ۱۰۰ فایل دانش ===== -->
-    <script src="m1.js"></script>
-    <script src="m2.js"></script>
-    <script src="m3.js"></script>
-    <script src="m4.js"></script>
-    <script src="m5.js"></script>
-    <script src="m6.js"></script>
-    <script src="m7.js"></script>
-    <script src="m8.js"></script>
-    <script src="m9.js"></script>
-    <script src="m10.js"></script>
-    <script src="m11.js"></script>
-    <script src="m12.js"></script>
-    <script src="m13.js"></script>
-    <script src="m14.js"></script>
-    <script src="m15.js"></script>
-    <script src="m16.js"></script>
-    <script src="m17.js"></script>
-    <script src="m18.js"></script>
-    <script src="m19.js"></script>
-    <script src="m20.js"></script>
-    <script src="m21.js"></script>
-    <script src="m22.js"></script>
-    <script src="m23.js"></script>
-    <script src="m24.js"></script>
-    <script src="m25.js"></script>
-    <script src="m26.js"></script>
-    <script src="m27.js"></script>
-    <script src="m28.js"></script>
-    <script src="m29.js"></script>
-    <script src="m30.js"></script>
-    <script src="m31.js"></script>
-    <script src="m32.js"></script>
-    <script src="m33.js"></script>
-    <script src="m34.js"></script>
-    <script src="m35.js"></script>
-    <script src="m36.js"></script>
-    <script src="m37.js"></script>
-    <script src="m38.js"></script>
-    <script src="m39.js"></script>
-    <script src="m40.js"></script>
-    <script src="m41.js"></script>
-    <script src="m42.js"></script>
-    <script src="m43.js"></script>
-    <script src="m44.js"></script>
-    <script src="m45.js"></script>
-    <script src="m46.js"></script>
-    <script src="m47.js"></script>
-    <script src="m48.js"></script>
-    <script src="m49.js"></script>
-    <script src="m50.js"></script>
-    <script src="m51.js"></script>
-    <script src="m52.js"></script>
-    <script src="m53.js"></script>
-    <script src="m54.js"></script>
-    <script src="m55.js"></script>
-    <script src="m56.js"></script>
-    <script src="m57.js"></script>
-    <script src="m58.js"></script>
-    <script src="m59.js"></script>
-    <script src="m60.js"></script>
-    <script src="m61.js"></script>
-    <script src="m62.js"></script>
-    <script src="m63.js"></script>
-    <script src="m64.js"></script>
-    <script src="m65.js"></script>
-    <script src="m66.js"></script>
-    <script src="m67.js"></script>
-    <script src="m68.js"></script>
-    <script src="m69.js"></script>
-    <script src="m70.js"></script>
-    <script src="m71.js"></script>
-    <script src="m72.js"></script>
-    <script src="m73.js"></script>
-    <script src="m74.js"></script>
-    <script src="m75.js"></script>
-    <script src="m76.js"></script>
-    <script src="m77.js"></script>
-    <script src="m78.js"></script>
-    <script src="m79.js"></script>
-    <script src="m80.js"></script>
-    <script src="m81.js"></script>
-    <script src="m82.js"></script>
-    <script src="m83.js"></script>
-    <script src="m84.js"></script>
-    <script src="m85.js"></script>
-    <script src="m86.js"></script>
-    <script src="m87.js"></script>
-    <script src="m88.js"></script>
-    <script src="m89.js"></script>
-    <script src="m90.js"></script>
-    <script src="m91.js"></script>
-    <script src="m92.js"></script>
-    <script src="m93.js"></script>
-    <script src="m94.js"></script>
-    <script src="m95.js"></script>
-    <script src="m96.js"></script>
-    <script src="m97.js"></script>
-    <script src="m98.js"></script>
-    <script src="m99.js"></script>
-    <script src="m100.js"></script>
-
     <script>
-        // ==================== ۱. بارگذاری همه فایل‌ها ====================
-        let knowledgeBase = {};
+        // ==================== ۱. داده‌های نمونه (در صورت نبود فایل) ====================
+        // این داده‌ها به عنوان fallback استفاده می‌شوند
+        const sampleData = {
+            "سلام": "سلام! چطور می‌توانم کمک کنم؟",
+            "خداحافظ": "خداحافظ! موفق باشید.",
+            "چطوری": "من خوبم، ممنون! شما چطورید؟",
+            "اسمت چیه": "من یک دستیار هوشمند هستم.",
+            "چه کاری میتونی بکنی": "می‌توانم به سوالات شما پاسخ دهم.",
+            "ممنون": "خواهش می‌کنم!",
+            "مرسی": "قابل شما را ندارد.",
+            "سپاس": "افتخار کردید."
+        };
+
+        // ==================== ۲. بارگذاری پویای فایل‌ها ====================
+        let knowledgeBase = {...sampleData}; // شروع با داده‌های نمونه
+        let loadedFiles = 0;
+        let totalFiles = 100;
+        let failedFiles = 0;
 
         function loadAllFiles() {
-            const files = [
-                m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,
-                m11, m12, m13, m14, m15, m16, m17, m18, m19, m20,
-                m21, m22, m23, m24, m25, m26, m27, m28, m29, m30,
-                m31, m32, m33, m34, m35, m36, m37, m38, m39, m40,
-                m41, m42, m43, m44, m45, m46, m47, m48, m49, m50,
-                m51, m52, m53, m54, m55, m56, m57, m58, m59, m60,
-                m61, m62, m63, m64, m65, m66, m67, m68, m69, m70,
-                m71, m72, m73, m74, m75, m76, m77, m78, m79, m80,
-                m81, m82, m83, m84, m85, m86, m87, m88, m89, m90,
-                m91, m92, m93, m94, m95, m96, m97, m98, m99, m100
-            ];
+            const statsElement = document.getElementById('stats');
+            statsElement.innerHTML = `📊 در حال بارگذاری ۱۰۰ فایل دانش... (0/${totalFiles})`;
             
-            let totalItems = 0;
-            files.forEach((file, index) => {
-                if (file && typeof file === 'object') {
-                    knowledgeBase = {...knowledgeBase, ...file};
-                    totalItems += Object.keys(file).length;
-                } else {
-                    console.log(`فایل m${index+1}.js خالی است یا وجود ندارد`);
-                }
-            });
-            
-            document.getElementById('stats').innerHTML = 
-                `📊 ${Object.keys(knowledgeBase).length} سوال در ${files.filter(f => f).length} فایل فعال`;
-            
-            console.log('✅ پایگاه دانش بارگذاری شد:', Object.keys(knowledgeBase).length, 'مورد');
+            // تلاش برای بارگذاری هر فایل
+            for (let i = 1; i <= totalFiles; i++) {
+                loadSingleFile(i);
+            }
         }
 
-        // ==================== ۲. موتور جستجوی پیشرفته ====================
+        function loadSingleFile(fileNumber) {
+            const script = document.createElement('script');
+            script.src = `m${fileNumber}.js`; // مسیر فایل‌ها
+            script.async = true;
+            
+            script.onload = function() {
+                loadedFiles++;
+                
+                // اگر متغیر m1, m2, ... وجود داشته باشد
+                const variableName = `m${fileNumber}`;
+                if (window[variableName] && typeof window[variableName] === 'object') {
+                    knowledgeBase = {...knowledgeBase, ...window[variableName]};
+                }
+                
+                updateStats();
+            };
+            
+            script.onerror = function() {
+                loadedFiles++;
+                failedFiles++;
+                console.log(`❌ فایل m${fileNumber}.js یافت نشد یا خطا در بارگذاری`);
+                updateStats();
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        function updateStats() {
+            const statsElement = document.getElementById('stats');
+            
+            if (loadedFiles < totalFiles) {
+                statsElement.innerHTML = `📊 در حال بارگذاری: ${loadedFiles}/${totalFiles} فایل...`;
+            } else {
+                const totalQuestions = Object.keys(knowledgeBase).length;
+                statsElement.innerHTML = `📊 ${totalQuestions} سوال در ${totalFiles - failedFiles} فایل فعال (${failedFiles} فایل缺失)`;
+                console.log('✅ پایگاه دانش بارگذاری شد:', totalQuestions, 'مورد');
+            }
+        }
+
+        // ==================== ۳. موتور جستجوی پیشرفته ====================
         function findBestAnswer(question) {
             question = question.trim().toLowerCase();
             
-            // حذف کلمات اضافی
+            // حذف کلمات اضافی و نرمال‌سازی
             let cleanQuestion = question.replace(/[؟?!\s]/g, ' ').trim();
             
             // ۱. جستجوی دقیق
@@ -327,12 +260,12 @@
             
             // ۲. جستجوی包含
             for (let key in knowledgeBase) {
-                if (cleanQuestion.includes(key)) {
+                if (cleanQuestion.includes(key) || key.includes(cleanQuestion)) {
                     return knowledgeBase[key];
                 }
             }
             
-            // ۳. جستجوی کلمات کلیدی
+            // ۳. جستجوی کلمات کلیدی با امتیازدهی
             let bestMatch = null;
             let bestScore = 0;
             let questionWords = cleanQuestion.split(' ').filter(w => w.length > 1);
@@ -343,15 +276,20 @@
                 
                 for (let qWord of questionWords) {
                     for (let kWord of keyWords) {
-                        if (kWord.includes(qWord) || qWord.includes(kWord)) {
+                        // تطابق دقیق کلمه
+                        if (kWord === qWord) {
+                            score += 5;
+                        }
+                        // تطابق جزئی
+                        else if (kWord.includes(qWord) || qWord.includes(kWord)) {
                             score += 2;
                         }
+                        // شباهت ۳ کاراکتر اول
+                        else if (qWord.length >= 3 && kWord.length >= 3 && 
+                                 qWord.substring(0, 3) === kWord.substring(0, 3)) {
+                            score += 1;
+                        }
                     }
-                }
-                
-                // امتیاز برای کلیدهای طولانی‌تر
-                if (key.length > 5 && cleanQuestion.includes(key.substring(0, 4))) {
-                    score += 1;
                 }
                 
                 if (score > bestScore) {
@@ -360,14 +298,27 @@
                 }
             }
             
-            if (bestScore > 1) {
+            if (bestScore >= 2) {
                 return bestMatch;
+            }
+            
+            // ۴. جستجوی کلمات پرتکرار (پاسخ‌های پیشنهادی)
+            let suggestions = [];
+            for (let key in knowledgeBase) {
+                if (key.includes(question.substring(0, 3))) {
+                    suggestions.push(key);
+                    if (suggestions.length >= 3) break;
+                }
+            }
+            
+            if (suggestions.length > 0) {
+                return `❓ سوال دقیق‌تری بپرسید. شاید این‌ها مد نظر شما باشد:\n${suggestions.map(s => '• ' + s).join('\n')}`;
             }
             
             return "❌ این سوال رو توی پایگاه دانش ندارم. میشه واضح‌تر بپرسی؟";
         }
 
-        // ==================== ۳. مدیریت چت ====================
+        // ==================== ۴. مدیریت چت ====================
         let messagesDiv = document.getElementById('messages');
         let inputField = document.getElementById('input');
         let sendButton = document.getElementById('sendBtn');
@@ -405,7 +356,7 @@
             }, 400);
         }
 
-        // ==================== ۴. رویدادها ====================
+        // ==================== ۵. رویدادها ====================
         sendButton.addEventListener('click', function(e) {
             e.preventDefault();
             sendMessage();
@@ -418,8 +369,8 @@
             }
         });
 
-        // ==================== ۵. شروع ====================
-        loadAllFiles();
+        // ==================== ۶. شروع ====================
+        loadAllFiles(); // بارگذاری فایل‌ها
         inputField.focus();
     </script>
 </body>
