@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>چت علوم</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .chat {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: white;
+        }
+
+        .messages::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .message {
+            max-width: 85%;
+            animation: fade 0.2s ease;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user {
+            align-self: flex-end;
+        }
+
+        .bot {
+            align-self: flex-start;
+        }
+
+        .bubble {
+            padding: 12px 18px;
+            border-radius: 20px;
+            line-height: 1.6;
+            font-size: 1rem;
+            word-break: break-word;
+            white-space: pre-wrap;
+            color: black;
+        }
+
+        .user .bubble {
+            background: #e3f2fd;
+            border-bottom-left-radius: 6px;
+        }
+
+        .bot .bubble {
+            background: #f5f5f5;
+            border-bottom-right-radius: 6px;
+        }
+
+        .time {
+            font-size: 0.65rem;
+            color: #999;
+            margin-top: 4px;
+            margin-right: 10px;
+        }
+
+        .typing {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            background: #f5f5f5;
+            border-radius: 30px;
+            padding: 0 18px;
+            border: 1px solid #ddd;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #006d77;
+        }
+
+        .input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 14px 0;
+            color: black;
+            font-size: 1rem;
+            font-family: inherit;
+            direction: rtl;
+        }
+
+        .input:focus {
+            outline: none;
+        }
+
+        .input::placeholder {
+            color: #aaa;
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            background: #006d77;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+            background: #00838f;
+        }
+
+        .send-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat">
+        <div class="messages" id="messages">
+            <div class="message bot">
+                <div class="bubble">سلام. سوال علمیت رو بپرس.</div>
+                <div class="time">الآن</div>
+            </div>
+        </div>
+        
+        <div class="typing">
+            <div class="input-wrapper">
+                <input type="text" class="input" id="input" placeholder="..." autocomplete="off">
+            </div>
+            <button class="send-btn" onclick="sendMessage()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== فایل‌های دانش تو ===== -->
+    <script src="m1.js"></script>
+    <script src="m2.js"></script>
+    <script src="m3.js"></script>
+    <!-- هرچقدر فایل داری همینجا اضافه کن -->
+
+    <script>
+        // ==================== لود دانش از فایل‌های تو ====================
+        let knowledge = {};
+        
+        // لیست فایل‌ها - هر چی داری اینجا اضافه کن
+        const files = [
+            window.m1, window.m2, window.m3
+            // اگه m4, m5, ... داری اینجا اضافه کن
+        ];
+        
+        files.forEach(file => {
+            if (file) knowledge = {...knowledge, ...file};
+        });
+        
+        // ==================== ذخیره سوالات کاربر (برای تو) ====================
+        let userQuestions = [];
+        try {
+            const saved = localStorage.getItem('all_user_questions');
+            if (saved) userQuestions = JSON.parse(saved);
+        } catch(e) {}
+        
+        function saveUserQuestion(question, found) {
+            userQuestions.push({
+                question: question,
+                time: new Date().toLocaleString('fa-IR'),
+                found: found ? 'پیدا شد' : 'پیدا نشد',
+                answered: found ? found : 'بدون جواب'
+            });
+            
+            // نگه داشتن آخرین ۱۰۰۰ سوال
+            if (userQuestions.length > 1000) userQuestions = userQuestions.slice(-1000);
+            
+            localStorage.setItem('all_user_questions', JSON.stringify(userQuestions));
+            
+            // نمایش در کنسول برای تو (هر moment می‌تونی ببینی)
+            console.log('📊 آخرین سوال:', question);
+            console.log('📈 تعداد کل سوالات:', userQuestions.length);
+        }
+        
+        // ==================== جستجوی جواب ====================
+        function findAnswer(question) {
+            question = question.trim().toLowerCase();
+            
+            // 1. جستجوی دقیق
+            if (knowledge[question]) {
+                saveUserQuestion(question, knowledge[question]);
+                return knowledge[question];
+            }
+            
+            // 2. جستجوی包含 (کلید داخل سوال)
+            for (let key in knowledge) {
+                if (question.includes(key.toLowerCase())) {
+                    saveUserQuestion(question, knowledge[key]);
+                    return knowledge[key];
+                }
+            }
+            
+            // 3. جستجوی کلمات کلیدی
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            for (let key in knowledge) {
+                let score = 0;
+                let words = key.split(' ');
+                
+                for (let word of words) {
+                    if (question.includes(word)) score++;
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = knowledge[key];
+                }
+            }
+            
+            if (bestScore > 0) {
+                saveUserQuestion(question, bestMatch);
+                return bestMatch;
+            }
+            
+            // اگه هیچی پیدا نشد
+            saveUserQuestion(question, null);
+            return "نتونستم پیدا کنم. سوالتو دقیق‌تر بپرس.";
+        }
+        
+        // ==================== نمایش پیام ====================
+        const msgDiv = document.getElementById('messages');
+        const input = document.getElementById('input');
+        
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.textContent = text;
+            
+            const time = document.createElement('div');
+            time.className = 'time';
+            const d = new Date();
+            time.textContent = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+            
+            div.appendChild(bubble);
+            div.appendChild(time);
+            msgDiv.appendChild(div);
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+        }
+        
+        // ==================== ارسال پیام ====================
+        function sendMessage() {
+            let text = input.value.trim();
+            if (!text) return;
+            
+            addMessage(text, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                let answer = findAnswer(text);
+                addMessage(answer, 'bot');
+            }, 300);
+        }
+        
+        // ==================== دکمه ارسال ====================
+        document.querySelector('.send-btn').onclick = sendMessage;
+        
+        // ==================== غیرفعال کردن اینتر ====================
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+        
+        // ==================== قفل زوم ====================
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        
+        input.focus();
+        
+        // ==================== نمایش آمار (برای تو) ====================
+        console.log('📚 دانش از فایل‌ها:', Object.keys(knowledge).length, 'عدد');
+        console.log('👥 سوالات ذخیره شده:', userQuestions.length, 'عدد');
+        console.log('برای دیدن سوالات کاربران:');
+        console.log('localStorage.getItem("all_user_questions")');
+    </script>
+</body>
+</html>
