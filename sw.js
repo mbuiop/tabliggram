@@ -3,7 +3,7 @@
 // (http:// یا https://) سرو بشه؛ باز کردن مستقیم فایل (file:// یا content://)
 // باعث می‌شه ثبت service worker رد بشه — این محدودیت خود مرورگرهاست، نه این کد.
 
-const CACHE_NAME = 'دخل خرج';
+const CACHE_NAME = 'لاتاری';
 const APP_SHELL = [
   './index.html,
   './manifest.json',
