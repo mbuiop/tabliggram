@@ -1,11 +1,8 @@
-// دخل و خرج — service worker برای کارکرد آفلاین
-// این فایل باید کنار dakhl-o-kharj.html و manifest.json، روی یک وب‌سرور واقعی
-// (http:// یا https://) سرو بشه؛ باز کردن مستقیم فایل (file:// یا content://)
-// باعث می‌شه ثبت service worker رد بشه — این محدودیت خود مرورگرهاست، نه این کد.
+// BitTap Pro — Service Worker برای کارکرد آفلاین
 
-const CACHE_NAME = 'لاتاری';
+const CACHE_NAME = 'bittap-pro-v1';
 const APP_SHELL = [
-  './index.html,
+  './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
@@ -27,8 +24,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// cache-first for the app shell, network-first (with cache fallback) for everything else
-// (so live prices/job-search style network calls still try the network first)
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
