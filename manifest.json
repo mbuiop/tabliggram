@@ -1,7 +1,7 @@
 {
-  "name": "دخل و خرج",
-  "short_name": "دخل و خرج",
-  "description": "مدیریت هوشمند پول، کسب‌وکار، کارمندان و رستوران",
+  "name": "لاتاری",
+  "short_name": "لاتاری",
+  "description": "لاتاری",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
