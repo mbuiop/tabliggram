@@ -6,16 +6,12 @@
     <title>BitTap Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
     <style>
-        /* ============================================================
-           RESET & BASE
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #f5f7fa;
@@ -27,7 +23,6 @@
             align-items: center;
             overflow-x: hidden;
         }
-
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -38,18 +33,15 @@
             background: #2ecc71;
             border-radius: 10px;
         }
-
         .container {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
         }
-
         .header {
             text-align: center;
             padding: 6px 0 14px;
         }
-
         .header h1 {
             font-size: 30px;
             font-weight: 800;
@@ -58,13 +50,11 @@
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
         }
-
         .header .sub {
             color: #7f8c8d;
             font-size: 13px;
             margin-top: 2px;
         }
-
         .header .version {
             display: inline-block;
             background: rgba(46, 204, 113, 0.08);
@@ -75,14 +65,12 @@
             margin-top: 4px;
             border: 1px solid rgba(46, 204, 113, 0.08);
         }
-
         .lang-switch {
             display: flex;
             gap: 8px;
             justify-content: center;
             margin-bottom: 14px;
         }
-
         .lang-switch button {
             background: #ffffff;
             border: 2px solid #dce1e8;
@@ -96,23 +84,19 @@
             font-family: inherit;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
-
         .lang-switch button.active {
             border-color: #2ecc71;
             color: #ffffff;
             background: #2ecc71;
             box-shadow: 0 4px 12px rgba(46, 204, 113, 0.15);
         }
-
         .lang-switch button:hover {
             border-color: #2ecc71;
             color: #2ecc71;
         }
-
         .lang-switch button.active:hover {
             color: #ffffff;
         }
-
         .plastic-btn {
             position: relative;
             display: inline-flex;
@@ -137,19 +121,16 @@
             background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
             box-shadow: 0 6px 0 #1a7a42, 0 8px 28px rgba(46, 204, 113, 0.15), inset 0 2px 0 rgba(255, 255, 255, 0.08);
         }
-
         .plastic-btn:active {
             transform: translateY(5px);
             box-shadow: 0 1px 0 #1a7a42, 0 4px 16px rgba(46, 204, 113, 0.08);
         }
-
         .plastic-btn.small {
             padding: 12px 20px;
             font-size: 14px;
             border-radius: 14px;
             width: auto;
         }
-
         .plastic-btn:disabled {
             opacity: 0.3;
             transform: translateY(4px);
@@ -157,17 +138,14 @@
             cursor: not-allowed;
             pointer-events: none;
         }
-
         .plastic-btn.gold {
             background: linear-gradient(180deg, #f1c40f, #f39c12);
             box-shadow: 0 6px 0 #b7950b, 0 8px 28px rgba(241, 196, 15, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.15);
             color: #1a1a2e;
         }
-
         .plastic-btn.gold:active {
             box-shadow: 0 1px 0 #b7950b, 0 4px 16px rgba(241, 196, 15, 0.06);
         }
-
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -183,7 +161,6 @@
             margin: 0 auto;
             box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.04);
         }
-
         .bottom-nav button {
             padding: 12px 4px;
             border: none;
@@ -199,23 +176,19 @@
             transform: translateY(0);
             border: none;
         }
-
         .bottom-nav button .icon {
             display: block;
             font-size: 22px;
             margin-bottom: 2px;
         }
-
         .bottom-nav button.active {
             background: linear-gradient(180deg, #27ae60 0%, #1e8a4a 100%);
             box-shadow: 0 4px 0 #0f5a2e, 0 4px 20px rgba(46, 204, 113, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
-
         .bottom-nav button:active {
             transform: translateY(4px);
             box-shadow: 0 0px 0 #1a7a42, 0 2px 8px rgba(46, 204, 113, 0.04);
         }
-
         .card {
             background: #ffffff;
             border-radius: 22px;
@@ -225,11 +198,9 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
             transition: 0.2s;
         }
-
         .card:hover {
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
         }
-
         .card-title {
             font-size: 11px;
             font-weight: 700;
@@ -238,63 +209,33 @@
             letter-spacing: 0.8px;
             margin-bottom: 12px;
         }
-
-        .balance-display {
-            text-align: center;
-            padding: 6px 0;
-        }
-
-        .balance-display .amount {
-            font-size: 42px;
-            font-weight: 800;
-            color: #2ecc71;
-            letter-spacing: -0.5px;
-        }
-
-        .balance-display .amount small {
-            font-size: 16px;
-            font-weight: 400;
-            color: #95a5a6;
-        }
-
-        .balance-display .sub {
-            font-size: 13px;
-            color: #95a5a6;
-            margin-top: 4px;
-        }
-
         .dual-balance {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             text-align: center;
         }
-
         .dual-balance .item {
             background: #f7f9fb;
             border-radius: 14px;
             padding: 14px 10px;
             border: 1px solid #e8ecf0;
         }
-
         .dual-balance .item .num {
             font-size: 22px;
             font-weight: 800;
             color: #2ecc71;
         }
-
         .dual-balance .item .num small {
             font-size: 13px;
             font-weight: 400;
             color: #95a5a6;
         }
-
         .dual-balance .item .lbl {
             font-size: 11px;
             color: #95a5a6;
             margin-top: 2px;
         }
-
         .coin-container {
             display: flex;
             justify-content: center;
@@ -302,7 +243,6 @@
             margin: 8px 0 4px;
             perspective: 1000px;
         }
-
         .coin {
             width: 170px;
             height: 170px;
@@ -323,7 +263,6 @@
             transform: rotateX(6deg) rotateY(-3deg);
             transform-style: preserve-3d;
         }
-
         .coin::before {
             content: '';
             position: absolute;
@@ -332,7 +271,6 @@
             background: radial-gradient(circle at 40% 35%, transparent 40%, rgba(255, 255, 255, 0.04) 60%, transparent 80%);
             pointer-events: none;
         }
-
         .coin .btc-symbol {
             font-size: 56px;
             font-weight: 900;
@@ -342,7 +280,6 @@
             z-index: 2;
             animation: pulse 2s ease-in-out infinite;
         }
-
         @keyframes pulse {
             0%,
             100% {
@@ -352,7 +289,6 @@
                 transform: scale(1.04);
             }
         }
-
         .coin .btc-label {
             font-size: 9px;
             font-weight: 700;
@@ -363,12 +299,10 @@
             z-index: 2;
             margin-top: -2px;
         }
-
         .coin:active {
             transform: scale(0.90) rotateX(4deg) rotateY(-2deg);
             box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.08), 0 0 0 12px rgba(251, 191, 36, 0.03), 0 8px 30px rgba(0, 0, 0, 0.04);
         }
-
         .coin .ripple {
             position: absolute;
             border-radius: 50%;
@@ -377,7 +311,6 @@
             animation: rippleAnim 0.8s ease-out forwards;
             pointer-events: none;
         }
-
         @keyframes rippleAnim {
             0% {
                 transform: scale(0);
@@ -388,7 +321,6 @@
                 opacity: 0;
             }
         }
-
         .coin .glow {
             position: absolute;
             inset: -8px;
@@ -397,7 +329,6 @@
             pointer-events: none;
             animation: glowPulse 3s ease-in-out infinite;
         }
-
         @keyframes glowPulse {
             0%,
             100% {
@@ -407,7 +338,6 @@
                 opacity: 1;
             }
         }
-
         .mining-float {
             position: fixed;
             font-size: 18px;
@@ -418,7 +348,6 @@
             animation: floatUp 1.5s ease-out forwards;
             text-shadow: 0 0 20px rgba(46, 204, 113, 0.08);
         }
-
         @keyframes floatUp {
             0% {
                 opacity: 1;
@@ -429,27 +358,23 @@
                 transform: translateY(-80px) scale(1.2);
             }
         }
-
         .stats-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             text-align: center;
         }
-
         .stats-row .stat {
             background: #f7f9fb;
             padding: 12px 8px;
             border-radius: 14px;
             border: 1px solid #e8ecf0;
         }
-
         .stats-row .stat .num {
             font-size: 20px;
             font-weight: 700;
             color: #2ecc71;
         }
-
         .stats-row .stat .lbl {
             font-size: 9px;
             color: #95a5a6;
@@ -457,7 +382,6 @@
             letter-spacing: 0.5px;
             margin-top: 2px;
         }
-
         .power-bar {
             display: flex;
             justify-content: space-between;
@@ -468,18 +392,15 @@
             border: 1px solid #e8ecf0;
             margin: 6px 0;
         }
-
         .power-bar .label {
             font-size: 13px;
             color: #7f8c8d;
         }
-
         .power-bar .value {
             font-size: 18px;
             font-weight: 700;
             color: #2ecc71;
         }
-
         .progress-track {
             height: 5px;
             background: #e8ecf0;
@@ -487,14 +408,12 @@
             overflow: hidden;
             margin: 8px 0;
         }
-
         .progress-track .fill {
             height: 100%;
             background: linear-gradient(90deg, #2ecc71, #27ae60);
             border-radius: 10px;
             transition: width 0.5s ease;
         }
-
         .bonus-box {
             display: flex;
             justify-content: space-between;
@@ -506,26 +425,22 @@
             margin: 6px 0;
             gap: 10px;
         }
-
         .bonus-box .label {
             font-size: 13px;
             color: #7f8c8d;
         }
-
         .bonus-box .time {
             font-size: 18px;
             font-weight: 700;
             color: #2ecc71;
             font-variant-numeric: tabular-nums;
         }
-
         .hash-plans {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 8px;
         }
-
         .hash-plan {
             background: #f7f9fb;
             border-radius: 16px;
@@ -535,38 +450,32 @@
             transition: 0.25s;
             cursor: pointer;
         }
-
         .hash-plan:hover {
             border-color: #2ecc71;
             transform: translateY(-3px);
             box-shadow: 0 8px 24px rgba(46, 204, 113, 0.06);
         }
-
         .hash-plan .plan-price {
             font-size: 22px;
             font-weight: 800;
             color: #2ecc71;
         }
-
         .hash-plan .plan-price small {
             font-size: 13px;
             font-weight: 400;
             color: #95a5a6;
         }
-
         .hash-plan .plan-power {
             font-size: 15px;
             font-weight: 700;
             color: #1a1a2e;
             margin: 4px 0;
         }
-
         .hash-plan .plan-desc {
             font-size: 11px;
             color: #95a5a6;
             line-height: 1.5;
         }
-
         .hash-plan .plan-badge {
             display: inline-block;
             font-size: 9px;
@@ -577,24 +486,20 @@
             background: rgba(46, 204, 113, 0.08);
             color: #2ecc71;
         }
-
         .hash-plan.disabled {
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
         }
-
         .hash-plan .plan-status {
             font-size: 11px;
             color: #f1c40f;
             margin-top: 4px;
             display: none;
         }
-
         .hash-plan .plan-status.show {
             display: block;
         }
-
         .wallet-row {
             display: flex;
             align-items: center;
@@ -607,11 +512,9 @@
             cursor: pointer;
             transition: 0.2s;
         }
-
         .wallet-row:hover {
             border-color: #2ecc71;
         }
-
         .wallet-row .address {
             flex: 1;
             font-size: 14px;
@@ -621,31 +524,26 @@
             word-break: break-all;
             letter-spacing: 0.2px;
         }
-
         .wallet-row .copy-icon {
             color: #95a5a6;
             font-size: 18px;
             flex-shrink: 0;
             transition: 0.2s;
         }
-
         .wallet-row:hover .copy-icon {
             color: #2ecc71;
         }
-
         .wallet-row .copy-status {
             font-size: 11px;
             color: #2ecc71;
             display: none;
         }
-
         .wallet-row.copied .copy-status {
             display: inline;
         }
         .wallet-row.copied .copy-icon {
             display: none;
         }
-
         .input-field {
             width: 100%;
             padding: 14px 18px;
@@ -659,23 +557,19 @@
             transition: 0.2s;
             margin: 8px 0;
         }
-
         .input-field:focus {
             border-color: #2ecc71;
             box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.04);
         }
-
         .input-field::placeholder {
             color: #bdc3c7;
         }
-
         .plans-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             gap: 8px;
             margin-top: 8px;
         }
-
         .plan-card {
             background: #f7f9fb;
             border-radius: 14px;
@@ -685,13 +579,11 @@
             transition: 0.25s;
             cursor: pointer;
         }
-
         .plan-card:hover {
             border-color: #2ecc71;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(46, 204, 113, 0.06);
         }
-
         .plan-card .level {
             font-size: 9px;
             font-weight: 700;
@@ -699,23 +591,19 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         .plan-card .power {
             font-size: 19px;
             font-weight: 800;
             color: #2ecc71;
             margin: 4px 0;
         }
-
         .plan-card .cost {
             font-size: 10px;
             color: #95a5a6;
         }
-
         .plan-card .cost strong {
             color: #1a1a2e;
         }
-
         .plan-card .badge {
             display: inline-block;
             font-size: 8px;
@@ -726,35 +614,29 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-
         .plan-card .badge.owned {
             background: rgba(46, 204, 113, 0.08);
             color: #2ecc71;
         }
-
         .plan-card .badge.locked {
             background: #f0f2f5;
             color: #bdc3c7;
         }
-
         .plan-card .badge.available {
             background: rgba(46, 204, 113, 0.06);
             color: #2ecc71;
         }
-
         .plan-card.disabled {
             opacity: 0.4;
             cursor: not-allowed;
             pointer-events: none;
         }
-
         .lottery-stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin: 10px 0;
         }
-
         .lottery-stats .ls-item {
             text-align: center;
             background: #f7f9fb;
@@ -762,24 +644,20 @@
             border-radius: 12px;
             border: 1px solid #e8ecf0;
         }
-
         .lottery-stats .ls-item .num {
             font-size: 20px;
             font-weight: 700;
             color: #2ecc71;
         }
-
         .lottery-stats .ls-item .lbl {
             font-size: 9px;
             color: #95a5a6;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-
         .winners-list {
             margin-top: 8px;
         }
-
         .winners-list .item {
             display: flex;
             justify-content: space-between;
@@ -788,19 +666,16 @@
             font-size: 13px;
             color: #7f8c8d;
         }
-
         .winners-list .item .prize {
             color: #2ecc71;
             font-weight: 600;
         }
-
         .winners-empty {
             font-size: 13px;
             color: #bdc3c7;
             text-align: center;
             padding: 10px 0;
         }
-
         .withdraw-box {
             background: #f7f9fb;
             border-radius: 14px;
@@ -808,26 +683,22 @@
             border: 1px solid #e8ecf0;
             margin: 8px 0;
         }
-
         .withdraw-box .label {
             font-size: 12px;
             color: #95a5a6;
             margin-bottom: 4px;
         }
-
         .withdraw-box .value {
             font-size: 22px;
             font-weight: 800;
             color: #2ecc71;
         }
-
         .withdraw-box .sub {
             font-size: 12px;
             color: #95a5a6;
             opacity: 0.6;
             margin-top: 4px;
         }
-
         .withdraw-status {
             padding: 12px 16px;
             border-radius: 12px;
@@ -835,29 +706,24 @@
             margin-top: 10px;
             display: none;
         }
-
         .withdraw-status.show {
             display: block;
         }
-
         .withdraw-status.success {
             background: rgba(46, 204, 113, 0.06);
             border: 1px solid rgba(46, 204, 113, 0.08);
             color: #2ecc71;
         }
-
         .withdraw-status.error {
             background: rgba(231, 76, 60, 0.06);
             border: 1px solid rgba(231, 76, 60, 0.08);
             color: #e74c3c;
         }
-
         .withdraw-status.info {
             background: rgba(241, 196, 15, 0.06);
             border: 1px solid rgba(241, 196, 15, 0.08);
             color: #f1c40f;
         }
-
         .toast {
             position: fixed;
             bottom: 120px;
@@ -878,12 +744,10 @@
             text-align: center;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
-
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
-
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -895,11 +759,9 @@
             z-index: 1000;
             padding: 16px;
         }
-
         .modal-overlay.show {
             display: flex;
         }
-
         .modal {
             background: #ffffff;
             border-radius: 24px;
@@ -911,14 +773,12 @@
             border: 1px solid #e8ecf0;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
         }
-
         .modal h2 {
             font-size: 22px;
             font-weight: 700;
             color: #2ecc71;
             margin-bottom: 8px;
         }
-
         .modal .close-btn {
             float: left;
             background: none;
@@ -928,28 +788,23 @@
             cursor: pointer;
             padding: 0 4px;
         }
-
         .modal .close-btn:hover {
             color: #1a1a2e;
         }
-
         .modal p,
         .modal li {
             color: #7f8c8d;
             line-height: 1.9;
             font-size: 14px;
         }
-
         .modal ul {
             padding-right: 18px;
             list-style: none;
         }
-
         .modal ul li::before {
             content: "• ";
             color: #2ecc71;
         }
-
         .modal .help-section {
             margin: 10px 0;
             padding: 12px 14px;
@@ -957,18 +812,15 @@
             border-radius: 12px;
             border-right: 4px solid #2ecc71;
         }
-
         .modal .help-section h3 {
             font-size: 14px;
             color: #2ecc71;
             margin-bottom: 2px;
         }
-
         .modal .help-section p {
             font-size: 13px;
             opacity: 0.7;
         }
-
         .modal .btn-close-modal {
             width: 100%;
             padding: 16px;
@@ -984,12 +836,10 @@
             box-shadow: 0 5px 0 #1a7a42, 0 4px 20px rgba(46, 204, 113, 0.08);
             transition: 0.06s ease;
         }
-
         .modal .btn-close-modal:active {
             transform: translateY(4px);
             box-shadow: 0 1px 0 #1a7a42, 0 4px 12px rgba(46, 204, 113, 0.04);
         }
-
         .modal::-webkit-scrollbar {
             width: 3px;
         }
@@ -1000,7 +850,6 @@
             background: #2ecc71;
             border-radius: 10px;
         }
-
         .help-fixed {
             position: fixed;
             bottom: 90px;
@@ -1010,21 +859,17 @@
             max-width: 480px;
             width: calc(100% - 32px);
         }
-
         .help-fixed .plastic-btn {
             font-size: 14px;
             padding: 14px 20px;
         }
-
         .tab-content {
             display: none;
             animation: fadeIn 0.3s ease;
         }
-
         .tab-content.active {
             display: block;
         }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -1035,11 +880,7 @@
                 transform: translateY(0);
             }
         }
-
         @media (max-width: 420px) {
-            .balance-display .amount {
-                font-size: 34px;
-            }
             .coin {
                 width: 140px;
                 height: 140px;
@@ -1090,8 +931,10 @@
             .plan-card .power {
                 font-size: 14px;
             }
+            .balance-display .amount {
+                font-size: 34px;
+            }
         }
-
         @media (min-width: 481px) {
             .bottom-nav {
                 border-radius: 18px 18px 0 0;
@@ -1126,8 +969,8 @@
         <!-- HEADER -->
         <div class="header">
             <h1>🟡 BitTap Pro</h1>
-            <div class="sub" id="headerSub">Click + Miner + Lottery + Withdraw</div>
-            <div class="version" id="headerVersion">v9.0 · 3 Languages</div>
+            <div class="sub" id="headerSub">کلیک + ماینر + لاتاری + برداشت</div>
+            <div class="version" id="headerVersion">v9.0 · ۳ زبان</div>
         </div>
 
         <!-- LANGUAGE SWITCHER -->
@@ -1144,12 +987,12 @@
             <div class="card">
                 <div class="dual-balance">
                     <div class="item">
-                        <div class="num" id="pointBalance">0 <small>Points</small></div>
-                        <div class="lbl" id="pointLabel">Your Points</div>
+                        <div class="num" id="pointBalance">0 <small>امتیاز</small></div>
+                        <div class="lbl" id="pointLabel">امتیاز شما</div>
                     </div>
                     <div class="item">
                         <div class="num" id="dollarBalance">$0.00</div>
-                        <div class="lbl" id="dollarLabel">Dollar Balance</div>
+                        <div class="lbl" id="dollarLabel">موجودی دلار</div>
                     </div>
                 </div>
             </div>
@@ -1162,46 +1005,46 @@
                         <span class="btc-label">BITCOIN</span>
                     </div>
                 </div>
-                <div style="font-size:14px; color:#7f8c8d; margin-top:10px;" id="clickCounter">0 clicks today</div>
-                <div style="font-size:12px; color:#95a5a6; margin-top:2px;" id="clickHint">Each click = 1 point</div>
+                <div style="font-size:14px; color:#7f8c8d; margin-top:10px;" id="clickCounter">۰ کلیک امروز</div>
+                <div style="font-size:12px; color:#95a5a6; margin-top:2px;" id="clickHint">هر کلیک = ۱ امتیاز</div>
             </div>
 
             <div class="card">
                 <div class="stats-row">
                     <div class="stat">
                         <div class="num" id="statClicks">0</div>
-                        <div class="lbl" id="statClicksLbl">Clicks</div>
+                        <div class="lbl" id="statClicksLbl">کلیک</div>
                     </div>
                     <div class="stat">
                         <div class="num" id="statPower">0</div>
-                        <div class="lbl" id="statPowerLbl">Miner Power</div>
+                        <div class="lbl" id="statPowerLbl">قدرت ماینر</div>
                     </div>
                     <div class="stat">
                         <div class="num" id="statLevel">0</div>
-                        <div class="lbl" id="statLevelLbl">Level</div>
+                        <div class="lbl" id="statLevelLbl">سطح</div>
                     </div>
                 </div>
             </div>
 
             <div class="card" id="miningCard">
                 <div class="power-bar">
-                    <span class="label" id="miningPowerLabel">⛏️ Mining Power</span>
+                    <span class="label" id="miningPowerLabel">⛏️ قدرت ماینینگ</span>
                     <span class="value" id="miningPower">0 <small>H/s</small></span>
                 </div>
                 <div class="progress-track">
                     <div class="fill" id="miningProgress" style="width:0%;"></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:10px; color:#95a5a6; margin-top:6px;">
-                    <span id="miningEarned">Today: $0</span>
-                    <span id="miningTotal">Total: $0</span>
+                    <span id="miningEarned">امروز: $0</span>
+                    <span id="miningTotal">کل: $0</span>
                 </div>
             </div>
 
             <div class="card">
                 <div class="bonus-box">
-                    <span class="label" id="bonusLabel">🎁 4-Hour Bonus</span>
+                    <span class="label" id="bonusLabel">🎁 پاداش ۴ ساعته</span>
                     <span class="time" id="bonusTimer">--:--:--</span>
-                    <button class="plastic-btn small" id="bonusClaimBtn" onclick="claimBonus()" style="width:auto; padding:10px 22px; font-size:13px;">Claim</button>
+                    <button class="plastic-btn small" id="bonusClaimBtn" onclick="claimBonus()" style="width:auto; padding:10px 22px; font-size:13px;">دریافت</button>
                 </div>
             </div>
         </div>
@@ -1211,25 +1054,25 @@
         ============================================================ -->
         <div class="tab-content" id="tab-stats">
             <div class="card">
-                <div class="card-title" id="statsTitle">📊 Full Statistics</div>
+                <div class="card-title" id="statsTitle">📊 آمار کامل</div>
                 <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f0f2f5;">
-                    <span style="color:#7f8c8d;" id="statTotalClicksLabel">Total Clicks</span>
+                    <span style="color:#7f8c8d;" id="statTotalClicksLabel">کل کلیک</span>
                     <span style="color:#2ecc71; font-weight:700;" id="statTotalClicks">0</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f0f2f5;">
-                    <span style="color:#7f8c8d;" id="statTodayClicksLabel">Today's Clicks</span>
+                    <span style="color:#7f8c8d;" id="statTodayClicksLabel">کلیک امروز</span>
                     <span style="color:#2ecc71; font-weight:700;" id="statTodayClicks">0</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f0f2f5;">
-                    <span style="color:#7f8c8d;" id="statMaxStreakLabel">Best Streak</span>
+                    <span style="color:#7f8c8d;" id="statMaxStreakLabel">رکورد کلیک</span>
                     <span style="color:#2ecc71; font-weight:700;" id="statMaxStreak">0</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f0f2f5;">
-                    <span style="color:#7f8c8d;" id="statTotalMinedLabel">Total Mined</span>
+                    <span style="color:#7f8c8d;" id="statTotalMinedLabel">کل استخراج</span>
                     <span style="color:#2ecc71; font-weight:700;" id="statTotalMined">$0</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding:10px 0;">
-                    <span style="color:#7f8c8d;" id="statLevelLabel">Miner Level</span>
+                    <span style="color:#7f8c8d;" id="statLevelLabel">سطح ماینر</span>
                     <span style="color:#2ecc71; font-weight:700;" id="statLevelDisplay">0</span>
                 </div>
             </div>
@@ -1241,46 +1084,46 @@
         <div class="tab-content" id="tab-miner">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-size:13px; color:#7f8c8d;" id="currentPowerLabel">Current Power</span>
+                    <span style="font-size:13px; color:#7f8c8d;" id="currentPowerLabel">قدرت فعلی</span>
                     <span style="font-size:20px; font-weight:700; color:#2ecc71;" id="currentPowerDisplay">0 H/s</span>
                 </div>
                 <div class="plans-grid" id="plansGrid"></div>
             </div>
 
             <div class="card">
-                <div class="card-title" id="powerDetailsTitle">📊 Power Details</div>
+                <div class="card-title" id="powerDetailsTitle">📊 جزئیات قدرت</div>
                 <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0;">
-                    <span style="color:#95a5a6;" id="basePowerLabel">Base Power</span>
+                    <span style="color:#95a5a6;" id="basePowerLabel">قدرت پایه</span>
                     <span style="color:#1a1a2e;" id="basePowerValue">1 H/s</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-top:1px solid #e8ecf0;">
-                    <span style="color:#95a5a6;" id="bonusPowerLabel">Click Bonus</span>
+                    <span style="color:#95a5a6;" id="bonusPowerLabel">پاداش کلیک</span>
                     <span style="color:#2ecc71;" id="bonusPowerValue">+0 H/s</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-top:1px solid #e8ecf0;">
-                    <span style="color:#95a5a6;" id="totalPowerLabel">Total Power</span>
+                    <span style="color:#95a5a6;" id="totalPowerLabel">قدرت کل</span>
                     <span style="color:#2ecc71; font-size:20px; font-weight:700;" id="totalPowerValue">0 H/s</span>
                 </div>
             </div>
 
-            <!-- Hash Plans (Buy with Deposit) -->
+            <!-- Hash Plans -->
             <div class="card">
-                <div class="card-title" id="hashPlansTitle">⚡ Buy Hash Power</div>
-                <div style="font-size:12px; color:#7f8c8d; margin-bottom:10px;" id="hashPlansHint">Deposit to the wallet below and send the TXID to activate</div>
+                <div class="card-title" id="hashPlansTitle">⚡ خرید هش</div>
+                <div style="font-size:12px; color:#7f8c8d; margin-bottom:10px;" id="hashPlansHint">به کیف پول زیر واریز کنید و هش را ارسال کنید تا فعال شود</div>
                 <div class="hash-plans" id="hashPlansContainer"></div>
             </div>
 
             <!-- Wallet for Hash Deposit -->
             <div class="card">
-                <div class="card-title" id="hashDepositTitle">💳 Deposit for Hash Power</div>
+                <div class="card-title" id="hashDepositTitle">💳 واریز برای خرید هش</div>
                 <div class="wallet-row" id="hashWalletRow" onclick="copyHashWallet()">
                     <span class="address" id="hashWalletAddress">TV61aTh98MGqmteYzda5AaBzdXgGqreG6A</span>
                     <span class="copy-icon">📋</span>
-                    <span class="copy-status" style="display:none;">✅ Copied!</span>
+                    <span class="copy-status" style="display:none;">✅ کپی شد!</span>
                 </div>
-                <div style="font-size:10px; color:#95a5a6; text-align:center; margin-top:-2px;" id="hashWalletHint">Send the exact amount to this address</div>
-                <input type="text" class="input-field" id="hashTxidInput" placeholder="Enter transaction hash (TXID)..." />
-                <button class="plastic-btn gold" id="hashVerifyBtn" onclick="verifyHashPurchase()">✅ Verify & Activate Hash</button>
+                <div style="font-size:10px; color:#95a5a6; text-align:center; margin-top:-2px;" id="hashWalletHint">مبلغ دقیق را به این آدرس واریز کنید</div>
+                <input type="text" class="input-field" id="hashTxidInput" placeholder="هش تراکنش (TXID) را وارد کنید..." />
+                <button class="plastic-btn gold" id="hashVerifyBtn" onclick="verifyHashPurchase()">✅ تأیید و فعال‌سازی هش</button>
             </div>
         </div>
 
@@ -1290,43 +1133,43 @@
         <div class="tab-content" id="tab-lottery">
             <div class="card">
                 <div style="text-align:center; padding:6px 0 10px;">
-                    <div style="font-size:12px; color:#95a5a6;" id="lotteryPrizeLabel">This Week's Prize</div>
+                    <div style="font-size:12px; color:#95a5a6;" id="lotteryPrizeLabel">جایزه این هفته</div>
                     <div style="font-size:34px; font-weight:800; color:#2ecc71;" id="lotteryPrize">$0 USDT</div>
                 </div>
 
                 <div class="wallet-row" id="walletRow" onclick="copyWallet()">
                     <span class="address" id="walletAddress">TV61aTh98MGqmteYzda5AaBzdXgGqreG6A</span>
                     <span class="copy-icon">📋</span>
-                    <span class="copy-status" id="copyStatus">✅ Copied!</span>
+                    <span class="copy-status" id="copyStatus">✅ کپی شد!</span>
                 </div>
-                <div style="font-size:10px; color:#95a5a6; text-align:center; margin-top:-2px;" id="walletHint">Click on the address to copy</div>
+                <div style="font-size:10px; color:#95a5a6; text-align:center; margin-top:-2px;" id="walletHint">برای کپی، روی آدرس کلیک کنید</div>
 
-                <input type="text" class="input-field" id="txidInput" placeholder="Enter transaction hash (TXID)..." />
+                <input type="text" class="input-field" id="txidInput" placeholder="هش تراکنش (TXID) را وارد کنید..." />
 
-                <button class="plastic-btn" id="verifyBtn" onclick="verifyDeposit()">✅ Verify & Join Lottery</button>
+                <button class="plastic-btn" id="verifyBtn" onclick="verifyDeposit()">✅ تأیید و شرکت در قرعه‌کشی</button>
 
                 <div class="lottery-stats">
                     <div class="ls-item">
                         <div class="num" id="lotteryTickets">0</div>
-                        <div class="lbl" id="lotteryTicketsLbl">Tickets</div>
+                        <div class="lbl" id="lotteryTicketsLbl">بلیط</div>
                     </div>
                     <div class="ls-item">
                         <div class="num" id="lotteryPlayers">0</div>
-                        <div class="lbl" id="lotteryPlayersLbl">Players</div>
+                        <div class="lbl" id="lotteryPlayersLbl">شرکت‌کننده</div>
                     </div>
                     <div class="ls-item">
                         <div class="num" id="lotteryPool">$0</div>
-                        <div class="lbl" id="lotteryPoolLbl">Pool</div>
+                        <div class="lbl" id="lotteryPoolLbl">صندوق</div>
                     </div>
                 </div>
 
                 <div style="margin-top:10px; padding-top:10px; border-top:1px solid #e8ecf0;">
                     <div style="display:flex; justify-content:space-between; font-size:11px; color:#95a5a6;">
-                        <span id="winnersTitle">🏆 Recent Winners</span>
+                        <span id="winnersTitle">🏆 برندگان اخیر</span>
                         <span id="winnersCount">0</span>
                     </div>
                     <div class="winners-list" id="winnersList">
-                        <div class="winners-empty" id="winnersEmpty">No winners yet</div>
+                        <div class="winners-empty" id="winnersEmpty">هنوز برنده‌ای ثبت نشده</div>
                     </div>
                 </div>
             </div>
@@ -1337,47 +1180,47 @@
         ============================================================ -->
         <div class="tab-content" id="tab-withdraw">
             <div class="card">
-                <div class="card-title" id="withdrawTitle">💸 Withdraw</div>
+                <div class="card-title" id="withdrawTitle">💸 برداشت</div>
 
                 <div class="withdraw-box">
-                    <div class="label" id="withdrawBalanceLabel">Withdrawable Balance</div>
+                    <div class="label" id="withdrawBalanceLabel">موجودی قابل برداشت</div>
                     <div class="value" id="withdrawBalance">$0.00</div>
-                    <div class="sub" id="withdrawSub">Minimum withdraw: $100</div>
+                    <div class="sub" id="withdrawSub">حداقل برداشت: $100</div>
                 </div>
 
                 <div class="withdraw-box" style="margin-top:10px;">
-                    <div class="label" id="withdrawFeeLabel">💰 Transaction Fee</div>
+                    <div class="label" id="withdrawFeeLabel">💰 کارمزد تراکنش</div>
                     <div class="value" style="color:#f1c40f; font-size:20px;" id="withdrawFee">$50.00</div>
-                    <div class="sub" id="withdrawFeeSub">Deposit $50 to activate withdrawal</div>
+                    <div class="sub" id="withdrawFeeSub">برای برداشت، ۵۰ دلار واریز کنید</div>
                 </div>
 
                 <div class="wallet-row" id="depositWalletRow" onclick="copyDepositWallet()" style="margin-top:8px;">
                     <span class="address" id="depositWalletAddress">TV61aTh98MGqmteYzda5AaBzdXgGqreG6A</span>
                     <span class="copy-icon">📋</span>
-                    <span class="copy-status" style="display:none;">✅ Copied!</span>
+                    <span class="copy-status" style="display:none;">✅ کپی شد!</span>
                 </div>
-                <div style="font-size:10px; color:#95a5a6; text-align:center; margin-top:-2px;" id="depositHint">Send $50 to this address to activate withdrawal</div>
+                <div style="font-size:10px; color:#95a5a6; text-align:center; margin-top:-2px;" id="depositHint">برای فعال‌سازی برداشت، $50 به این آدرس واریز کنید</div>
 
-                <input type="text" class="input-field" id="depositTxidInput" placeholder="Enter $50 deposit transaction hash..." />
+                <input type="text" class="input-field" id="depositTxidInput" placeholder="هش تراکنش واریز ۵۰ دلار را وارد کنید..." />
 
-                <button class="plastic-btn gold" id="depositVerifyBtn" onclick="verifyDepositForWithdraw()">✅ Verify $50 Deposit</button>
+                <button class="plastic-btn gold" id="depositVerifyBtn" onclick="verifyDepositForWithdraw()">✅ تأیید واریز ۵۰ دلار</button>
 
                 <div style="margin:12px 0;">
-                    <label style="font-size:12px; color:#95a5a6; display:block; margin-bottom:4px;" id="withdrawWalletLabel">USDT Wallet Address (TRC20) for withdrawal</label>
-                    <input type="text" class="input-field" id="withdrawWalletInput" placeholder="Enter your wallet address..." />
+                    <label style="font-size:12px; color:#95a5a6; display:block; margin-bottom:4px;" id="withdrawWalletLabel">آدرس کیف پول USDT (TRC20) برای برداشت</label>
+                    <input type="text" class="input-field" id="withdrawWalletInput" placeholder="آدرس کیف پول خود را وارد کنید..." />
                 </div>
 
-                <button class="plastic-btn" id="withdrawBtn" onclick="requestWithdraw()">💸 Request Withdrawal</button>
+                <button class="plastic-btn" id="withdrawBtn" onclick="requestWithdraw()">💸 درخواست برداشت</button>
 
                 <div class="withdraw-status" id="withdrawStatus"></div>
 
                 <div style="margin-top:14px; padding-top:12px; border-top:1px solid #e8ecf0;">
                     <div style="display:flex; justify-content:space-between; font-size:12px; color:#95a5a6; padding:4px 0;">
-                        <span id="withdrawHistoryLabel">📋 Withdraw History</span>
+                        <span id="withdrawHistoryLabel">📋 تاریخچه برداشت</span>
                         <span id="withdrawCount">0</span>
                     </div>
                     <div id="withdrawHistory" style="font-size:12px; color:#95a5a6; padding:6px 0;">
-                        No requests yet
+                        هنوز درخواستی ثبت نشده
                     </div>
                 </div>
             </div>
@@ -1387,7 +1230,7 @@
         HELP BUTTON
         ============================================================ -->
         <div class="help-fixed">
-            <button class="plastic-btn small" id="helpBtn" onclick="openHelp()" style="width:100%; padding:14px; font-size:14px;">📖 Help</button>
+            <button class="plastic-btn small" id="helpBtn" onclick="openHelp()" style="width:100%; padding:14px; font-size:14px;">📖 راهنمایی</button>
         </div>
 
         <!-- ============================================================
@@ -1395,31 +1238,30 @@
         ============================================================ -->
         <div class="bottom-nav">
             <button class="active" data-tab="home" onclick="switchTab('home')">
-                <span class="icon">🏠</span> <span class="nav-label">Home</span>
+                <span class="icon">🏠</span> <span class="nav-label">خانه</span>
             </button>
             <button data-tab="stats" onclick="switchTab('stats')">
-                <span class="icon">📊</span> <span class="nav-label">Stats</span>
+                <span class="icon">📊</span> <span class="nav-label">آمار</span>
             </button>
             <button data-tab="miner" onclick="switchTab('miner')">
-                <span class="icon">⛏️</span> <span class="nav-label">Miner</span>
+                <span class="icon">⛏️</span> <span class="nav-label">ماینر</span>
             </button>
             <button data-tab="lottery" onclick="switchTab('lottery')">
-                <span class="icon">🎯</span> <span class="nav-label">Lottery</span>
+                <span class="icon">🎯</span> <span class="nav-label">لاتاری</span>
             </button>
             <button data-tab="withdraw" onclick="switchTab('withdraw')">
-                <span class="icon">💸</span> <span class="nav-label">Withdraw</span>
+                <span class="icon">💸</span> <span class="nav-label">برداشت</span>
             </button>
         </div>
 
     </div>
 
     <!-- ============================================================
-    JAVASCRIPT
+    JAVASCRIPT — کامل با ذخیره‌سازی دائمی
     ============================================================ -->
     <script>
         // ============================================================
-        // BIT TAP PRO — FINAL VERSION v9.0
-        // 100% Translation · Hash Plans via Deposit
+        // BIT TAP PRO — نسخه‌ی کامل با ذخیره‌سازی دائمی
         // ============================================================
 
         // ---------- CONFIG ----------
@@ -1434,11 +1276,15 @@
             MIN_WITHDRAW: 100,
             WITHDRAW_FEE: 50,
             HASH_PLANS: [
-                { id: 1, price: 20, power: 50, desc: 'Great Start' },
-                { id: 2, price: 40, power: 120, desc: 'Professional Miner' },
-                { id: 3, price: 60, power: 220, desc: 'Ultra Mining' },
-                { id: 4, price: 80, power: 350, desc: 'Industrial Miner' },
-                { id: 5, price: 100, power: 550, desc: 'Pro Cloud Miner' }
+                { id: 1, price: 20, power: 50, descFa: 'شروع قدرتمند', descEn: 'Great Start', descAr: 'بداية قوية' },
+                { id: 2, price: 40, power: 120, descFa: 'ماینر حرفه‌ای', descEn: 'Professional Miner',
+                descAr: 'تعدين احترافي' },
+                { id: 3, price: 60, power: 220, descFa: 'استخراج فوق‌العاده', descEn: 'Ultra Mining',
+                descAr: 'تعدين فائق' },
+                { id: 4, price: 80, power: 350, descFa: 'ماینر صنعتی', descEn: 'Industrial Miner',
+                descAr: 'تعدين صناعي' },
+                { id: 5, price: 100, power: 550, descFa: 'ماینر ابری حرفه‌ای', descEn: 'Pro Cloud Miner',
+                    descAr: 'تعدين سحابي احترافي' }
             ],
             PLANS: [
                 { level: 1, cost: 500, multiplier: 2 },
@@ -1482,15 +1328,71 @@
         let miningInterval = null;
 
         // ============================================================
-        // 100% TRANSLATION — تمام کلمات و نقطه‌ها
+        // ذخیره‌سازی دائمی
+        // ============================================================
+
+        function saveState() {
+            try {
+                const data = {
+                    state: state,
+                    lottery: lottery,
+                    lang: lang
+                };
+                localStorage.setItem('bittap_pro_data', JSON.stringify(data));
+            } catch (e) {
+                console.warn('Save failed:', e);
+            }
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('bittap_pro_data');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.state) {
+                        Object.assign(state, data.state);
+                        ['maxStreak', 'totalMined', 'minedToday', 'level', 'depositVerified'].forEach(k => {
+                            if (state[k] === undefined) state[k] = k === 'depositVerified' ? false : 0;
+                        });
+                        if (!state.power) state.power = CONFIG.BASE_POWER;
+                        if (!state.withdraws) state.withdraws = [];
+                        if (!state.hashPurchases) state.hashPurchases = [];
+                        if (!state.hashDeposits) state.hashDeposits = [];
+                    }
+                    if (data.lottery) {
+                        Object.assign(lottery, data.lottery);
+                        if (!lottery.verifiedTxids) lottery.verifiedTxids = [];
+                        if (!lottery.winners) lottery.winners = [];
+                        if (!lottery.tickets) lottery.tickets = [];
+                    }
+                    if (data.lang) lang = data.lang;
+                    return true;
+                }
+            } catch (e) {
+                console.warn('Load failed:', e);
+            }
+            return false;
+        }
+
+        // ============================================================
+        // ذخیره‌سازی خودکار
+        // ============================================================
+
+        setInterval(() => { saveState(); }, 5000);
+        window.addEventListener('beforeunload', () => { saveState(); });
+
+        function updateAndSave() {
+            saveState();
+            renderAll();
+        }
+
+        // ============================================================
+        // ترجمه‌ها
         // ============================================================
         const LANG = {
             fa: {
-                // Header
                 headerSub: 'کلیک + ماینر + لاتاری + برداشت',
                 headerVersion: 'v9.0 · ۳ زبان',
-
-                // Home
                 pointLabel: 'امتیاز شما',
                 dollarLabel: 'موجودی دلار',
                 clickCounter: 'کلیک امروز',
@@ -1504,16 +1406,12 @@
                 bonusLabel: '🎁 پاداش ۴ ساعته',
                 bonusClaimBtn: 'دریافت',
                 bonusWaitBtn: 'صبر کن',
-
-                // Stats
                 statsTitle: '📊 آمار کامل',
                 statTotalClicksLabel: 'کل کلیک',
                 statTodayClicksLabel: 'کلیک امروز',
                 statMaxStreakLabel: 'رکورد کلیک',
                 statTotalMinedLabel: 'کل استخراج',
                 statLevelLabel: 'سطح ماینر',
-
-                // Miner
                 currentPowerLabel: 'قدرت فعلی',
                 powerDetailsTitle: '📊 جزئیات قدرت',
                 basePowerLabel: 'قدرت پایه',
@@ -1524,15 +1422,11 @@
                 planOwned: '✅',
                 planAvailable: '🟡',
                 planLocked: '🔒',
-
-                // Hash Plans
                 hashPlansTitle: '⚡ خرید هش',
                 hashPlansHint: 'به کیف پول زیر واریز کنید و هش را ارسال کنید تا فعال شود',
                 hashDepositTitle: '💳 واریز برای خرید هش',
                 hashWalletHint: 'مبلغ دقیق را به این آدرس واریز کنید',
                 hashVerifyBtn: '✅ تأیید و فعال‌سازی هش',
-
-                // Lottery
                 lotteryPrizeLabel: 'جایزه این هفته',
                 walletHint: 'برای کپی، روی آدرس کلیک کنید',
                 verifyBtn: '✅ تأیید و شرکت در قرعه‌کشی',
@@ -1541,8 +1435,6 @@
                 lotteryPoolLbl: 'صندوق',
                 winnersTitle: '🏆 برندگان اخیر',
                 winnersEmpty: 'هنوز برنده‌ای ثبت نشده',
-
-                // Withdraw
                 withdrawTitle: '💸 برداشت',
                 withdrawBalanceLabel: 'موجودی قابل برداشت',
                 withdrawSub: 'حداقل برداشت: $۱۰۰',
@@ -1553,20 +1445,14 @@
                 withdrawHistoryLabel: '📋 تاریخچه برداشت',
                 withdrawEmpty: 'هنوز درخواستی ثبت نشده',
                 depositHint: 'برای فعال‌سازی برداشت، $۵۰ به این آدرس واریز کنید',
-
-                // Help
                 helpBtn: '📖 راهنمایی',
                 helpTitle: '📖 راهنمای کامل',
                 helpClose: 'متوجه شدم',
-
-                // Nav
                 navHome: 'خانه',
                 navStats: 'آمار',
                 navMiner: 'ماینر',
                 navLottery: 'لاتاری',
                 navWithdraw: 'برداشت',
-
-                // Toast
                 toastWait: '⏳ زود است، صبر کن!',
                 toastBonus: '🎁 +{amount} امتیاز پاداش!',
                 toastOwned: '✅ قبلاً خریداری شده!',
@@ -1594,8 +1480,6 @@
                 toastReset: '🔄 بازنشانی شد!',
                 toastWinner: '🏆 برنده قرعه‌کشی: {txid} — ${prize}',
                 toastNotEnough: '⚠️ تعداد بلیط‌ها کافی نیست',
-
-                // Help Content
                 helpGameTitle: '🟡 بازی کلیکی',
                 helpGameDesc: 'هر بار که روی بیت‌کوین کلیک کنید، ۱ امتیاز دریافت می‌کنید.',
                 helpBonusTitle: '🎁 پاداش ۴ ساعته',
@@ -1611,7 +1495,7 @@
                 helpWithdrawTitle: '💸 برداشت',
                 helpWithdrawDesc: 'برای برداشت، ابتدا $۵۰ واریز کنید و هش آن را وارد کنید، سپس درخواست برداشت دهید.',
                 helpStorageTitle: '🔒 ذخیره‌سازی دائمی',
-                helpStorageDesc: 'همه‌ی داده‌ها در دستگاه شما ذخیره می‌شوند.',
+                helpStorageDesc: 'همه‌ی داده‌ها در دستگاه شما ذخیره می‌شوند و با بستن مرورگر از دست نمی‌روند.',
                 helpTip: 'هرچه بیشتر کلیک کنید و ماینر خود را ارتقاء دهید، سریع‌تر دلار استخراج می‌کنید!'
             },
             en: {
@@ -1719,7 +1603,7 @@
                 helpWithdrawTitle: '💸 Withdraw',
                 helpWithdrawDesc: 'To withdraw, first deposit $50 and enter its hash, then request withdrawal.',
                 helpStorageTitle: '🔒 Permanent Storage',
-                helpStorageDesc: 'All data is saved on your device.',
+                helpStorageDesc: 'All data is saved on your device and never lost, even after closing the browser.',
                 helpTip: 'More clicks and upgrades = faster dollar mining!'
             },
             ar: {
@@ -1827,12 +1711,14 @@
                 helpWithdrawTitle: '💸 السحب',
                 helpWithdrawDesc: 'للسحب، قم أولاً بإيداع $٥٠ وإدخال هاشها، ثم طلب السحب.',
                 helpStorageTitle: '🔒 تخزين دائم',
-                helpStorageDesc: 'جميع البيانات محفوظة على جهازك.',
+                helpStorageDesc: 'جميع البيانات محفوظة على جهازك ولا تفقد أبداً حتى بعد إغلاق المتصفح.',
                 helpTip: 'كلما زادت النقرات والترقيات، زادت سرعة تعدين الدولارات!'
             }
         };
 
-        // ---------- HELPERS ----------
+        // ============================================================
+        // HELPERS
+        // ============================================================
         function getText(key) {
             const t = LANG[lang] || LANG.en;
             return t[key] || key;
@@ -1850,40 +1736,20 @@
             return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
         }
 
-        // ---------- STORAGE ----------
-        function saveState() {
-            try {
-                localStorage.setItem('bittap_pro_state', JSON.stringify(state));
-                localStorage.setItem('bittap_pro_lottery', JSON.stringify(lottery));
-            } catch (e) {}
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(el._t);
+            el._t = setTimeout(() => el.classList.remove('show'), 3000);
         }
 
-        function loadState() {
-            try {
-                const d = localStorage.getItem('bittap_pro_state');
-                if (d) {
-                    const parsed = JSON.parse(d);
-                    Object.assign(state, parsed);
-                }
-                const l = localStorage.getItem('bittap_pro_lottery');
-                if (l) {
-                    const parsed = JSON.parse(l);
-                    Object.assign(lottery, parsed);
-                }
-            } catch (e) {}
-            ['maxStreak', 'totalMined', 'minedToday', 'level', 'depositVerified'].forEach(k => {
-                if (state[k] === undefined) state[k] = k === 'depositVerified' ? false : 0;
-            });
-            if (!state.power) state.power = CONFIG.BASE_POWER;
-            if (!state.withdraws) state.withdraws = [];
-            if (!state.hashPurchases) state.hashPurchases = [];
-            if (!state.hashDeposits) state.hashDeposits = [];
-            if (!lottery.verifiedTxids) lottery.verifiedTxids = [];
-            if (!lottery.winners) lottery.winners = [];
-            if (!lottery.tickets) lottery.tickets = [];
-        }
-
-        // ---------- FLOATING NUMBERS ----------
+        // ============================================================
+        // FLOATING NUMBERS
+        // ============================================================
         function showMiningFloat(x, y, amount, symbol = '') {
             const el = document.createElement('div');
             el.className = 'mining-float';
@@ -1894,7 +1760,10 @@
             setTimeout(() => el.remove(), 1500);
         }
 
-        // ---------- COIN CLICK ----------
+        // ============================================================
+        // GAME FUNCTIONS
+        // ============================================================
+
         function handleClick(e) {
             const coin = document.getElementById('coin');
             const rect = coin.getBoundingClientRect();
@@ -1912,13 +1781,12 @@
             coin.appendChild(ripple);
             setTimeout(() => ripple.remove(), 800);
 
-            const reward = CONFIG.CLICK_REWARD;
-            state.points += reward;
+            state.points += CONFIG.CLICK_REWARD;
             state.clicks++;
             state.clicksToday++;
             state.totalClicks++;
 
-            showMiningFloat(cx - 30, cy - 20, reward);
+            showMiningFloat(cx - 30, cy - 20, CONFIG.CLICK_REWARD);
 
             const now = Date.now();
             if (state.lastClickTime && (now - state.lastClickTime) < 2000) {
@@ -1929,11 +1797,9 @@
             }
             state.lastClickTime = now;
 
-            saveState();
-            renderAll();
+            updateAndSave();
         }
 
-        // ---------- BONUS ----------
         function claimBonus() {
             const now = Date.now();
             const last = state.lastBonus ? new Date(state.lastBonus).getTime() : 0;
@@ -1943,19 +1809,10 @@
             }
             state.points += CONFIG.BONUS_AMOUNT;
             state.lastBonus = now;
-
-            const card = document.getElementById('miningCard');
-            if (card) {
-                const rect = card.getBoundingClientRect();
-                showMiningFloat(rect.left + rect.width / 2 - 20, rect.top + 20, CONFIG.BONUS_AMOUNT);
-            }
-
-            saveState();
-            renderAll();
+            updateAndSave();
             showToast(getText('toastBonus').replace('{amount}', CONFIG.BONUS_AMOUNT));
         }
 
-        // ---------- MINING ----------
         function startMining() {
             if (miningInterval) clearInterval(miningInterval);
             miningInterval = setInterval(() => {
@@ -1978,13 +1835,14 @@
                         showMiningFloat(x, y, earned, '$');
                     }
 
-                    saveState();
-                    renderAll();
+                    updateAndSave();
                 }
             }, 1000);
         }
 
-        // ---------- UPGRADE PLANS ----------
+        // ============================================================
+        // UPGRADE PLANS
+        // ============================================================
         function buyPlan(idx) {
             const plan = CONFIG.PLANS[idx];
             if (!plan) return;
@@ -2002,34 +1860,49 @@
             }
             state.points -= plan.cost;
             state.level = idx + 1;
-            saveState();
-            renderAll();
+            updateAndSave();
             showToast(getText('toastUpgraded').replace('{multiplier}', plan.multiplier));
         }
 
-        // ---------- HASH PLANS (via Deposit) ----------
-        function buyHashPlan(planId) {
+        // ============================================================
+        // HASH PLANS
+        // ============================================================
+        function selectHashPlan(planId) {
             const plan = CONFIG.HASH_PLANS.find(p => p.id === planId);
             if (!plan) return;
             if (state.hashPurchases.some(h => h.id === planId)) {
                 showToast(getText('toastHashPlanOwned'));
                 return;
             }
-            // Check if there's a pending deposit for this plan
-            const deposit = state.hashDeposits.find(d => d.planId === planId && d.status === 'pending');
+            const existing = state.hashDeposits.find(d => d.planId === planId && d.status === 'pending');
+            if (existing) {
+                showToast('⚠️ در انتظار هش، لطفاً هش را وارد کنید');
+                return;
+            }
+            state.hashDeposits.push({
+                planId: planId,
+                amount: plan.price,
+                status: 'pending',
+                date: new Date().toISOString()
+            });
+            updateAndSave();
+            showToast('✅ پلن انتخاب شد! مبلغ $' + plan.price + ' را به کیف پول واریز کنید و هش را وارد کنید.');
+        }
+
+        function buyHashPlan(planId) {
+            const plan = CONFIG.HASH_PLANS.find(p => p.id === planId);
+            if (!plan) return;
+            const deposit = state.hashDeposits.find(d => d.planId === planId && d.status === 'verified');
             if (!deposit) {
                 showToast(getText('toastHashDepositRequired'));
                 return;
             }
-            // Activate
             state.hashPurchases.push({ id: planId, power: plan.power, price: plan.price });
             deposit.status = 'activated';
-            saveState();
-            renderAll();
+            updateAndSave();
             showToast(getText('toastHashActivated').replace('{power}', plan.power));
         }
 
-        // ---------- VERIFY HASH DEPOSIT ----------
         function verifyHashPurchase() {
             const txid = document.getElementById('hashTxidInput').value.trim();
             if (!txid) {
@@ -2041,50 +1914,20 @@
                 return;
             }
 
-            // Find which plan this deposit is for (based on amount - user selects plan first)
-            // For simplicity, we'll check if there's any pending deposit
             const pending = state.hashDeposits.find(d => d.status === 'pending');
             if (!pending) {
-                showToast('⚠️ Please select a plan first by clicking on it');
+                showToast('⚠️ ابتدا یک پلن را انتخاب کنید');
                 return;
             }
-
             pending.txid = txid;
             pending.status = 'verified';
-            saveState();
-            renderAll();
-            showToast('✅ Deposit verified! Click the plan again to activate.');
+            updateAndSave();
+            showToast('✅ واریز تأیید شد! حالا روی پلن کلیک کنید تا فعال شود.');
         }
 
-        // ---------- SELECT HASH PLAN (for deposit) ----------
-        function selectHashPlan(planId) {
-            const plan = CONFIG.HASH_PLANS.find(p => p.id === planId);
-            if (!plan) return;
-            if (state.hashPurchases.some(h => h.id === planId)) {
-                showToast(getText('toastHashPlanOwned'));
-                return;
-            }
-
-            // Check if already pending
-            const existing = state.hashDeposits.find(d => d.planId === planId && d.status === 'pending');
-            if (existing) {
-                showToast('⚠️ Already pending, please send the TXID');
-                return;
-            }
-
-            // Create pending deposit
-            state.hashDeposits.push({
-                planId: planId,
-                amount: plan.price,
-                status: 'pending',
-                date: new Date().toISOString()
-            });
-            saveState();
-            renderAll();
-            showToast('✅ Plan selected! Send $' + plan.price + ' to the wallet and enter TXID.');
-        }
-
-        // ---------- LOTTERY ----------
+        // ============================================================
+        // LOTTERY
+        // ============================================================
         function verifyDeposit() {
             const txid = document.getElementById('txidInput').value.trim();
             if (!txid) {
@@ -2109,12 +1952,13 @@
             lottery.pool += CONFIG.TICKET_PRICE;
 
             document.getElementById('txidInput').value = '';
-            saveState();
-            renderAll();
+            updateAndSave();
             showToast(getText('toastDepositVerified'));
         }
 
-        // ---------- COPY WALLET ----------
+        // ============================================================
+        // COPY WALLET
+        // ============================================================
         function copyWallet() {
             copyAddress(CONFIG.WALLET, document.getElementById('walletRow'));
         }
@@ -2157,7 +2001,9 @@
             document.body.removeChild(ta);
         }
 
-        // ---------- WITHDRAW ----------
+        // ============================================================
+        // WITHDRAW
+        // ============================================================
         function verifyDepositForWithdraw() {
             const txid = document.getElementById('depositTxidInput').value.trim();
             if (!txid) {
@@ -2170,8 +2016,7 @@
             }
 
             state.depositVerified = true;
-            saveState();
-            renderAll();
+            updateAndSave();
             showToast(getText('toastDepositForWithdraw'));
         }
 
@@ -2206,8 +2051,7 @@
             state.dollars = 0;
             state.depositVerified = false;
 
-            saveState();
-            renderAll();
+            updateAndSave();
 
             const statusEl = document.getElementById('withdrawStatus');
             statusEl.className = 'withdraw-status show success';
@@ -2215,7 +2059,9 @@
             showToast(getText('toastWithdrawSuccess'));
         }
 
-        // ---------- RUN DRAW ----------
+        // ============================================================
+        // RUN DRAW
+        // ============================================================
         window.runDraw = function() {
             if (lottery.tickets.length < 2) {
                 showToast(getText('toastNotEnough'));
@@ -2232,16 +2078,17 @@
             lottery.week++;
             lottery.pool = 0;
             lottery.tickets = [];
-            saveState();
-            renderAll();
+            updateAndSave();
             showToast(getText('toastWinner').replace('{txid}', winner.txid.slice(0, 8)).replace('{prize}', prize));
         };
 
-        // ---------- HELP ----------
+        // ============================================================
+        // HELP
+        // ============================================================
         function openHelp() {
             document.getElementById('helpModal').classList.add('show');
             const t = LANG[lang] || LANG.en;
-            document.getElementById('helpTitle').textContent = t.helpTitle || '📖 Help';
+            document.getElementById('helpTitle').textContent = t.helpTitle || '📖 راهنما';
             document.getElementById('helpContent').innerHTML = `
             <div class="help-section"><h3>${t.helpGameTitle}</h3><p>${t.helpGameDesc}</p></div>
             <div class="help-section"><h3>${t.helpBonusTitle}</h3><p>${t.helpBonusDesc}</p></div>
@@ -2255,35 +2102,28 @@
               <p style="font-size:13px; color:#7f8c8d;">💡 ${t.helpTip}</p>
             </div>
           `;
-            document.querySelector('#helpModal .btn-close-modal').textContent = t.helpClose || 'Got it';
+            document.querySelector('#helpModal .btn-close-modal').textContent = t.helpClose || 'متوجه شدم';
         }
 
         function closeHelp() {
             document.getElementById('helpModal').classList.remove('show');
         }
 
-        // ---------- TOAST ----------
-        function showToast(msg) {
-            const el = document.getElementById('toast');
-            el.textContent = msg;
-            el.classList.add('show');
-            clearTimeout(el._t);
-            el._t = setTimeout(() => el.classList.remove('show'), 3000);
-        }
-
-        // ---------- LANGUAGE ----------
+        // ============================================================
+        // LANGUAGE
+        // ============================================================
         function setLang(l) {
             lang = l;
-            document.querySelectorAll('.lang-switch button').forEach(b => {
-                b.classList.toggle('active', b.dataset.lang === l);
-            });
+            saveState();
             renderAll();
             if (document.getElementById('helpModal').classList.contains('show')) {
                 openHelp();
             }
         }
 
-        // ---------- TAB SWITCH ----------
+        // ============================================================
+        // TAB SWITCH
+        // ============================================================
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tab).classList.add('active');
@@ -2293,7 +2133,9 @@
             renderAll();
         }
 
-        // ---------- RENDER ----------
+        // ============================================================
+        // RENDER
+        // ============================================================
         function renderAll() {
             const bonusPower = Math.floor(state.totalClicks / 10);
             const planPower = state.level > 0 ? CONFIG.PLANS[state.level - 1].multiplier : 0;
@@ -2326,8 +2168,7 @@
             const remaining = CONFIG.BONUS_INTERVAL - (now - last);
             const btn = document.getElementById('bonusClaimBtn');
             if (remaining <= 0) {
-                document.getElementById('bonusTimer').textContent = '✅ ' + (lang === 'fa' ? 'آماده!' : lang === 'ar' ?
-                    'جاهز!' : 'Ready!');
+                document.getElementById('bonusTimer').textContent = '✅ آماده!';
                 btn.disabled = false;
                 btn.textContent = t.bonusClaimBtn;
             } else {
@@ -2413,7 +2254,13 @@
                 const verified = state.hashDeposits.some(d => d.planId === plan.id && d.status === 'verified');
                 const card = document.createElement('div');
                 card.className = 'hash-plan' + (owned ? ' disabled' : '');
+
                 let statusText = '';
+                let descText = '';
+                if (lang === 'fa') descText = plan.descFa;
+                else if (lang === 'ar') descText = plan.descAr;
+                else descText = plan.descEn;
+
                 if (owned) statusText = '✅ ' + (lang === 'fa' ? 'خریداری شده' : lang === 'ar' ? 'تم الشراء' : 'Owned');
                 else if (pending) statusText = '⏳ ' + (lang === 'fa' ? 'در انتظار هش' : lang === 'ar' ?
                     'في انتظار الهاش' : 'Awaiting TXID');
@@ -2424,7 +2271,7 @@
                 card.innerHTML = `
               <div class="plan-price">$${plan.price}</div>
               <div class="plan-power">+${plan.power} H/s</div>
-              <div class="plan-desc">${plan.desc}</div>
+              <div class="plan-desc">${descText}</div>
               <span class="plan-badge">${statusText}</span>
               ${pending ? '<div class="plan-status show">' + (lang === 'fa' ? '💰 لطفاً واریز کنید و هش را وارد کنید' : lang === 'ar' ? '💰 يرجى الإيداع وإدخال الهاش' : '💰 Please deposit and enter TXID') + '</div>' : ''}
               ${verified ? '<div class="plan-status show" style="color:#2ecc71;">' + (lang === 'fa' ? '✅ کلیک کنید تا فعال شود' : lang === 'ar' ? '✅ انقر للتفعيل' : '✅ Click to activate') + '</div>' : ''}
@@ -2526,7 +2373,9 @@
             saveState();
         }
 
-        // ---------- INIT ----------
+        // ============================================================
+        // INIT
+        // ============================================================
         loadState();
         startMining();
         renderAll();
@@ -2535,13 +2384,12 @@
             if (e.target === this) closeHelp();
         });
 
-        console.log('🟡 BitTap Pro Final v9.0 loaded!');
+        console.log('🟡 BitTap Pro v9.0 loaded with Persistent Storage!');
         console.log('📊 State:', state);
         console.log('🎯 Lottery:', lottery);
+        console.log('🌍 Language:', lang);
+        console.log('💾 Auto-saves every 5 seconds and on page close');
         console.log('🔧 Run draw: window.runDraw()');
-        console.log('📋 Wallet:', CONFIG.WALLET);
-        console.log('💾 Data is saved permanently in localStorage');
-        console.log('🌍 100% translation support');
     </script>
 
 </body>
