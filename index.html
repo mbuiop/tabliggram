@@ -136,7 +136,7 @@ input[type=checkbox]{accent-color:#000;width:18px;height:18px;vertical-align:mid
 .chmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-weight:700;text-align:center;padding:20px}
 .fl{display:none;position:absolute;top:34px;left:6px;z-index:3;gap:6px}
 body.imm .fl{display:flex}
-body.imm .ctop,body.imm .chips{display:none}
+body.imm .chips{display:none}
 body.imm .nav{display:none}
 body.imm{--navh:0px}
 .sheet{display:none;flex:0 0 auto;max-height:48%;overflow-y:auto;background:#fff;border:2px solid #000;border-radius:12px;padding:8px 10px}
@@ -318,6 +318,74 @@ html[data-theme=dark] .heat .hm:focus-visible{outline-color:#fff}
 .ixk i{display:block;height:100%}.ixk i.b{background:#0ecb81}.ixk i.n{background:#d4a000}.ixk i.r{background:#f6465d}
 html[data-theme=dark] .ixr{border-bottom-color:#26404a}
 .sub{font-size:14px;margin:14px 0 6px}
+
+/* ===== نسخهٔ ۳: چیدمان مدرن برای گوشی و لپ‌تاپ ===== */
+.ctb{display:flex;flex-wrap:nowrap;gap:6px;align-items:center;overflow-x:auto;overflow-y:hidden;padding:3px 2px 5px;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;scroll-snap-type:x proximity}
+.ctb::-webkit-scrollbar{display:none}
+.ctb>*{flex:0 0 auto;scroll-snap-align:start}
+.ctb .seg{flex:0 0 auto}
+.ctb input{width:92px;height:36px}
+.ctb .layers,.ctb .chips{display:contents}
+.ctb .btn.xs{min-height:36px}
+.ctb .sep{width:2px;height:22px;background:var(--line,#000);opacity:.35;border-radius:2px}
+body.imm .ctb{display:none}
+.cinfo{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;min-height:20px;padding:0 4px}
+.cinfo #chInfo{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:700}
+.cinfo .stamp{flex:0 0 auto;opacity:.75;padding:0}
+body.imm .cinfo{display:none}
+.chartbox{background:linear-gradient(180deg,#fff 0,#eef8fb 100%)}
+html[data-theme=dark] .chartbox{background:linear-gradient(180deg,#121d23 0,#0d171c 100%)}
+.shead{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:-8px;z-index:3;background:inherit;padding:2px 0 6px;margin-bottom:2px;border-bottom:2px solid var(--line,#000)}
+.shead b{font-size:15px}
+.sheet.open{background:var(--surf,#fff)}
+/* کارت ترس و طمع */
+.fgc{display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
+.fgsvg{width:100%;max-width:230px;margin:0 auto;display:block}
+.ctb .seg button{padding-inline:12px;white-space:nowrap}
+.fgsp{height:70px!important}
+.fgv b{font-size:38px!important}
+.fgsvg .fgt{font:700 11px Vazirmatn,Tahoma,sans-serif;fill:var(--ink)}
+.fgv{text-align:center;margin-top:-6px;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.fgv b{font-size:46px;font-weight:800}.fgv span{font-size:15px;font-weight:700}
+.fgms{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.fgm{flex:1 1 80px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px}
+.fgm b{display:block;min-width:46px;text-align:center;padding:1px 10px;border:2px solid #000;border-radius:99px;color:#000}
+.fgsp{width:100%;height:96px;display:block}
+.fgsp .fgl{stroke:var(--ink);stroke-opacity:.18;stroke-dasharray:3 4;stroke-width:1}
+@media(min-width:760px){.fgc{grid-template-columns:300px 1fr}}
+.pcell{display:flex;flex-direction:column;align-items:center;gap:4px}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.rg div{border:2px solid #000;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;font-size:12px;background:var(--yp)}
+.rg b{font-size:15px;color:#000}
+.rg div,.rg span{color:#000}
+.gl{margin:8px 0;padding-inline-start:1.3em;line-height:1.9;font-size:13px}
+.disc{border:2px dashed #000;border-radius:14px;padding:10px 12px;font-size:12.5px;line-height:1.9;background:var(--yp);color:#000;margin-top:6px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;font-size:12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-inline-end:5px;vertical-align:-1px}
+.hbars{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;height:110px;align-items:end;margin:10px 0 4px;direction:ltr}
+.hb{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:9px}
+.hb i{display:block;width:100%;border-radius:4px 4px 0 0;border:1px solid #000}
+.hb span{margin-top:2px;opacity:.8}
+#modal .mbox{position:relative;padding-top:34px}
+#modalX{position:absolute;top:6px;inset-inline-start:8px}
+.tools .thead{position:sticky;top:0;z-index:2}
+/* حالت لپ‌تاپ */
+.btn:not(:disabled){cursor:pointer}
+.btn:hover{filter:brightness(.96)}
+@media(min-width:900px){
+  .wrap{max-width:1180px;padding-inline:20px}
+  .grid2{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+  .nav{left:50%!important;right:auto!important;transform:translateX(-50%);width:min(780px,94vw);bottom:10px!important;border:3px solid #000;border-radius:26px!important;padding-bottom:8px!important}
+  .nav button{font-size:12px!important;min-height:54px}
+  .ixl{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:26px}
+  .sheet.open{left:auto;right:14px;width:440px;max-height:calc(100vh - 150px)}
+  #tab-chart.on{padding-inline:14px}
+  .tools #tBody,.tools .thead{width:min(1020px,100%);margin-inline:auto}
+  .tgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hero{padding:14px 20px}
+  #tab-ind,#tab-free,#tab-prev,#tab-demo{max-width:1100px;margin-inline:auto}
+}
+@media(min-width:1280px){.grid2{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}.ixl{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -333,6 +401,8 @@ html[data-theme=dark] .ixr{border-bottom-color:#26404a}
 
 <section id="tab-free" class="pane">
   <div id="bc"></div>
+  <div id="fgCard"></div>
+  <div id="pulse"></div>
   <div class="cycle">
     <div class="r"><span id="cycleTxt"></span><span id="cycleLeft"></span></div>
     <div class="meter"><i id="cycleBar"></i></div>
@@ -342,6 +412,7 @@ html[data-theme=dark] .ixr{border-bottom-color:#26404a}
   </div>
   <div class="grid2" id="feed"></div>
   <div id="feedNote"></div>
+  <div id="guide"></div>
 </section>
 
 <section id="tab-prev" class="pane">
@@ -360,17 +431,21 @@ html[data-theme=dark] .ixr{border-bottom-color:#26404a}
 <section id="tab-ind" class="pane"></section>
 
 <section id="tab-chart" class="pane">
-  <div class="ctop">
+  <div class="ctb" id="ctb" role="toolbar" aria-label="ابزارهای چارت">
     <input id="symIn" list="symlist" placeholder="BTC" aria-label="نماد" autocomplete="off" spellcheck="false"><datalist id="symlist"></datalist>
     <button class="btn xs" id="symGo">برو</button>
     <div class="seg" id="tfSeg"><button data-tf="15m">15m</button><button data-tf="1h">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1d</button></div>
     <button class="btn xs" data-z="1" aria-label="بزرگ‌نمایی">+</button><button class="btn xs" data-z="-1" aria-label="کوچک‌نمایی">−</button>
-    <button class="btn xs" id="btnSheet">📋 تحلیل</button><button class="btn xs" id="btnImm" aria-label="تمام‌صفحه">⛶</button><button class="btn xs" id="btnMenu2" aria-label="ابزارها">☰</button><button class="btn xs" id="btnTheme2" aria-label="تم">🌙</button>
+    <button class="btn xs" id="btnSheet">📋 تحلیل</button>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="layers" id="layers"></div>
+    <span class="sep" aria-hidden="true"></span>
+    <button class="btn xs" id="btnImm" aria-label="تمام‌صفحه">⛶</button><button class="btn xs" id="btnMenu2" aria-label="ابزارها">☰</button><button class="btn xs" id="btnTheme2" aria-label="تم">🌙</button>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="chips" id="chips"></div>
   </div>
-  <div class="chips" id="chips"></div>
-  <div class="layers" id="layers"></div>
+  <div class="cinfo"><span class="num" id="chInfo"></span><span class="stamp" id="srStamp"></span></div>
   <div class="chartbox" id="chBox">
-    <div class="chinfo num" id="chInfo"></div>
     <div class="fl"><button class="btn xs" id="btnImmX">✕</button><button class="btn xs" data-z="1">+</button><button class="btn xs" data-z="-1">−</button><button class="btn xs" id="btnSheet2">📋</button></div>
     <canvas id="chCv"></canvas>
     <div class="chmsg" id="chMsg"></div>
@@ -1264,7 +1339,7 @@ const usd2=x=>(+x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFracti
 const qfmt=q=>q>=100?q.toFixed(2):q>=1?q.toFixed(4):q.toPrecision(4);
 const tfmt=t=>new Date(t).toLocaleString('fa-IR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
 const $v=id=>{const e=document.getElementById(id);return e?e.value:'';};
-function openModal(h){let m=document.getElementById('modal');if(!m){m=document.createElement('div');m.id='modal';document.body.appendChild(m);}m.innerHTML='<div class="mbox">'+h+'</div>';m.classList.add('on');}
+function openModal(h){let m=document.getElementById('modal');if(!m){m=document.createElement('div');m.id='modal';document.body.appendChild(m);}m.innerHTML='<div class="mbox"><button class="btn xs" id="modalX" aria-label="بستن">✕</button>'+h+'</div>';m.classList.add('on');}
 function closeModal(){const m=document.getElementById('modal');if(m)m.classList.remove('on');}
 
 function demoShell(){
@@ -1477,7 +1552,7 @@ function chipsHTML(){
   return syms.map(s=>`<button class="btn xs ${CT.sym===s?'on':'off'}" data-sym="${s}">${s}</button>`).join('');
 }
 function sheetHTML(){
-  const M=CT,s=M.sig;let h='';
+  const M=CT,s=M.sig;let h=`<div class="shead"><b>تحلیل ${M.sym}/${M.tf}</b><button class="btn xs" id="sheetX" aria-label="بستن">✕</button></div>`;
   if(s){const L=s.dir==='LONG';h+=`<div class="box" style="margin-top:0"><b>${s.sym}/USDT</b> <span class="pill ${L?'l':'s'}">${L?'لانگ':'شورت'}</span> قدرت <b class="num">${fa(s.score)}٪</b>${s.why&&s.why.length?`<div class="why" style="padding:4px 0 0">دلایل سیگنال: ${s.why.join('، ')}</div>`:''}
     ${['ACT','PEND'].includes(statusOf(s))?`<div style="margin-top:8px"><button class="btn xs" data-demo="${s.id}">ورود دمو با اهرم ${fa(levOf(s))}×</button></div>`:''}</div>`;}
   h+=topHTML();
@@ -1788,7 +1863,7 @@ function srTableHTML(){
 
 /* ---------- چارت حرفه‌ای ---------- */
 const LAY=Object.assign({sr:1,ema:1,smc:0,vol:1},store.get('radar.layers',{}));
-function renderLayers(){const el=$('#layers');if(!el)return;el.innerHTML=[['sr','حمایت/مقاومت'],['ema','EMA'],['smc','SMC'],['vol','حجم']].map(([k,t])=>`<button class="btn xs ${LAY[k]?'on':'off'}" data-layer="${k}">${t}</button>`).join('')+'<span class="stamp" id="srStamp"></span>';}
+function renderLayers(){const el=$('#layers');if(!el)return;el.innerHTML=[['sr','حمایت/مقاومت'],['ema','EMA'],['smc','SMC'],['vol','حجم']].map(([k,t])=>`<button class="btn xs ${LAY[k]?'on':'off'}" data-layer="${k}">${t}</button>`).join('')+'';}
 function drawChart(){
   const M=CT,cv=$('#chCv'),box=$('#chBox');if(!M.K||!cv||!box||TAB!=='chart')return;
   const W=box.clientWidth,H=box.clientHeight;if(W<40||H<40)return;
@@ -1853,8 +1928,9 @@ function closeTools(){$('#tools').hidden=true;document.body.classList.remove('lo
 function toolMenu(){TS.tool=null;$('#tTitle').textContent='ابزارهای تحلیل';$('#tBack').style.visibility='hidden';$('#tBody').innerHTML=`<div class="tgrid">${TOOLS.map(t=>`<button class="btn tile" data-tool="${t[0]}"><i>${t[1]}</i><b>${t[2]}</b><span>${t[3]}</span></button>`).join('')}</div>`;}
 const symBar=tf=>`<div class="tbar"><input id="tSym" list="symlist" value="${TS.sym}" aria-label="نماد" autocomplete="off" spellcheck="false">${tf?`<div class="seg" id="tTf">${['15m','1h','4h','1d'].map(t=>`<button data-ttf="${t}" class="${TS.tf===t?'on':''}">${t}</button>`).join('')}</div>`:''}<button class="btn xs" id="tRun">اجرا</button></div>`;
 async function openTool(id){
+  if(id.startsWith('go-')){closeTools();IXS.view=id==='go-full'?'full':'ind';IXS.data=null;IXS.full=null;setTab('ind');return;}
   TS.tool=id;const T=TOOLS.find(t=>t[0]===id);$('#tTitle').textContent=T[2];$('#tBack').style.visibility='visible';
-  const bar=['mtf','sr'].includes(id)?symBar(0):['fib','vp'].includes(id)?symBar(1):'';
+  const bar=toolBar(id);
   $('#tBody').innerHTML=bar+'<div id="tOut"></div>';await runTool();
 }
 async function runTool(){
@@ -2118,6 +2194,71 @@ function ixCompute(K,btc){
     const a=meta.atr,ns=sup!=null&&px-sup<a,nr=res!=null&&res-px<a;meta.sup=sup;meta.res=res;add('قیمت','نزدیکی به حمایت/مقاومت',`حمایت ${sup?fmt(sup):'—'} · مقاومت ${res?fmt(res):'—'}`,ns&&!nr?1:nr&&!ns?-1:0,.6);});
   T(()=>{const a=ix.hh(h,i-1,20),b=ix.ll(l,i-1,20);add('قیمت','شکست کانال ۲۰ کندل',px>a?'شکست سقف':px<b?'شکست کف':'داخل کانال',px>a?1:px<b?-1:0,.8);});
   T(()=>{if(!btc||btc.length<60)return;const m=50,a=(px/c[i-m]-1)*100,b=(btc.at(-1)/btc.at(-1-m)-1)*100,d=a-b;add('قیمت','قدرت نسبی در برابر BTC',(d>=0?'+':'')+nf(d,1)+'٪ (۵۰ کندل)',sgn3(d,1),Math.min(1,Math.abs(d)/10+.2));meta.rs=d;});
+
+  /* ===== ۵۵ اندیکاتور دیگر ===== */
+  const rg=h.map((x,j)=>x-l[j]),hl2=K.map((k,j)=>(h[j]+l[j])/2);
+  T(()=>{const m=ix.sma(c,100)[i];m==null?add('روند','SMA 100','داده کم',0,.1):add('روند','SMA 100',fmt(m),px>m?1:-1,gap(px,m));});
+  T(()=>{const m=ema(100)[i];n<100?add('روند','EMA 100','داده کم',0,.1):add('روند','EMA 100',fmt(m),px>m?1:-1,gap(px,m));});
+  const e1=ema(21),e2=ix.ema(e1,21),e3=ix.ema(e2,21);
+  T(()=>{const d=2*e1[i]-e2[i];add('روند','DEMA (21)',fmt(d),px>d?1:-1,gap(px,d));});
+  T(()=>{const d=3*e1[i]-3*e2[i]+e3[i];add('روند','TEMA (21)',fmt(d),px>d?1:-1,gap(px,d));});
+  T(()=>{let k=c[0];const kam=[k];for(let j=1;j<n;j++){if(j<10){k=c[j];kam.push(k);continue;}let vl=0;for(let q=j-9;q<=j;q++)vl+=Math.abs(c[q]-c[q-1]);const er=vl?Math.abs(c[j]-c[j-10])/vl:0,sc=(er*(2/3-2/31)+2/31)**2;k=k+sc*(c[j]-k);kam.push(k);}add('روند','KAMA (10)',fmt(k),px>k?1:-1,gap(px,k));});
+  T(()=>{const d=c.map((x,j)=>j>=10?x+(x-c[j-10]):x),z=ix.ema(d,21)[i];add('روند','ZLEMA (21)',fmt(z),px>z?1:-1,gap(px,z));});
+  T(()=>{let a=0,b=0;for(let j=i-19;j<=i;j++){a+=c[j]*v[j];b+=v[j];}const w=a/b;add('روند','VWMA (20)',fmt(w),px>w?1:-1,gap(px,w));});
+  T(()=>{const md=[c[0]];for(let j=1;j<n;j++)md.push(md[j-1]+(c[j]-md[j-1])/(14*Math.pow(c[j]/md[j-1],4)));add('روند','مک‌گینلی (14)',fmt(md[i]),px>md[i]?1:-1,gap(px,md[i]));});
+  T(()=>{const sH=ix.sma(h,13),sL=ix.sma(l,13);let st=1;for(let j=14;j<n;j++){if(c[j]>sH[j-1])st=1;else if(c[j]<sL[j-1])st=-1;}add('روند','Gann HiLo (13)',fmt(st===1?sL[i]:sH[i]),st,gap(px,st===1?sL[i]:sH[i]));});
+  T(()=>{const a=[8,13,21,34,55].map(p=>ema(p)[i]),up=a.every((x,q)=>q===4||x>a[q+1]),dw=a.every((x,q)=>q===4||x<a[q+1]);add('روند','ریبون EMA (8..55)',up?'مرتب صعودی':dw?'مرتب نزولی':'درهم',up?1:dw?-1:0,up||dw?.8:.2);});
+  T(()=>{const a22=ix.rma(tr,22);let dir=1;for(let j=22;j<n;j++){const ls=ix.hh(h,j,22)-3*a22[j],ss=ix.ll(l,j,22)+3*a22[j];if(dir===1&&c[j]<ls)dir=-1;else if(dir===-1&&c[j]>ss)dir=1;}const lv=dir===1?ix.hh(h,i,22)-3*a22[i]:ix.ll(l,i,22)+3*a22[i];add('روند','Chandelier Exit (22,3)',fmt(lv),dir,gap(px,lv));});
+  T(()=>{const e13=ema(13),u=e13[i]>e13[i-1],hu=hist[i]>hist[i-1];add('روند','ایمپالس الدر',u&&hu?'سبز':!u&&!hu?'قرمز':'آبی (خنثی)',u&&hu?1:!u&&!hu?-1:0,.55);});
+  T(()=>{const m=(ix.hh(h,i,20)+ix.ll(l,i,20))/2;add('روند','خط میانی دانچیان',fmt(m),px>m?1:-1,gap(px,m));});
+  T(()=>{const m=50,y=c.slice(i-m+1);let sx=0,sy=0,sxy=0,sxx=0;y.forEach((q,j)=>{sx+=j;sy+=q;sxy+=j*q;sxx+=j*j;});const sl=(m*sxy-sx*sy)/(m*sxx-sx*sx),ic=(sy-sl*sx)/m;let ss=0;y.forEach((q,j)=>{ss+=(q-(ic+sl*j))**2;});const sd=Math.sqrt(ss/m),z=(px-(ic+sl*(m-1)))/(sd||1);add('روند','کانال رگرسیون (50)','Z '+nf(z,2),z>.5?1:z<-.5?-1:0,Math.min(1,Math.abs(z)/2+.1));});
+  /* مومنتوم */
+  T(()=>{let f=0,vv=0;const fs0=[];for(let j=9;j<n;j++){const hi=ix.hh(h,j,9),lo=ix.ll(l,j,9),raw=hi===lo?.5:(hl2[j]-lo)/(hi-lo);vv=.66*(raw-.5)+.67*vv;vv=Math.max(-.999,Math.min(.999,vv));f=.5*Math.log((1+vv)/(1-vv))+.5*f;fs0.push(f);}const p=fs0.at(-2);add('مومنتوم','Fisher Transform (9)',nf(f,2),f>0&&f>p?1:f<0&&f<p?-1:0,Math.min(1,Math.abs(f)/2+.15));});
+  T(()=>{const roc=p=>c.map((x,j)=>j>=p?(x/c[j-p]-1)*100:0),a=ix.sma(roc(10),10),b=ix.sma(roc(15),10),d=ix.sma(roc(20),10),e=ix.sma(roc(30),15),k=[];for(let j=i-8;j<=i;j++)k.push(a[j]+2*b[j]+3*d[j]+4*e[j]);const cur=k.at(-1),sg=k.reduce((x,y)=>x+y,0)/k.length;add('مومنتوم','KST',nf(cur,2),cur>sg?1:-1,Math.min(1,Math.abs(cur-sg)/3+.2));});
+  T(()=>{const d=c[i-11]-ix.sma(c,20)[i],p=d/px*100;add('مومنتوم','DPO (20)',nf(p,2)+'٪',sgn3(p,.1),Math.min(1,Math.abs(p)/3+.15));});
+  T(()=>{if(n<95)return add('مومنتوم','TII (30,60)','داده کم',0,.1);const s60=ix.sma(c,60);let k=0;for(let j=i-29;j<=i;j++)if(c[j]>s60[j])k++;const t=k/30*100;add('مومنتوم','شاخص شدت روند (TII)',nf(t,0),t>70?1:t<30?-1:0,Math.abs(t-50)/50);});
+  T(()=>{const nu=K.map((k,j)=>j>=3?((c[j]-o[j])+2*(c[j-1]-o[j-1])+2*(c[j-2]-o[j-2])+(c[j-3]-o[j-3]))/6:0),de=K.map((k,j)=>j>=3?((h[j]-l[j])+2*(h[j-1]-l[j-1])+2*(h[j-2]-l[j-2])+(h[j-3]-l[j-3]))/6:0),sn=ix.sma(nu,10),sd=ix.sma(de,10),r=j=>sn[j]/(sd[j]||1),rv=r(i),sg=(r(i)+2*r(i-1)+2*r(i-2)+r(i-3))/6;add('مومنتوم','RVI (10)',nf(rv,3),rv>sg?1:-1,Math.min(1,Math.abs(rv-sg)*20+.2));});
+  T(()=>{const m=c.map((x,j)=>x-(ix.hh(h,j,10)+ix.ll(l,j,10))/2),d=c.map((x,j)=>ix.hh(h,j,10)-ix.ll(l,j,10)),a=ix.ema(ix.ema(m,3),3)[i],b=ix.ema(ix.ema(d,3),3)[i],s=100*a/((b/2)||1);add('مومنتوم','SMI (10,3,3)',nf(s,0),s<-40?1:s>40?-1:0,Math.min(1,Math.abs(s)/60+.1));});
+  T(()=>{const rs3=ix.rsi(c,3)[i],st=[0];for(let j=1;j<n;j++)st.push(c[j]>c[j-1]?(st[j-1]>0?st[j-1]+1:1):c[j]<c[j-1]?(st[j-1]<0?st[j-1]-1:-1):0);const rsS=ix.rsi(st,2)[i],r1=c.map((x,j)=>j?x/c[j-1]-1:0),w=r1.slice(i-99),pr=w.filter(x=>x<r1[i]).length/w.length*100,cr=(rs3+rsS+pr)/3;add('مومنتوم','Connors RSI',nf(cr,0),cr<20?1:cr>80?-1:0,Math.abs(cr-50)/50);});
+  T(()=>{const b=ix.sma(K.map((k,j)=>(c[j]-o[j])/((h[j]-l[j])||1)),14)[i];add('مومنتوم','BOP (14)',nf(b,2),sgn3(b,.1),Math.min(1,Math.abs(b)*2+.15));});
+  T(()=>{const q=ix.sma(c.map((x,j)=>x-o[j]),8)[i]/px*100;add('مومنتوم','Qstick (8)',nf(q,3)+'٪',sgn3(q,.02),Math.min(1,Math.abs(q)*10+.15));});
+  T(()=>{const ch=100*Math.log10(ix.sum(tr,i,14)/((ix.hh(h,i,14)-ix.ll(l,i,14))||1))/Math.log10(14),d=Math.sign(c[i]-c[i-14]);meta.chop=ch;add('مومنتوم','شاخص آشفتگی (Choppiness)',nf(ch,0)+(ch<38.2?' · روند':ch>61.8?' · رنج':' · میانی'),ch<38.2?d:0,Math.abs(ch-50)/30);});
+  T(()=>{let s=0;for(let j=i-27;j<=i;j++)s+=Math.abs(c[j]-c[j-1]);const vh=(ix.hh(c,i,28)-ix.ll(c,i,28))/(s||1);add('مومنتوم','VHF (28)',nf(vh,2)+(vh>.35?' · روند':' · رنج'),vh>.35?Math.sign(c[i]-c[i-28]):0,Math.min(1,vh*1.5));});
+  const rsi14=ix.rsi(c,14);
+  const divg=(name,ser)=>T(()=>{let a=i-30,b=i-14,ha=a,hb=b,la=a,lb=b;for(let j=i-30;j<=i-15;j++){if(l[j]<l[la])la=j;if(h[j]>h[ha])ha=j;}for(let j=i-14;j<=i;j++){if(l[j]<l[lb]||lb<i-14)lb=j;if(h[j]>h[hb]||hb<i-14)hb=j;}
+    const bull=l[lb]<l[la]&&ser[lb]>ser[la],bear=h[hb]>h[ha]&&ser[hb]<ser[ha];if(name==='RSI')meta.divBull=bull,meta.divBear=bear;add('مومنتوم','واگرایی '+name,bull?'صعودی (Bullish)':bear?'نزولی (Bearish)':'ندارد',bull?1:bear?-1:0,bull||bear?.85:.15);});
+  divg('RSI',rsi14);divg('MACD',macd);
+  T(()=>{const jw=ix.rma(hl2,13)[i-8],te=ix.rma(hl2,8)[i-5],li=ix.rma(hl2,5)[i-3],up=li>te&&te>jw,dw=li<te&&te<jw;add('مومنتوم','آلیگاتور ویلیامز',up?'دهان باز صعودی':dw?'دهان باز نزولی':'خوابیده',up?1:dw?-1:0,up||dw?.7:.15);});
+  T(()=>add('مومنتوم','چیکو اسپن (۲۶ کندل)',(px>c[i-26]?'بالاتر':'پایین‌تر')+' از ۲۶ کندل قبل',px>c[i-26]?1:-1,gap(px,c[i-26])));
+  /* حجم */
+  T(()=>{const avg=ix.sma(rg,20),vf=K.map((k,j)=>j?v[j]*(tp[j]>tp[j-1]?1:-1)*Math.abs(rg[j]/(avg[j]||rg[j]||1)):0),a=ix.ema(vf,34),b=ix.ema(vf,55),kv0=a.map((x,j)=>x-b[j]),sg=ix.ema(kv0,13);add('حجم','Klinger',kv0[i]>sg[i]?'بالای سیگنال':'زیر سیگنال',kv0[i]>sg[i]?1:-1,.5);});
+  T(()=>{const adl=cum(j=>clv[j]*v[j]),co=ix.ema(adl,3)[i]-ix.ema(adl,10)[i];add('حجم','اسیلاتور چایکین',co>0?'مثبت':'منفی',co>0?1:-1,.5);});
+  T(()=>{let nv=1000,pv=1000;const N1=[],P1=[];for(let j=0;j<n;j++){if(j){if(v[j]<v[j-1])nv*=c[j]/c[j-1];if(v[j]>v[j-1])pv*=c[j]/c[j-1];}N1.push(nv);P1.push(pv);}const a=ix.sma(N1,50)[i],b=ix.sma(P1,50)[i];add('حجم','NVI (پول هوشمند)',N1[i]>a?'بالای میانگین':'زیر میانگین',N1[i]>a?1:-1,.5);add('حجم','PVI (پول عمومی)',P1[i]>b?'بالای میانگین':'زیر میانگین',P1[i]>b?1:-1,.4);});
+  T(()=>{const r=(v[i]/v[i-14]-1)*100;add('حجم','VROC (14)',nf(r,0)+'٪',r>20?(c[i]>=o[i]?1:-1):0,Math.min(1,Math.abs(r)/150+.1));});
+  T(()=>{const a=K.map((k,j)=>(2*c[j]-h[j]-l[j])/((h[j]-l[j])||1)*v[j]),ii=ix.sum(a,i,21)/(ix.sum(v,i,21)||1);add('حجم','Intraday Intensity (21)',nf(ii*100,1)+'٪',sgn3(ii,.05),Math.min(1,Math.abs(ii)*4+.15));});
+  T(()=>{const adv=K.map((k,j)=>{if(!j)return 0;const th=Math.max(h[j],c[j-1]),tl=Math.min(l[j],c[j-1]);return v[j]*((c[j]-tl)-(th-c[j]))/((th-tl)||1);}),t=ix.ema(adv,21)[i]/(ix.ema(v,21)[i]||1);add('حجم','Twiggs Money Flow',nf(t,3),sgn3(t,.05),Math.min(1,Math.abs(t)*4+.15));});
+  T(()=>{let u=0,d=0;for(let j=i-13;j<=i;j++){if(c[j]>=o[j])u+=v[j];else d+=v[j];}const r=u/(d||1);add('حجم','نسبت حجم صعودی/نزولی',nf(r,2),r>1.3?1:r<.77?-1:0,Math.min(1,Math.abs(Math.log(r))+.1));});
+  /* نوسان */
+  T(()=>{const e=ix.ema(rg,10),cv=(e[i]/e[i-10]-1)*100;add('نوسان','نوسان چایکین (10,10)',nf(cv,0)+'٪',0,Math.min(1,Math.abs(cv)/80+.1));});
+  T(()=>{let s=0;for(let j=i-13;j<=i;j++){const m=ix.hh(c,j,14),d=(c[j]-m)/m*100;s+=d*d;}const u=Math.sqrt(s/14);add('نوسان','Ulcer Index (14)',nf(u,2),0,Math.min(1,u/6+.1));});
+  T(()=>{const e=ix.ema(rg,9),r=e.map((x,j)=>x/(ix.ema(e,9)[j]||1));let s=0;const e9=ix.ema(e,9);for(let j=i-24;j<=i;j++)s+=e[j]/(e9[j]||1);add('نوسان','Mass Index (25)',nf(s,1)+(s>27?' · هشدار برگشت':''),0,Math.min(1,s/30));});
+  T(()=>{let s=0;for(let j=i-19;j<=i;j++)s+=Math.log(h[j]/l[j])**2;const p=Math.sqrt(s/(4*20*Math.LN2))*100;add('نوسان','Parkinson Volatility',nf(p,2)+'٪',0,Math.min(1,p/4+.1));});
+  T(()=>{const lr=c.map((x,j)=>j?Math.log(x/c[j-1]):0),r=ix.sd(lr,i,5)/(ix.sd(lr,i,20)||1);add('نوسان','نسبت نوسان ۵ به ۲۰',nf(r,2)+(r>1.5?' · انبساط':r<.7?' · انقباض':''),0,Math.min(1,r/2));});
+  T(()=>{const w=[];for(let j=i-99;j<=i;j++)w.push(atr14[j]);const rk=w.filter(x=>x<=atr14[i]).length/w.length*100;meta.atrp=rk;add('نوسان','صدک ATR (۱۰۰ کندل)',nf(rk,0)+' از ۱۰۰',0,Math.abs(rk-50)/50);});
+  T(()=>{const w=[];for(let j=i-99;j<=i;j++)w.push((ix.hh(h,j,20)-ix.ll(l,j,20))/c[j]);const rk=w.filter(x=>x<=w.at(-1)).length/w.length*100;add('نوسان','صدک پهنای دانچیان',nf(rk,0)+' از ۱۰۰',0,Math.abs(rk-50)/50);});
+  T(()=>{let k=0;for(let j=i;j>=i-40;j--){if(2*ix.sd(c,j,20)<1.5*atr10[j])k++;else break;}add('نوسان','مدت اسکوییز',k?fa(k)+' کندل پیاپی':'ندارد',0,Math.min(1,k/20+.05));});
+  /* قیمت */
+  T(()=>{const H=Math.max(...h.slice(i-24,i)),L=Math.min(...l.slice(i-24,i)),C=c[i-1],r=H-L,R3=C+r*1.1/4,S3=C-r*1.1/4;add('قیمت','پیوت Camarilla',`R3 ${fmt(R3)} · S3 ${fmt(S3)}`,px>R3?1:px<S3?-1:0,.6);});
+  T(()=>{const H=Math.max(...h.slice(i-24,i)),L=Math.min(...l.slice(i-24,i)),C=c[i-1],P=(H+L+C)/3,r=H-L,R1=P+.382*r,S1=P-.382*r;add('قیمت','پیوت فیبوناچی',`R1 ${fmt(R1)} · S1 ${fmt(S1)}`,px>R1?1:px<S1?-1:0,.55);});
+  T(()=>{const ins=h[i]<h[i-1]&&l[i]>l[i-1],out=h[i]>h[i-1]&&l[i]<l[i-1];add('قیمت','Inside / Outside Bar',ins?'Inside (فشردگی)':out?'Outside ('+(c[i]>o[i]?'صعودی':'نزولی')+')':'ندارد',out?(c[i]>o[i]?1:-1):0,ins||out?.6:.1);});
+  T(()=>{const g=[i-2,i-1,i],up=g.every((j,q)=>c[j]>o[j]&&(!q||(c[j]>c[g[q-1]]&&o[j]>=o[g[q-1]]&&o[j]<=c[g[q-1]]))),dw=g.every((j,q)=>c[j]<o[j]&&(!q||(c[j]<c[g[q-1]]&&o[j]<=o[g[q-1]]&&o[j]>=c[g[q-1]])));add('قیمت','سه سرباز / سه کلاغ',up?'سه سرباز سفید':dw?'سه کلاغ سیاه':'ندارد',up?1:dw?-1:0,up||dw?.85:.1);});
+  T(()=>{const b0=Math.abs(c[i-2]-o[i-2]),b1=Math.abs(c[i-1]-o[i-1]),mo=c[i-2]<o[i-2]&&b1<b0*.3&&c[i]>o[i]&&c[i]>(o[i-2]+c[i-2])/2,ev=c[i-2]>o[i-2]&&b1<b0*.3&&c[i]<o[i]&&c[i]<(o[i-2]+c[i-2])/2;add('قیمت','ستارهٔ صبحگاهی / عصرگاهی',mo?'صبحگاهی':ev?'عصرگاهی':'ندارد',mo?1:ev?-1:0,mo||ev?.85:.1);});
+  T(()=>{const pb=Math.abs(c[i-1]-o[i-1]),inside=Math.max(o[i],c[i])<Math.max(o[i-1],c[i-1])&&Math.min(o[i],c[i])>Math.min(o[i-1],c[i-1]),bu=inside&&c[i-1]<o[i-1]&&c[i]>o[i]&&pb>atr14[i]*.5,be=inside&&c[i-1]>o[i-1]&&c[i]<o[i]&&pb>atr14[i]*.5;add('قیمت','هارامی (Harami)',bu?'صعودی':be?'نزولی':'ندارد',bu?1:be?-1:0,bu||be?.7:.1);});
+  T(()=>{const b=Math.abs(c[i]-o[i]),r=h[i]-l[i],mz=b>=.9*r&&r>atr14[i]*.8;add('قیمت','Marubozu (کندل پرقدرت)',mz?(c[i]>o[i]?'صعودی':'نزولی'):'ندارد',mz?(c[i]>o[i]?1:-1):0,mz?.9:.1);});
+  T(()=>{let a=0,b=0;for(let j=i-9;j<=i;j++){if(h[j]>ix.hh(h,j-1,20))a++;if(l[j]<ix.ll(l,j-1,20))b++;}add('قیمت','سقف/کف تازه (۱۰ کندل)',`${fa(a)} سقف · ${fa(b)} کف`,a>b+1?1:b>a+1?-1:0,Math.min(1,Math.abs(a-b)/4+.1));});
+  T(()=>{const m=ix.sma(c,200)[i];if(m==null)return add('قیمت','فاصله از SMA 200','داده کم',0,.1);const d=(px/m-1)*100;add('قیمت','فاصله از SMA 200',nf(d,1)+'٪'+(Math.abs(d)>25?' · کشیده':''),d>25?-1:d>0?1:d<-25?1:-1,Math.min(1,Math.abs(d)/30+.1));});
+  T(()=>{const w=c.slice(-250),p=w.filter(x=>x<=px).length/w.length*100;add('قیمت','صدک قیمت (۲۵۰ کندل)',nf(p,0)+' از ۱۰۰',p>80?1:p<20?-1:0,Math.abs(p-50)/50);});
+  T(()=>{meta.macdUp=hist[i]>0&&hist[i-1]<=0;meta.macdDn=hist[i]<0&&hist[i-1]>=0;meta.brkUp=px>ix.hh(h,i-1,20);meta.brkDn=px<ix.ll(l,i-1,20);meta.volSp=(meta.volRatio||0)>2;});
   return {list:R,meta};
 }
 function ixSum(list){
@@ -2130,10 +2271,10 @@ function ixSum(list){
 }
 const ixLab=s=>s>0?'صعودی':s<0?'نزولی':'خنثی',ixCls=s=>s>0?'b':s<0?'r':'n';
 const IXC={};
-async function ixGet(sym,tf,force){
-  const key=sym+'|'+tf,c0=IXC[key];if(!force&&c0&&Date.now()-c0.t<60000)return c0;
-  const K=await klines(sym,tf,LIM[tf]),cl=cl2(K,tf);if(cl.length<80)throw new Error('کندل کافی نیست');
-  let btc=null;if(sym!=='BTC'){try{const B=await klines('BTC',tf,LIM[tf]);btc=cl2(B,tf).map(k=>k.c);}catch(e){}}
+async function ixGet(sym,tf,force,live){
+  const key=sym+'|'+tf+'|'+(live?1:0),c0=IXC[key];if(!force&&c0&&Date.now()-c0.t<60000)return c0;
+  const K=await klines(sym,tf,LIM[tf]),cl=live?K:cl2(K,tf);if(cl.length<80)throw new Error('کندل کافی نیست');
+  let btc=null;if(sym!=='BTC'){try{const B=await klines('BTC',tf,LIM[tf]);btc=(live?B:cl2(B,tf)).map(k=>k.c);}catch(e){}}
   const r=ixCompute(cl.slice(-400),btc);r.sum=ixSum(r.list);r.t=Date.now();r.px=K.at(-1).c;IXC[key]=r;return r;
 }
 /* ---------- تحلیل جامع ---------- */
@@ -2207,17 +2348,18 @@ function fullText(F){
   return t.join('\n');
 }
 /* ---------- رابط صفحه ---------- */
-let IXS=Object.assign({sym:'BTC',tf:'1h',view:'ind',grp:'همه',st:'all',data:null,full:null,loading:false,err:''},store.get('radar.ind',{}));IXS.loading=false;IXS.data=null;IXS.full=null;IXS.err='';
+let IXS=Object.assign({sym:'BTC',tf:'1h',view:'ind',grp:'همه',st:'all',live:false,data:null,full:null,loading:false,err:''},store.get('radar.ind',{}));IXS.loading=false;IXS.data=null;IXS.full=null;IXS.err='';
 function indShell(){
   const el=$('#tab-ind');if(!el||el.dataset.built)return;el.dataset.built=1;
-  el.innerHTML=`<h3 class="sec">اندیکاتورها و تحلیل جامع</h3><div class="seg" id="indView"><button data-iv="ind">۶۰+ اندیکاتور</button><button data-iv="full">تحلیل جامع</button></div>
-  <div class="tbar"><input id="iSym" list="symlist" autocomplete="off" spellcheck="false" aria-label="نماد"><div class="seg" id="iTf">${['15m','1h','4h','1d'].map(t=>`<button data-itf="${t}">${t}</button>`).join('')}</div><button class="btn xs" id="iRun">اجرا</button></div><div id="indOut"></div>`;
+  el.innerHTML=`<h3 class="sec">اندیکاتورها و تحلیل جامع</h3><div class="seg" id="indView"><button data-iv="ind">۱۱۶ اندیکاتور</button><button data-iv="full">تحلیل جامع</button></div>
+  <div class="tbar"><input id="iSym" list="symlist" autocomplete="off" spellcheck="false" aria-label="نماد"><div class="seg" id="iTf">${['15m','1h','4h','1d'].map(t=>`<button data-itf="${t}">${t}</button>`).join('')}</div><button class="btn xs" id="iRun">اجرا</button></div><div class="tbar" id="iLiveBar"><div class="seg" id="iLive"><button data-ilive="0">کندل بسته</button><button data-ilive="1">کندل در حال تشکیل</button></div><span class="note" id="iStamp"></span></div><div id="indOut"></div>`;
   $('#iSym').value=IXS.sym;
 }
 function indSyncUI(){
   $$('#indView button').forEach(b=>b.classList.toggle('on',b.dataset.iv===IXS.view));
   $$('#iTf button').forEach(b=>b.classList.toggle('on',b.dataset.itf===IXS.tf));
   const t=$('#iTf');if(t)t.style.display=IXS.view==='ind'?'':'none';
+  $$('#iLive button').forEach(b=>b.classList.toggle('on',(b.dataset.ilive==='1')===!!IXS.live));const lb=$('#iLiveBar');if(lb)lb.style.display=IXS.view==='ind'?'':'none';
 }
 function indListHTML(d){
   const s=d.sum,pct=x=>(x/s.total*100).toFixed(1);
@@ -2229,7 +2371,7 @@ function indListHTML(d){
   const f1=`<div class="seg wrapseg">${['همه',...IXG].map(g=>`<button data-igrp="${g}" class="${IXS.grp===g?'on':''}">${g}${g==='همه'?'':' ('+fa(d.list.filter(x=>x.g===g).length)+')'}</button>`).join('')}</div>`;
   const f2=`<div class="seg">${[['all','همه'],['b','صعودی'],['n','خنثی'],['r','نزولی']].map(([k,t])=>`<button data-ist="${k}" class="${IXS.st===k?'on':''}">${t}</button>`).join('')}</div>`;
   const rows=list.map(x=>`<div class="ixr"><div class="ixn"><b>${x.n}</b><span class="num">${x.v}</span></div><span class="ixp ${ixCls(x.s)}">${ixLab(x.s)}</span><div class="ixk"><i class="${ixCls(x.s)}" style="width:${Math.round(x.k*100)}%"></i></div></div>`).join('')||'<p class="note">موردی نیست.</p>';
-  return head+f1+f2+`<div class="ixl">${rows}</div><p class="note">نوار زیر هر ردیف قدرت سیگنال آن اندیکاتور است. اندیکاتورها فقط بر اساس کندل‌های بسته‌شده ${IXS.tf} حساب می‌شوند و توصیهٔ مالی نیستند.</p>`;
+  return head+f1+f2+`<div class="ixl">${rows}</div><p class="note">نوار زیر هر ردیف قدرت سیگنال آن اندیکاتور است. محاسبه روی کندل‌های ${IXS.live?'شامل کندل در حال تشکیل':'بسته‌شدهٔ'} ${IXS.tf} انجام می‌شود، هر ۲ دقیقه با بازار به‌روز می‌شود و توصیهٔ مالی نیست.</p>`;
 }
 function renderIndOut(){
   const o=$('#indOut');if(!o)return;indSyncUI();
@@ -2237,12 +2379,12 @@ function renderIndOut(){
   if(IXS.err){o.innerHTML=`<p class="note">${IXS.err}</p>`;return;}
   if(IXS.view==='ind')o.innerHTML=IXS.data?indListHTML(IXS.data):'';else o.innerHTML=IXS.full?fullHTML(IXS.full):'';
 }
-async function indLoad(force){
+async function indLoad(force,silent){
   indShell();const si=$('#iSym');if(si){const v=si.value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'');if(v)IXS.sym=v;}
-  store.set('radar.ind',{sym:IXS.sym,tf:IXS.tf,view:IXS.view});IXS.loading=true;IXS.err='';renderIndOut();
-  try{if(IXS.view==='ind')IXS.data=await ixGet(IXS.sym,IXS.tf,force);else IXS.full=await ixFull(IXS.sym,force);}
-  catch(e){console.error(e);IXS.err='دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن و نماد را چک کن.';}
-  IXS.loading=false;renderIndOut();
+  store.set('radar.ind',{sym:IXS.sym,tf:IXS.tf,view:IXS.view,live:IXS.live});if(!silent){IXS.loading=true;IXS.err='';renderIndOut();}
+  try{if(IXS.view==='ind')IXS.data=await ixGet(IXS.sym,IXS.tf,force,IXS.live);else IXS.full=await ixFull(IXS.sym,force);if(silent)IXS.err='';}
+  catch(e){console.error(e);if(!silent)IXS.err='دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن و نماد را چک کن.';}
+  IXS.loading=false;renderIndOut();const st=$('#iStamp');if(st)st.textContent='به‌روزرسانی: '+new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})+' · خودکار هر ۲ دقیقه';
 }
 function renderInd(){indShell();indSyncUI();const have=IXS.view==='ind'?IXS.data:IXS.full;if(!have&&!IXS.loading)indLoad(false);else renderIndOut();}
 document.addEventListener('click',e=>{
@@ -2257,6 +2399,244 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='iSym'){IXS.data=null;IXS.full=null;indLoad(true);}});
 {const dl0=$('#symlist');if(dl0&&!dl0.children.length)dl0.innerHTML=UNIVERSE.map(s=>`<option value="${s}">`).join('');}
+
+/* ======================================================================
+   نسخهٔ ۳: چارت بدون تداخل، ترس و طمع، نبض بازار، راهنمای ریسک، ابزارهای سازمانی
+   ====================================================================== */
+/* ---------- چارت (بازنویسی؛ برچسب‌ها در ستون قیمت و بدون تداخل) ---------- */
+function drawChart(){
+  const M=CT,cv=$('#chCv'),box=$('#chBox');if(!M.K||!cv||!box||TAB!=='chart')return;
+  const W=box.clientWidth,H=box.clientHeight;if(W<40||H<40)return;
+  const dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+  const dk=isDark(),INK=dk?'#e8f1f4':'#000',GRID=dk?'rgba(255,255,255,.07)':'rgba(12,96,109,.13)',UP='#0ecb81',DN='#f6465d',FONT='Vazirmatn,Tahoma,sans-serif';
+  const K=M.K.slice(),li=K.length-1,lp=LP[M.sym]??K[li].c;K[li]={...K[li],c:lp,h:Math.max(K[li].h,lp),l:Math.min(K[li].l,lp)};
+  const N=Math.min(M.n,K.length),end=K.length-M.off,D=K.slice(Math.max(0,end-N),end),off0=Math.max(0,end-N);
+  const padR=W<520?78:90,padT=10,padB=22,volH=LAY.vol?H*.12:0,pw=W-padR,ph=H-padT-padB-volH,step=pw/D.length;
+  let lo=Math.min(...D.map(k=>k.l)),hi=Math.max(...D.map(k=>k.h));const span0=hi-lo||1;
+  const s=M.sig&&!M.sig.closed&&M.sig.sym===M.sym?M.sig:null,lines=[];
+  if(s)[['ورود',s.entry,'#e0b000'],['TP1',s.tp[0],UP],['TP2',s.tp[1],UP],['TP3',s.tp[2],UP],['SL',s.sl,DN]].forEach(([t,p,c])=>{if(p>lo-span0*.6&&p<hi+span0*.6){lines.push({t,p,c});lo=Math.min(lo,p);hi=Math.max(hi,p);}});
+  for(const p of F.pos.filter(q=>q.sym===M.sym)){lines.push({t:'پوزیشن',p:p.entry,c:dk?'#e8f1f4':'#444'});lo=Math.min(lo,p.entry);hi=Math.max(hi,p.entry);}
+  const srL=[];if(LAY.sr&&M.sr){M.sr.res.forEach((q,i)=>srL.push({t:'R'+(i+1),p:q.p,n:q.touches,c:DN}));M.sr.sup.forEach((q,i)=>srL.push({t:'S'+(i+1),p:q.p,n:q.touches,c:UP}));}
+  srL.forEach(l=>{if(l.p>lo-span0*.35&&l.p<hi+span0*.35){lo=Math.min(lo,l.p);hi=Math.max(hi,l.p);l.show=true;}});
+  const pad=(hi-lo)*.06;lo-=pad;hi+=pad;const Y=p=>padT+(hi-p)/(hi-lo)*ph;
+  /* برچسب‌ها: همه در ستون قیمت، با فاصلهٔ حداقلی تا روی هم نیفتند */
+  const lastUp=lp>=K[li].o,tags=[];
+  srL.filter(l=>l.show).forEach(l=>tags.push({y:Y(l.p),txt:`${l.t} ${fmt(l.p)}`,col:l.c}));
+  lines.forEach(l=>tags.push({y:Y(l.p),txt:`${l.t} ${fmt(l.p)}`,col:l.c}));
+  tags.push({y:Y(lp),txt:fmt(lp),col:lastUp?UP:DN,last:1});
+  tags.sort((a,b)=>a.y-b.y);let pv=-99;tags.forEach(t=>{t.ty=Math.max(t.y,pv+17);pv=t.ty;});
+  let mx=H-padB-9;for(let q=tags.length-1;q>=0;q--){if(tags[q].ty>mx)tags[q].ty=mx;mx=tags[q].ty-17;}
+  x.font='10.5px '+FONT;x.textBaseline='middle';x.lineWidth=1;
+  /* واترمارک */
+  x.save();x.globalAlpha=dk?.07:.05;x.fillStyle=INK;x.font='800 '+Math.round(Math.min(70,W*.13))+'px '+FONT;x.textAlign='center';x.fillText(M.sym+' · '+M.tf,pw/2,padT+ph/2);x.restore();
+  x.font='10.5px '+FONT;
+  for(let i=0;i<=5;i++){const p=lo+(hi-lo)*i/5,y=Y(p);x.strokeStyle=GRID;x.beginPath();x.moveTo(0,y);x.lineTo(pw,y);x.stroke();if(!tags.some(t=>Math.abs(t.ty-y)<13)){x.fillStyle=INK;x.textAlign='left';x.fillText(fmt(p),pw+5,y);}}
+  const sm=LAY.smc&&M.an&&M.an.smc;
+  const zoneDraw=(z,col,label)=>{if(!z||z.hi<lo||z.lo>hi)return;const y1=Y(Math.min(hi,z.hi)),y2=Y(Math.max(lo,z.lo));x.fillStyle=col;x.fillRect(0,y1,pw,Math.max(2,y2-y1));x.fillStyle=INK;x.textAlign='left';x.fillText(label,4,y1+8);};
+  if(sm){zoneDraw(sm.ob.bull,'rgba(14,203,129,.14)','OB↑');zoneDraw(sm.ob.bear,'rgba(246,70,93,.14)','OB↓');zoneDraw(sm.fvg.bull,'rgba(36,157,197,.13)','FVG');zoneDraw(sm.fvg.bear,'rgba(36,157,197,.13)','FVG');}
+  srL.filter(l=>l.show).forEach(l=>{const y=Y(l.p);x.strokeStyle=l.c;x.globalAlpha=.9;x.lineWidth=Math.min(2.5,1+l.n*.3);x.setLineDash([6,5]);x.beginPath();x.moveTo(0,y);x.lineTo(pw,y);x.stroke();x.setLineDash([]);x.globalAlpha=1;x.lineWidth=1;});
+  const vmax=Math.max(...D.map(k=>k.v))||1,bw=Math.max(3,Math.min(20,step*.76));
+  D.forEach((k,i)=>{const cx=i*step+step/2,up=k.c>=k.o,col=up?UP:DN;
+    if(LAY.vol){const vh=k.v/vmax*volH;x.globalAlpha=.38;x.fillStyle=col;x.fillRect(cx-bw/2,H-padB-vh,bw,vh);x.globalAlpha=1;}
+    x.strokeStyle=col;x.lineWidth=Math.max(1,Math.min(2,step*.1));x.beginPath();x.moveTo(cx,Y(k.h));x.lineTo(cx,Y(k.l));x.stroke();
+    const yo=Y(k.o),yc=Y(k.c);x.fillStyle=col;x.fillRect(cx-bw/2,Math.min(yo,yc),bw,Math.max(1.6,Math.abs(yo-yc)));});
+  x.lineWidth=1;
+  if(LAY.ema){const ln=(arr,col)=>{if(!arr)return;x.strokeStyle=col;x.lineWidth=1.6;x.beginPath();let st=false;D.forEach((k,i)=>{const v=arr[off0+i];if(v==null)return;const cx=i*step+step/2;if(!st){x.moveTo(cx,Y(v));st=true;}else x.lineTo(cx,Y(v));});x.stroke();x.lineWidth=1;};ln(M.e20,'#249dc5');ln(M.e50,'#e0b000');}
+  if(sm){const st=sm.struct;[...st.eqH,...st.eqL].forEach(p=>{if(p<lo||p>hi)return;const y=Y(p);x.setLineDash([2,4]);x.strokeStyle=dk?'rgba(255,255,255,.35)':'rgba(0,0,0,.35)';x.beginPath();x.moveTo(0,y);x.lineTo(pw,y);x.stroke();x.setLineDash([]);});}
+  lines.forEach(l=>{const y=Y(l.p);x.strokeStyle=l.c;x.lineWidth=1.5;x.beginPath();x.moveTo(0,y);x.lineTo(pw,y);x.stroke();x.lineWidth=1;});
+  const yl=Y(lp);x.setLineDash([2,3]);x.strokeStyle=INK;x.globalAlpha=.5;x.beginPath();x.moveTo(0,yl);x.lineTo(pw,yl);x.stroke();x.setLineDash([]);x.globalAlpha=1;
+  tags.forEach(t=>{x.fillStyle=t.col;x.fillRect(pw+1,t.ty-8,padR-2,16);x.fillStyle='#000';x.textAlign='left';x.font=(t.last?'700 ':'')+'10.5px '+FONT;x.fillText(t.txt,pw+4,t.ty);});
+  const info=$('#chInfo');
+  if(M.hov!=null&&M.hov>=0&&M.hov<D.length){const k=D[M.hov],cx=M.hov*step+step/2;x.strokeStyle=INK;x.globalAlpha=.3;x.beginPath();x.moveTo(cx,padT);x.lineTo(cx,H-padB);x.stroke();x.globalAlpha=1;
+    if(info)info.textContent=`O ${fmt(k.o)}  H ${fmt(k.h)}  L ${fmt(k.l)}  C ${fmt(k.c)}  ${pct(k.c,k.o)}`;}
+  else if(info)info.textContent=`${M.sym}/USDT · ${M.tf} · ${fmt(lp)} · ${pct(lp,K[li].o)}`;
+  x.font='10.5px '+FONT;x.fillStyle=INK;x.textAlign='center';[0,Math.floor(D.length/2),D.length-1].forEach(i=>{const k=D[i];if(!k)return;const d=new Date(k.t);x.fillText(d.toLocaleString('fa-IR',M.tf==='1d'?{month:'numeric',day:'numeric'}:{day:'numeric',hour:'2-digit',minute:'2-digit'}),Math.min(pw-34,Math.max(34,i*step+step/2)),H-9);});
+  const st=$('#srStamp');if(st&&M.chk)st.textContent='S/R '+new Date(M.chk).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ---------- ترس و طمع ---------- */
+const fgCol=v=>v<25?'#f6465d':v<45?'#ff9f43':v<56?'#ebeb00':v<76?'#9be15d':'#0ecb81';
+const fgFa=v=>v<25?'ترس شدید':v<45?'ترس':v<56?'خنثی':v<76?'طمع':'طمع شدید';
+async function fgSeries(){
+  const c=store.get('radar.fng2',null);if(c&&Date.now()-c.t<30*60000)return c;
+  try{const d=await jget('https://api.alternative.me/fng/?limit=31'),arr=d.data.map(x=>({t:+x.timestamp*1000,v:+x.value}));const o={t:Date.now(),arr};store.set('radar.fng2',o);return o;}
+  catch(e){return c?{...c,stale:true}:null;}
+}
+function fgGauge(v){
+  const cols=['#f6465d','#ff9f43','#ebeb00','#9be15d','#0ecb81'],pt=(a,r)=>[100+r*Math.cos(a),100-r*Math.sin(a)];
+  const arcs=cols.map((c,k)=>{const a0=Math.PI*(1-k/5),a1=Math.PI*(1-(k+1)/5),[x0,y0]=pt(a0-.012,80),[x1,y1]=pt(a1+.012,80);return `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)}A80 80 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="${c}" stroke-width="15" fill="none"/>`;}).join('');
+  const a=Math.PI*(1-v/100),[nx,ny]=pt(a,60);
+  return `<svg viewBox="0 0 200 116" class="fgsvg" role="img" aria-label="ترس و طمع ${v}">${arcs}<line x1="100" y1="100" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="var(--ink)"/><text x="27" y="114" class="fgt" text-anchor="middle">ترس</text><text x="173" y="114" class="fgt" text-anchor="middle">طمع</text></svg>`;
+}
+function fgSpark(arr){
+  const a=arr.slice().reverse(),n=a.length;if(n<2)return '';const W=320,Hh=96,X=i=>i/(n-1)*W,Yv=v=>Hh-6-v/100*(Hh-12);
+  const pts=a.map((p,i)=>`${X(i).toFixed(1)},${Yv(p.v).toFixed(1)}`).join(' '),last=a.at(-1);
+  return `<svg viewBox="0 0 ${W} ${Hh}" class="fgsp" preserveAspectRatio="none" role="img" aria-label="روند ۳۰ روزهٔ ترس و طمع"><defs><linearGradient id="fgA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${fgCol(last.v)}" stop-opacity=".45"/><stop offset="1" stop-color="${fgCol(last.v)}" stop-opacity="0"/></linearGradient></defs>
+   <line x1="0" x2="${W}" y1="${Yv(25)}" y2="${Yv(25)}" class="fgl"/><line x1="0" x2="${W}" y1="${Yv(50)}" y2="${Yv(50)}" class="fgl"/><line x1="0" x2="${W}" y1="${Yv(75)}" y2="${Yv(75)}" class="fgl"/>
+   <polygon points="0,${Hh} ${pts} ${W},${Hh}" fill="url(#fgA)"/><polyline points="${pts}" fill="none" stroke="${fgCol(last.v)}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function fgHTML(o,est){
+  if(!o&&!est)return `<div class="box fgc"><b>ترس و طمع</b><p class="note">داده در دسترس نیست. اینترنت یا VPN را بررسی کن؛ با وصل‌شدن خودکار نمایش داده می‌شود.</p></div>`;
+  const arr=o?o.arr:null,cur=arr?arr[0].v:est,g=i=>arr&&arr[i]?arr[i].v:null;
+  const chip=(l,v)=>v==null?'':`<div class="fgm"><span>${l}</span><b class="num" style="background:${fgCol(v)}">${fa(v)}</b></div>`;
+  const hint=cur<25?'ترس شدید؛ بازار معمولاً نزدیک کف‌های میان‌مدت است ولی «سیگنال خرید» نیست.':cur<45?'ترس؛ معامله‌گران محتاط‌اند.':cur<56?'احساسات خنثی است.':cur<76?'طمع؛ در رالی‌های داغ، ریسک اصلاح بالا می‌رود.':'طمع شدید؛ نزدیک سقف‌های موقت معمولاً بازار برمی‌گردد.';
+  return `<div class="box fgc"><div class="fgl1"><div class="between"><b>شاخص ترس و طمع</b><span class="note">${est!=null&&!arr?'تخمین داخلی':(o&&o.stale?'آخرین داده ذخیره‌شده':'زنده · alternative.me')}</span></div>
+    ${fgGauge(cur)}<div class="fgv"><b class="num" style="color:${fgCol(cur)};-webkit-text-stroke:.6px var(--ink)">${fa(cur)}</b><span>${fgFa(cur)}</span></div></div>
+    <div class="fgl2">${arr?`<div class="fgms">${chip('دیروز',g(1))}${chip('هفتهٔ قبل',g(7))}${chip('ماه قبل',g(30))}</div>${fgSpark(arr)}<div class="between note"><span>۳۰ روز پیش</span><span>امروز</span></div>`:'<p class="note">شاخص رسمی در دسترس نبود؛ عدد بالا از جمع‌بندی اندیکاتورهای BTC تخمین زده شده است.</p>'}<p class="ex">${hint}</p></div></div>`;
+}
+/* ---------- نبض بازار و راهنمای ریسک ---------- */
+let PULSE=null,pulseBusy=false;
+async function pulseLoad(force){
+  if(pulseBusy)return;pulseBusy=true;
+  try{
+    const [fg,b1,b4,bd,e4]=await Promise.all([fgSeries().catch(()=>null),ixGet('BTC','1h',force).catch(()=>null),ixGet('BTC','4h',force).catch(()=>null),ixGet('BTC','1d',force).catch(()=>null),ixGet('ETH','4h',force).catch(()=>null)]);
+    PULSE={t:Date.now(),fg,b1,b4,bd,e4};
+  }catch(e){}
+  pulseBusy=false;renderPulse();
+}
+function renderPulse(){
+  const P=PULSE,fc=$('#fgCard'),pl=$('#pulse'),gd=$('#guide');if(!fc)return;
+  const est=P&&P.bd?P.bd.sum.pct:null;fc.innerHTML=fgHTML(P?P.fg:null,P&&!P.fg?est:null);
+  if(!P||!(P.b1||P.b4||P.bd)){pl.innerHTML='<div class="box"><b>نبض بازار</b><p class="note">در حال دریافت داده بازار…</p></div>';gd.innerHTML='';return;}
+  const cell=(n,r)=>r?`<div class="pcell">${gauge(r.sum.pct,n)}<span class="ixp ${ixCls(r.sum.sc)}">${r.sum.vd}</span></div>`:'';
+  pl.innerHTML=`<div class="box"><div class="between"><b>نبض بازار (۱۱۶ اندیکاتور)</b><span class="note">${new Date(P.t).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})}</span></div><div class="gauges">${cell('BTC · 1h',P.b1)}${cell('BTC · 4h',P.b4)}${cell('BTC · 1d',P.bd)}${cell('ETH · 4h',P.e4)}</div></div>`;
+  gd.innerHTML=guideHTML(P);
+}
+function guideHTML(P){
+  const w={b1:.3,b4:.35,bd:.35};let comp=0,ws=0;['b1','b4','bd'].forEach(k=>{if(P[k]){comp+=P[k].sum.sc*w[k];ws+=w[k];}});comp=ws?comp/ws:0;
+  const dir=comp>=.15?'صعودی':comp<=-.15?'نزولی':'بی‌جهت (خنثی)',atrP=P.b1?P.b1.meta.atrPct:(P.b4?P.b4.meta.atrPct/2:1),vol=atrP<.5?'کم':atrP<1?'متوسط':'زیاد',fv=P.fg&&P.fg.arr?P.fg.arr[0].v:null;
+  const slPct=1.8*atrP,levMax=Math.max(1,Math.min(10,Math.floor(100/(slPct*5)))),extreme=fv!=null&&(fv<20||fv>80);
+  let rec=Math.max(1,Math.min(5,Math.round(levMax/3))),cap=levMax;if(atrP>=1||extreme){rec=Math.max(1,rec-1);cap=Math.min(cap,5);}
+  const risk=10,notional=risk/(slPct/100),margin=notional/rec;
+  return `<div class="box guide"><div class="between"><b>🧭 تحلیل بازار برای باز کردن معامله</b></div>
+   <p class="ex">وضعیت کلی بازار (بر پایهٔ BTC در ۱ ساعته، ۴ ساعته و روزانه): <b>${dir}</b> · نوسان <b>${vol}</b> (ATR حدود ${nf(atrP,2)}٪)${fv!=null?` · ترس و طمع ${fa(fv)} (${fgFa(fv)})`:''}.</p>
+   <p class="ex">${Math.abs(comp)<.15?'بازار جهت روشنی ندارد؛ ورود با حجم کم یا صبر کردن منطقی‌تر است.':'سیگنال‌هایی که هم‌جهت با روند کلی هستند احتمال بهتری دارند؛ بر خلاف جهت بازار فقط با حجم خیلی کم وارد شو.'}</p>
+   <div class="rg"><div><span>اهرم پیشنهادی</span><b class="num">${fa(rec)}× تا ${fa(Math.min(cap,rec+2))}×</b></div><div><span>سقف اهرم امن</span><b class="num">${fa(cap)}×</b></div><div><span>ریسک هر معامله</span><b class="num">۱٪ (حداکثر ۲٪)</b></div><div><span>حداکثر معاملهٔ هم‌زمان</span><b class="num">۳</b></div></div>
+   <p class="ex">مثال: با سرمایه ۱٬۰۰۰ دلار و ریسک ۱٪ (۱۰ دلار) و حد ضرر حدود ${nf(slPct,2)}٪، ارزش پوزیشن حدود ${Math.round(notional).toLocaleString('fa-IR')} دلار می‌شود؛ با اهرم ${fa(rec)}× مارجین لازم حدود ${Math.round(margin).toLocaleString('fa-IR')} دلار است.</p>
+   <ul class="gl"><li>اهرم را پایین بگیر؛ اهرم بالا یعنی فاصله تا لیکوئید کم می‌شود.</li><li>حتماً حد ضرر بگذار و بعد از ورود آن را عقب نبر.</li><li>در TP1 بخشی از سود را بگیر و حد ضرر را به نقطهٔ ورود ببر.</li><li>آلت‌کوین‌ها نوسان بیشتری از BTC دارند؛ برای آن‌ها اهرم را کمتر کن.</li><li>موقع اخبار مهم و بعد از جهش‌های ناگهانی وارد نشو و میانگین‌گیری نکن.</li></ul>
+   <div class="disc">⚠️ این اپ هیچ تضمینی روی سیگنال‌ها نمی‌دهد. فقط بر اساس داده بازار و الگوریتم تحلیل، موقعیت‌ها را شناسایی می‌کند. تصمیم نهایی و ریسک معامله با خود شماست.</div></div>`;
+}
+setTimeout(()=>pulseLoad(false),900);setInterval(()=>{if(!document.hidden&&navigator.onLine)pulseLoad(true);},3*60000);
+window.addEventListener('online',()=>pulseLoad(true));
+
+/* ---------- ۱۱۶ اندیکاتور: به‌روزرسانی خودکار و کندل زنده ---------- */
+setInterval(()=>{if(TAB==='ind'&&!document.hidden&&navigator.onLine&&!IXS.loading)indLoad(true,true);},120000);
+
+/* ---------- نمودارهای کمکی ---------- */
+function sparkSVG(arr,color){
+  if(arr.length<2)return '';const W=320,Hh=90,mn=Math.min(0,...arr),mx=Math.max(0,...arr)||1,rg=mx-mn||1,X=i=>i/(arr.length-1)*W,Y=v=>Hh-6-(v-mn)/rg*(Hh-12);
+  const pts=arr.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+  return `<svg viewBox="0 0 ${W} ${Hh}" class="fgsp" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" class="fgl"/><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+const SERC=['#249dc5','#e0b000','#0ecb81','#f6465d'];
+function lineChartSVG(series){
+  const all=series.flat(),mn=Math.min(...all),mx=Math.max(...all),rg=mx-mn||1,W=320,Hh=170,n=series[0].length,X=i=>i/(n-1)*W,Y=v=>Hh-8-(v-mn)/rg*(Hh-16);
+  return `<svg viewBox="0 0 ${W} ${Hh}" class="fgsp" style="height:190px" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${Y(100)}" y2="${Y(100)}" class="fgl"/>${series.map((s,k)=>`<polyline points="${s.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ')}" fill="none" stroke="${SERC[k]}" stroke-width="2.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>`).join('')}</svg>`;
+}
+/* ---------- ابزارهای جدید ---------- */
+const TOOLS_V3=[
+ ['go-ind','🧪','اندیکاتورها','۱۱۶ اندیکاتور با به‌روزرسانی خودکار','تحلیل'],['go-full','🏛️','تحلیل جامع','چند تایم‌فریم + نقشهٔ معامله','تحلیل'],
+ ['mtf','🧭','چند تایم‌فریم','هم‌جهتی ۱۵m تا ۱d','تحلیل'],['fib','📐','فیبوناچی و پیوت','اصلاح و پیوت روزانه','تحلیل'],['sr','🧱','حمایت و مقاومت','سطوح ترکیبی چند تایم‌فریم','تحلیل'],['vp','📊','پروفایل حجم','POC و محدودهٔ ارزش','تحلیل'],
+ ['isc','🎯','اسکنر اندیکاتوری','شکست، اسکوییز، واگرایی، کراس','اسکنر'],['scan','🔎','اسکنر بازار','RSI، تغییر و قدرت','اسکنر'],['heat','🗺️','نقشهٔ حرارتی','رشد و ریزش ارزها','اسکنر'],['cor','🔗','همبستگی با BTC','تنوع‌بخشی پرتفوی','اسکنر'],
+ ['bt','🧬','بک‌تست استراتژی','آزمون روی داده گذشته','آزمایشگاه'],['cmp','⚖️','مقایسهٔ ارزها','عملکرد نرمال‌شده تا ۴ ارز','آزمایشگاه'],['hrs','🕒','ساعت‌های پرنوسان','بهترین ساعت‌ها برای معامله','آزمایشگاه'],
+ ['risk','🧮','ماشین‌حساب ریسک','حجم پوزیشن و لیکوئید','معامله'],['watch','⭐','دیده‌بان و هشدار','هشدار قیمت','معامله'],
+ ['fng','😨','ترس و طمع و خبر','نمودار ۳۰ روزه + اخبار','بازار'],['rep','📰','گزارش روز بازار','خلاصهٔ بازار قابل کپی','بازار'],
+ ['data','💾','خروجی و پشتیبان','CSV و JSON','سیستم'],['set','⚙️','تنظیمات','تم و اعلان','سیستم']];
+TOOLS.length=0;TOOLS.push(...TOOLS_V3);
+function toolMenu(){
+  TS.tool=null;$('#tTitle').textContent='ابزارهای تحلیل';$('#tBack').style.visibility='hidden';
+  const cats=[...new Set(TOOLS.map(t=>t[4]))];
+  $('#tBody').innerHTML=cats.map(c=>`<h3 class="sub">${c}</h3><div class="tgrid">${TOOLS.filter(t=>t[4]===c).map(t=>`<button class="btn tile" data-tool="${t[0]}"><i>${t[1]}</i><b>${t[2]}</b><span>${t[3]}</span></button>`).join('')}</div>`).join('');
+}
+function btBar(){return `<div class="tbar"><input id="tSym" list="symlist" value="${TS.sym}" aria-label="نماد" autocomplete="off" spellcheck="false"><div class="seg" id="tTf">${['15m','1h','4h','1d'].map(t=>`<button data-ttf="${t}" class="${TS.tf===t?'on':''}">${t}</button>`).join('')}</div><button class="btn xs" id="tRun">اجرا</button></div><div class="seg wrapseg" id="btSeg">${BTS.map(([k,t])=>`<button data-bts="${k}" class="${BTSEL===k?'on':''}">${t}</button>`).join('')}</div>`;}
+function cmpBar(){return `<div class="tbar"><input id="cmpSyms" value="BTC,ETH,SOL" aria-label="نمادها" autocomplete="off" spellcheck="false"><div class="seg" id="tTf">${['1h','4h','1d'].map(t=>`<button data-ttf="${t}" class="${TS.tf===t?'on':''}">${t}</button>`).join('')}</div><button class="btn xs" id="tRun">اجرا</button></div>`;}
+function toolBar(id){if(['mtf','sr','hrs'].includes(id))return symBar(0);if(['fib','vp'].includes(id))return symBar(1);if(id==='bt')return btBar();if(id==='cmp')return cmpBar();return '';}
+/* بک‌تست */
+const BTS=[['ema','تقاطع EMA 9/21'],['macd','تقاطع MACD'],['rsi','بازگشت RSI'],['bb','برگشت بولینگر'],['st','سوپرترند'],['brk','شکست ۲۰ کندل'],['combo','ترکیب EMA+MACD+RSI']];let BTSEL='ema';
+function btSignals(id,K){
+  const n=K.length,c=K.map(k=>k.c),h=K.map(k=>k.h),l=K.map(k=>k.l),sg=Array(n).fill(0);
+  const e12=ix.ema(c,12),e26=ix.ema(c,26),m=e12.map((x,j)=>x-e26[j]),ms=ix.ema(m,9),hs=m.map((x,j)=>x-ms[j]);
+  if(id==='ema'){const a=ix.ema(c,9),b=ix.ema(c,21);for(let i=22;i<n;i++){if(a[i]>b[i]&&a[i-1]<=b[i-1])sg[i]=1;else if(a[i]<b[i]&&a[i-1]>=b[i-1])sg[i]=-1;}}
+  else if(id==='macd'){for(let i=35;i<n;i++){if(hs[i]>0&&hs[i-1]<=0)sg[i]=1;else if(hs[i]<0&&hs[i-1]>=0)sg[i]=-1;}}
+  else if(id==='rsi'){const r=ix.rsi(c,14);for(let i=15;i<n;i++){if(r[i-1]<30&&r[i]>=30)sg[i]=1;else if(r[i-1]>70&&r[i]<=70)sg[i]=-1;}}
+  else if(id==='bb'){for(let i=22;i<n;i++){const m1=ix.sma(c,20),a=m1[i-1],s1=ix.sd(c,i-1,20),a2=m1[i],s2=ix.sd(c,i,20);if(c[i-1]<a-2*s1&&c[i]>a2-2*s2)sg[i]=1;else if(c[i-1]>a+2*s1&&c[i]<a2+2*s2)sg[i]=-1;}}
+  else if(id==='st'){const tr=[h[0]-l[0]];for(let j=1;j<n;j++)tr.push(Math.max(h[j]-l[j],Math.abs(h[j]-c[j-1]),Math.abs(l[j]-c[j-1])));const at=ix.rma(tr,10);let fub=0,flb=0,dir=1;for(let j=0;j<n;j++){const md=(h[j]+l[j])/2,ub=md+3*at[j],lb=md-3*at[j];if(!j){fub=ub;flb=lb;continue;}fub=(ub<fub||c[j-1]>fub)?ub:fub;flb=(lb>flb||c[j-1]<flb)?lb:flb;const pd=dir;if(dir===1&&c[j]<flb)dir=-1;else if(dir===-1&&c[j]>fub)dir=1;if(j>12&&dir!==pd)sg[j]=dir;}}
+  else if(id==='brk'){for(let i=22;i<n;i++){if(c[i]>ix.hh(h,i-1,20)&&c[i-1]<=ix.hh(h,i-2,20))sg[i]=1;else if(c[i]<ix.ll(l,i-1,20)&&c[i-1]>=ix.ll(l,i-2,20))sg[i]=-1;}}
+  else{const a=ix.ema(c,21),b=ix.ema(c,50),r=ix.rsi(c,14);let pv=0;for(let i=55;i<n;i++){const st=(a[i]>b[i]&&hs[i]>0&&r[i]>50)?1:(a[i]<b[i]&&hs[i]<0&&r[i]<50)?-1:0;if(st&&st!==pv)sg[i]=st;pv=st;}}
+  return sg;
+}
+function btRun(K,sg){
+  const n=K.length,c=K.map(k=>k.c),tr=[K[0].h-K[0].l];for(let j=1;j<n;j++)tr.push(Math.max(K[j].h-K[j].l,Math.abs(K[j].h-c[j-1]),Math.abs(K[j].l-c[j-1])));const at=ix.rma(tr,14),T=[];let i=30;
+  while(i<n-2){if(!sg[i]){i++;continue;}const dir=sg[i],e=K[i+1].o,R=1.8*at[i],sl=dir>0?e-R:e+R,tp=dir>0?e+R*1.5:e-R*1.5;let out=null,j=i+1;
+    for(;j<n&&j<=i+49;j++){const k=K[j],hs=dir>0?k.l<=sl:k.h>=sl,ht=dir>0?k.h>=tp:k.l<=tp;if(hs){out=-1;break;}if(ht){out=1.5;break;}}
+    if(out==null){j=Math.min(j,n-1);out=(dir>0?K[j].c-e:e-K[j].c)/R;}out-=.001*e/R;T.push({r:out,dir});i=j+1;}
+  return T;
+}
+TFN.bt=async()=>{
+  const K=await klines(TS.sym,TS.tf,LIM[TS.tf]),cl=cl2(K,TS.tf);if(cl.length<120)throw new Error('no');
+  const T=btRun(cl,btSignals(BTSEL,cl)),w=T.filter(t=>t.r>0),ls=T.filter(t=>t.r<=0);
+  if(T.length<3)return `<div class="box"><b>${TS.sym}/USDT ${TS.tf}</b><p class="note">در این بازه فقط ${fa(T.length)} معامله ساخته شد؛ برای نتیجهٔ معتبر کافی نیست. تایم‌فریم یا استراتژی دیگری را امتحان کن.</p></div>`;
+  let eq=0,pk=0,dd=0;const curve=[0];T.forEach(t=>{eq+=t.r;curve.push(eq);pk=Math.max(pk,eq);dd=Math.max(dd,pk-eq);});
+  const gw=w.reduce((a,t)=>a+t.r,0),gl=-ls.reduce((a,t)=>a+t.r,0),pf=gl?gw/gl:99,wr=w.length/T.length*100,ex=eq/T.length;
+  return `<div class="box"><b>${TS.sym}/USDT ${TS.tf} · ${BTS.find(x=>x[0]===BTSEL)[1]}</b>${kv('تعداد معامله',fa(T.length)+` (${fa(T.filter(t=>t.dir>0).length)} لانگ / ${fa(T.filter(t=>t.dir<0).length)} شورت)`)+kv('درصد برد',nf(wr,0)+'٪',wr>=50?'up':'dn')+kv('میانگین نتیجه (R)',nf(ex,2),ex>0?'up':'dn')+kv('ضریب سود (PF)',nf(pf,2),pf>=1.3?'up':'dn')+kv('جمع نتیجه (R)',nf(eq,1),eq>0?'up':'dn')+kv('بیشترین افت (R)',nf(dd,1))}
+   ${sparkSVG(curve,eq>=0?'#0ecb81':'#f6465d')}<p class="note">منحنی سود تجمعی بر حسب R (R = فاصلهٔ حد ضرر ۱٫۸ ATR). حد سود ۱٫۵R، خروج زمانی بعد از ۴۸ کندل و کارمزد رفت‌وبرگشت ۰٫۱٪ لحاظ شده است. عملکرد گذشته آینده را تضمین نمی‌کند.</p></div>`;
+};
+/* مقایسه */
+TFN.cmp=async()=>{
+  const syms=[...new Set(($('#cmpSyms').value||'BTC,ETH,SOL').toUpperCase().split(/[,\s،]+/).map(x=>x.replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'')).filter(Boolean))].slice(0,4);if(syms.length<2)throw new Error('no');
+  const D=[];for(const s of syms){const K=await klines(s,TS.tf,LIM[TS.tf]);D.push({s,c:cl2(K,TS.tf).slice(-200).map(k=>k.c)});}
+  const m=Math.min(...D.map(d=>d.c.length));D.forEach(d=>{d.c=d.c.slice(-m);d.n=d.c.map(x=>x/d.c[0]*100);});
+  const st=D.map((d,k)=>{let pk=0,dd=0;d.n.forEach(v=>{pk=Math.max(pk,v);dd=Math.max(dd,(pk-v)/pk*100);});const r=d.c.map((x,j)=>j?x/d.c[j-1]-1:0),mu=r.reduce((a,b)=>a+b,0)/r.length,sd=Math.sqrt(r.reduce((a,b)=>a+(b-mu)**2,0)/r.length)*100;return {s:d.s,ch:d.n.at(-1)-100,dd,sd,co:k?corr(d.c,D[0].c):1,col:SERC[k]};});
+  return `<div class="box"><div class="legend">${st.map(x=>`<span><i style="background:${x.col}"></i>${x.s}</span>`).join('')}</div>${lineChartSVG(D.map(d=>d.n))}<p class="note">همهٔ ارزها روی ۱۰۰ نرمال شده‌اند (آخرین ${fa(m)} کندل ${TS.tf}).</p></div><div class="scroll"><table class="tb"><thead><tr><th>ارز</th><th>تغییر</th><th>بیشترین افت</th><th>نوسان/کندل</th><th>همبستگی</th></tr></thead><tbody>${st.map(x=>`<tr><td><b style="border-bottom:3px solid ${x.col}">${x.s}</b></td><td class="num">${x.ch>=0?'▲':'▼'} ${Math.abs(x.ch).toFixed(1)}٪</td><td class="num">${x.dd.toFixed(1)}٪</td><td class="num">${x.sd.toFixed(2)}٪</td><td class="num">${isFinite(x.co)?x.co.toFixed(2):'—'}</td></tr>`).join('')}</tbody></table></div>`;
+};
+/* ساعت‌های پرنوسان */
+TFN.hrs=async()=>{
+  const K=await klines(TS.sym,'1h',1000),cl=K.slice(0,-1),r=Array(24).fill(0),vo=Array(24).fill(0),cn=Array(24).fill(0);
+  cl.forEach(k=>{const hr=new Date(k.t).getHours();r[hr]+=(k.h-k.l)/k.o*100;vo[hr]+=k.v;cn[hr]++;});
+  const ar=r.map((x,i)=>cn[i]?x/cn[i]:0),av=vo.map((x,i)=>cn[i]?x/cn[i]:0),mv=Math.max(...av)||1,mr=Math.max(...ar)||1,top=(a,k)=>a.map((v,i)=>[v,i]).sort((x,y)=>y[0]-x[0]).slice(0,k).map(x=>String(x[1]).padStart(2,'0')+':00');
+  const bars=(a,mx,col,tp)=>`<div class="hbars">${a.map((v,i)=>`<div class="hb" title="${i}:00"><i style="height:${Math.max(3,v/mx*100)}%;background:${tp.includes(String(i).padStart(2,'0')+':00')?'var(--y)':col}"></i><span>${i}</span></div>`).join('')}</div>`;
+  const t1=top(ar,3),t2=top(av,3),q1=top(ar.map(x=>-x),3);
+  return `<div class="box"><b>${TS.sym}/USDT · نوسان میانگین هر ساعت</b>${bars(ar,mr,'var(--c1)',t1)}<p class="ex">پرنوسان‌ترین ساعت‌ها: <b>${t1.join(' ، ')}</b> · آرام‌ترین: <b>${q1.join(' ، ')}</b></p></div><div class="box"><b>حجم میانگین هر ساعت</b>${bars(av,mv,'var(--c2)',t2)}<p class="ex">پرحجم‌ترین ساعت‌ها: <b>${t2.join(' ، ')}</b></p><p class="note">ساعت‌ها بر اساس ساعت دستگاه تو و آخرین ۱۰۰۰ کندل ۱ ساعته است؛ الگو تضمین تکرار ندارد.</p></div>`;
+};
+/* اسکنر اندیکاتوری */
+let ISC=null,ISCM='top';
+const ISCF=[['top','قوی‌ترین صعودی'],['bot','قوی‌ترین نزولی'],['os','RSI اشباع فروش'],['ob','RSI اشباع خرید'],['sq','اسکوییز'],['bu','شکست سقف'],['bd','شکست کف'],['mu','کراس صعودی MACD'],['md','کراس نزولی MACD'],['vs','جهش حجم'],['dv','واگرایی صعودی'],['dr','واگرایی نزولی']];
+async function iscData(out){
+  if(ISC&&Date.now()-ISC.t<5*60000)return ISC.rows;const rows=[];let n=0;
+  await pool(UNIVERSE,6,async s=>{try{const K=await klines(s,'1h',400),cl=K.slice(0,-1);if(cl.length>=210){const r=ixCompute(cl.slice(-400),null),sm=ixSum(r.list),m=r.meta;rows.push({s,px:K.at(-1).c,pct:sm.pct,vd:sm.vd,sc:sm.sc,b:sm.b,r:sm.r,rsi:m.rsi,sq:m.sq,bu:m.brkUp,bd:m.brkDn,mu:m.macdUp,md:m.macdDn,vs:m.volSp,dv:m.divBull,dr:m.divBear});}}catch(e){}n++;if(n%8===0&&$('#tOut'))$('#tOut').innerHTML=`<p class="note">اسکن ${fa(n)} از ${fa(UNIVERSE.length)} ارز…</p>`;});
+  if(!rows.length)throw new Error('no');ISC={t:Date.now(),rows};return rows;
+}
+function iscHTML(rows,m){
+  const f={top:x=>true,bot:x=>true,os:x=>x.rsi!=null&&x.rsi<30,ob:x=>x.rsi!=null&&x.rsi>70,sq:x=>x.sq,bu:x=>x.bu,bd:x=>x.bd,mu:x=>x.mu,md:x=>x.md,vs:x=>x.vs,dv:x=>x.dv,dr:x=>x.dr}[m];
+  let l=rows.filter(f);l=m==='bot'||m==='bd'||m==='md'||m==='dr'||m==='ob'?l.sort((a,b)=>a.sc-b.sc):l.sort((a,b)=>b.sc-a.sc);const tot=l.length;l=l.slice(0,30);
+  return `<div class="seg wrapseg">${ISCF.map(([k,t])=>`<button data-iscf="${k}" class="${m===k?'on':''}">${t}</button>`).join('')}</div><p class="note">${fa(tot)} ارز از ${fa(rows.length)} مورد با این شرط پیدا شد (۱ ساعته، کندل بسته).</p>${l.length?`<div class="scroll"><table class="tb"><thead><tr><th>ارز</th><th>قیمت</th><th>جمع‌بندی</th><th>صعودی/نزولی</th><th>RSI</th></tr></thead><tbody>${l.map(x=>`<tr><td><button class="btn xs" data-an="${x.s}">${x.s}</button></td><td class="num">${fmt(x.px)}</td><td><span class="ixp ${ixCls(x.sc)}">${x.vd}</span></td><td class="num">${fa(x.b)} / ${fa(x.r)}</td><td class="num">${x.rsi==null?'—':x.rsi.toFixed(0)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="note">موردی پیدا نشد.</p>'}`;
+}
+TFN.isc=async out=>iscHTML(await iscData(out),ISCM);
+/* گزارش روز بازار */
+let REPT='';
+TFN.rep=async out=>{
+  const rows=await scanData(out);await pulseLoad(false);const P=PULSE,up=rows.filter(r=>r.ch>0).length,so=rows.slice().sort((a,b)=>b.ch-a.ch),g=so.slice(0,5),lz=so.slice(-5).reverse(),os=rows.filter(r=>r.rsi!=null&&r.rsi<30).map(r=>r.s).slice(0,8),ob=rows.filter(r=>r.rsi!=null&&r.rsi>70).map(r=>r.s).slice(0,8);
+  const fv=P&&P.fg&&P.fg.arr?P.fg.arr[0].v:null,bt=P&&P.b4?P.b4.sum.vd:'—';
+  const L=[`گزارش بازار — ${new Date().toLocaleString('fa-IR')}`,`از ${rows.length} ارز، ${up} ارز در ۲۴ ساعت گذشته مثبت بوده‌اند (${Math.round(up/rows.length*100)}٪).`,`BTC (۴ ساعته): ${bt}${fv!=null?` | ترس و طمع: ${fv} (${fgFa(fv)})`:''}`,'بیشترین رشد: '+g.map(x=>`${x.s} ${x.ch.toFixed(1)}٪`).join('، '),'بیشترین ریزش: '+lz.map(x=>`${x.s} ${x.ch.toFixed(1)}٪`).join('، '),os.length?'RSI اشباع فروش: '+os.join('، '):'',ob.length?'RSI اشباع خرید: '+ob.join('، '):''].filter(Boolean);
+  REPT=L.join('\n');
+  return `<div class="box"><b>خلاصهٔ بازار</b>${L.slice(1).map(x=>`<p class="ex">${x}</p>`).join('')}<div class="acts"><button class="btn" id="repCopy">کپی گزارش</button></div></div><p class="note">این خلاصه از داده‌های اسکن ۱ ساعتهٔ همهٔ ارزها ساخته شده و توصیهٔ مالی نیست.</p>`;
+};
+/* ترس و طمع (جایگزین ابزار قبلی) */
+TFN.fng=async()=>{
+  const o=await fgSeries().catch(()=>null),news=await newsAt(Date.now()).catch(()=>[]);
+  return fgHTML(o,null)+`<h3 class="sub">آخرین خبرها</h3>${(news||[]).slice(0,8).map(n=>`<div class="item"><a class="mlink" href="${esc(n.url||'#')}" target="_blank" rel="noopener" dir="ltr">${esc(n.title)}</a><div class="note">${esc((n.source_info&&n.source_info.name)||n.source||'')}</div></div>`).join('')||'<p class="note">خبری دریافت نشد.</p>'}`;
+};
+/* ---------- رویدادها ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target,q=s=>t.closest(s);
+  if(q('#sheetX')){$('#sheet').classList.remove('open');return;}
+  if(q('#modalX')||(t.id==='modal')){closeModal();return;}
+  const bs=q('[data-bts]');if(bs){BTSEL=bs.dataset.bts;$$('#btSeg button').forEach(b=>b.classList.toggle('on',b===bs));runTool();return;}
+  const sf=q('[data-iscf]');if(sf&&ISC){ISCM=sf.dataset.iscf;$('#tOut').innerHTML=iscHTML(ISC.rows,ISCM);return;}
+  if(t.id==='repCopy'){copyText(REPT,t);return;}
+  const lv=q('[data-ilive]');if(lv){IXS.live=lv.dataset.ilive==='1';IXS.data=null;indLoad(true);return;}
+});
 
 let polling=false;
 async function pollLive(){
