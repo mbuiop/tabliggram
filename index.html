@@ -386,6 +386,24 @@ html[data-theme=dark] .chartbox{background:linear-gradient(180deg,#121d23 0,#0d1
   #tab-ind,#tab-free,#tab-prev,#tab-demo{max-width:1100px;margin-inline:auto}
 }
 @media(min-width:1280px){.grid2{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}.ixl{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* ===== نسخهٔ ۷ ===== */
+.disclaimer{font-size:11px;line-height:1.7;text-align:center;padding:10px 14px;margin:16px 0 4px;background:var(--yp);border:2px solid #000;border-radius:14px;color:#000;opacity:.9}
+html[data-theme=dark] .disclaimer{background:#2a2810;color:#e8f1f4;border-color:#3d6272}
+.cdisc2{font-size:10px;text-align:center;opacity:.7;line-height:1.5;padding:0 6px}
+body.imm .cdisc2{display:none}
+.nav{grid-template-columns:repeat(4,1fr)!important}
+
+/* ===== نسخهٔ ۷: توضیح امتیاز، آمار ===== */
+.sbx{margin-top:6px;border:1.5px dashed var(--line,#000);border-radius:12px;padding:3px 8px}
+.sbx summary{font-size:11.5px;cursor:pointer;font-weight:700;padding:3px 0}
+.score-breakdown{margin-top:4px;font-size:11px}
+.sb-row{display:grid;grid-template-columns:1fr auto;grid-template-areas:"l v" "b b";gap:2px 8px;align-items:center;padding:3px 0}
+.sb-row>span:first-child{grid-area:l}.sb-row>b{grid-area:v;text-align:end}.sb-row>.sb-bar{grid-area:b}
+.sb-bar{height:6px;border-radius:99px;background:var(--gtrack,#e5e5e5);overflow:hidden;direction:ltr}
+.sb-bar i{display:block;height:100%}
+.sb-total{display:flex;justify-content:space-between;border-top:1px dashed var(--line,#999);margin-top:4px;padding-top:4px;font-weight:700}
+.cpre{white-space:pre-wrap;font:12.5px/1.9 Vazirmatn,Tahoma,sans-serif;direction:rtl;text-align:right;margin:10px 0;max-height:58vh;overflow-y:auto;background:var(--yp);color:#000;border:2px solid #000;border-radius:12px;padding:10px}
 </style>
 </head>
 <body>
@@ -410,17 +428,12 @@ html[data-theme=dark] .chartbox{background:linear-gradient(180deg,#121d23 0,#0d1
     <div class="gauges" id="cycG"></div>
     <div class="acts"><button class="btn xs y" id="btnCopyAll">کپی همهٔ سیگنال‌ها</button></div>
   </div>
+  <div id="ffBox"></div>
   <div class="grid2" id="feed"></div>
+  <div id="olderBox"></div>
   <div id="feedNote"></div>
   <div id="guide"></div>
-</section>
-
-<section id="tab-prev" class="pane">
-  <h3 class="sec">سیگنال‌های قبلی (سودده و باز)</h3>
-  <div class="stats" id="prevStats"></div>
-  <details class="box"><summary>گزارش روزانه</summary><div id="dailyBox"></div></details>
-  <h3 class="sec">سیگنال‌های سودده و هنوز باز</h3>
-  <div class="grid2" id="prevGrid"></div>
+  <details class="box" id="statsBox"><summary>📈 آمار عملکرد و گزارش روزانه</summary><div class="stats" id="prevStats"></div><div id="perfBox"></div><div id="dailyBox"></div></details>
 </section>
 
 <section id="tab-demo" class="pane">
@@ -444,19 +457,20 @@ html[data-theme=dark] .chartbox{background:linear-gradient(180deg,#121d23 0,#0d1
     <span class="sep" aria-hidden="true"></span>
     <div class="chips" id="chips"></div>
   </div>
-  <div class="cinfo"><span class="num" id="chInfo"></span><span class="stamp" id="srStamp"></span></div>
+  <div class="cinfo"><span class="num" id="chInfo"></span><span class="stamp" id="srStamp"></span><span class="stamp" style="opacity:.6">⚠️ توصیهٔ مالی نیست</span></div>
   <div class="chartbox" id="chBox">
     <div class="fl"><button class="btn xs" id="btnImmX">✕</button><button class="btn xs" data-z="1">+</button><button class="btn xs" data-z="-1">−</button><button class="btn xs" id="btnSheet2">📋</button></div>
     <canvas id="chCv"></canvas>
     <div class="chmsg" id="chMsg"></div>
   </div>
+  <div class="cdisc2" aria-label="هشدار">⚠️ توصیهٔ مالی نیست · همیشه حد ضرر بگذار</div>
   <div class="sheet" id="sheet"><div id="sheetBody"></div></div>
 </section>
+<p class="disclaimer" id="disclaimer">⚠️ این ابزار آموزشی است و توصیهٔ مالی نیست. همهٔ معاملات ریسک از دست دادن سرمایه دارند. همیشه با حد ضرر معامله کن و بیش از توان مالی‌ات ریسک نکن.</p>
 </div>
 
 <nav class="nav" id="nav" aria-label="بخش‌ها">
   <button class="btn on" data-tab="free"><i>📡</i>سیگنال رایگان</button>
-  <button class="btn off" data-tab="prev"><i>🏆</i>سیگنال قبلی</button>
   <button class="btn off" data-tab="demo"><i>💹</i>فیوچرز دمو</button>
   <button class="btn off" data-tab="chart"><i>📈</i>چارت تحلیلی</button>
   <button class="btn off" data-tab="ind"><i>🧪</i>اندیکاتورها</button>
@@ -473,6 +487,15 @@ const TFMS={'15m':9e5,'1h':36e5,'4h':144e5,'1d':864e5};
 const TREND=new Set(['ema2050','ema50200','linreg','macd','adx','supertrend','ichimoku','psar','roc','aroon','donchian','keltner','trix','elder','mom','pivot']);
 const REVERS=new Set(['rsi','stoch','stochrsi','bb','cci','wpr','mfi','ult','zscore']);
 const DEFAULT_PARAMS={slAtr:1.8,tp1R:.8,tpR:[.8,1.6,2.4],lr:.06,pendingHours:6};
+/* حالت‌های معاملاتی: امتیاز حداقل، فاصلهٔ SL، هدف‌ها و تعداد سیگنال هر دوره */
+const MODES={conservative:{minScore:70,slAtr:2.2,tpR:[1,2,3],per:5,label:'محافظه‌کار'},balanced:{minScore:60,slAtr:1.8,tpR:[.8,1.6,2.4],per:10,label:'متعادل'},aggressive:{minScore:50,slAtr:1.5,tpR:[.6,1.2,2],per:15,label:'تهاجمی'}};
+let ACTIVE_MODE='balanced';try{const m=JSON.parse(localStorage.getItem('radar.mode'));if(MODES[m])ACTIVE_MODE=m;}catch(e){}
+const modeCfg=()=>MODES[ACTIVE_MODE];
+/* ضرایب حالت روی پارامترهای یادگرفته‌شده اعمال می‌شود تا یادگیری سیستم از بین نرود */
+function modeParams(P){const m=modeCfg(),k=(P.slAtr||1.8)/1.8,t=(P.tp1R||.8)/.8,tr=m.tpR.map(x=>+(x*t).toFixed(2));return {...P,slAtr:+(m.slAtr*k).toFixed(2),tpR:tr,tp1R:tr[0]};}
+/* حالت سبک برای دستگاه‌های ضعیف (خودکار یا دستی از تنظیمات) */
+const LITE_PREF=(()=>{try{return JSON.parse(localStorage.getItem('radar.lite'))||'auto';}catch(e){return 'auto';}})();
+const LITE=LITE_PREF==='on'||(LITE_PREF!=='off'&&((navigator.hardwareConcurrency||4)<4||(navigator.deviceMemory&&navigator.deviceMemory<4)));
 const IND=[['ema2050','EMA 20/50'],['ema50200','EMA 50/200'],['linreg','رگرسیون خطی'],['rsi','RSI'],['macd','MACD'],
 ['stoch','استوکاستیک'],['stochrsi','Stoch RSI'],['bb','بولینگر'],['adx','ADX / DI'],['cci','CCI'],
 ['wpr','ویلیامز %R'],['mfi','MFI'],['obv','OBV'],['vwap','VWAP'],['supertrend','سوپرترند'],
@@ -510,118 +533,129 @@ function srLevels(K,atr){
   return {sup,res};
 }
 
-function analyze(K){
+/* ======================================================================
+   TA — تنها منبع محاسبهٔ اندیکاتورها. analyze و صفحهٔ اندیکاتورها هر دو از TA.core می‌خوانند.
+   ====================================================================== */
+const TA={
+  sma,ema,rma,roll,rMax,rMin,rsi:rsiCalc,
+  fill(a){const f=a.find(x=>x!=null),z=f==null?0:f;return a.map(x=>x==null?z:x);},
+  sd(a,i,n){const st=Math.max(0,i-n+1),len=i-st+1;if(len<2)return 0;let m=0;for(let j=st;j<=i;j++)m+=a[j];m/=len;let s=0;for(let j=st;j<=i;j++)s+=(a[j]-m)**2;return Math.sqrt(s/len);},
+  hh(a,i,n){let m=-Infinity;for(let j=Math.max(0,i-n+1);j<=i;j++)if(a[j]>m)m=a[j];return m;},
+  ll(a,i,n){let m=Infinity;for(let j=Math.max(0,i-n+1);j<=i;j++)if(a[j]<m)m=a[j];return m;},
+  sum(a,i,n){let s=0;for(let j=Math.max(0,i-n+1);j<=i;j++)s+=a[j];return s;},
+  /* هستهٔ محاسبه: همهٔ مقادیر خام آخرین کندل (بدون رأی‌گیری). ms = طول کندل برای نوسان سالانه */
+  core(K,ms){
+    ms=ms||36e5;
+    const n=K.length,h=K.map(k=>k.h),l=K.map(k=>k.l),c=K.map(k=>k.c),v=K.map(k=>k.v),L=n-1,P=n-2,price=c[L];
+    const tr=K.map((k,i)=>i===0?k.h-k.l:Math.max(k.h-k.l,Math.abs(k.h-c[i-1]),Math.abs(k.l-c[i-1])));
+    const atr=rma(tr,14)[L]||price*0.01,atrPct=atr/price*100,tp=K.map(k=>(k.h+k.l+k.c)/3);
+    const o={n,price,atr,atrPct,c12:c[L-12],c10:c[L-10]};
+    const e9=ema(c,9),e12=ema(c,12),e13=ema(c,13),e20=ema(c,20),e21=ema(c,21),e26=ema(c,26),e50=ema(c,50),e200=ema(c,200);
+    o.e9=e9[L];o.e21=e21[L];o.e20=e20[L];o.e50=e50[L];o.e200=e200[L];
+    {const m=30;let sx=0,sy=0,sxy=0,sxx=0;for(let i=0;i<m;i++){const y=c[n-m+i];sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;}o.lr={slope:(m*sxy-sx*sy)/(m*sxx-sx*sx),m};}
+    const rs=rsiCalc(c,14);o.rsi=rs[L];
+    {const ml=c.map((_,i)=>e12[i]!=null&&e26[i]!=null?e12[i]-e26[i]:null),sg=ema(ml,9),hs=ml.map((x,i)=>x!=null&&sg[i]!=null?x-sg[i]:null);o.macd={hist:hs[L],hist1:hs[P],hist2:hs[L-2],line:ml[L],sig:sg[L]};}
+    const hh14=rMax(h,14),ll14=rMin(l,14);o.hh14=hh14[L];o.ll14=ll14[L];
+    {const raw=c.map((x,i)=>hh14[i]==null?null:(hh14[i]===ll14[i]?50:(x-ll14[i])/(hh14[i]-ll14[i])*100)),K1=sma(raw,3),D1=sma(K1,3);o.stoch={k:K1[L],d:D1[L]};}
+    {const rm=rMax(rs,14),rn=rMin(rs,14),raw=rs.map((x,i)=>rm[i]==null?null:(rm[i]===rn[i]?.5:(x-rn[i])/(rm[i]-rn[i]))),k1=sma(raw,3),d1=sma(k1,3);o.stochrsi={k:k1[L]*100,d:d1[L]*100};}
+    {const mid=sma(c,20),sdv=roll(c,20,w=>{const m=w.reduce((s,x)=>s+x,0)/20;return Math.sqrt(w.reduce((s,x)=>s+(x-m)**2,0)/20);});
+     const up=mid[L]+2*sdv[L],lo=mid[L]-2*sdv[L];o.bb={mid:mid[L],sd:sdv[L],up,lo,pb:(price-lo)/((up-lo)||1)};}
+    {const pdm=[null],mdm=[null];for(let i=1;i<n;i++){const u=h[i]-h[i-1],d=l[i-1]-l[i];pdm.push(u>d&&u>0?u:0);mdm.push(d>u&&d>0?d:0);}
+     const a14=rma(tr.map((x,i)=>i===0?null:x),14),pdi=rma(pdm,14).map((x,i)=>x==null||!a14[i]?null:100*x/a14[i]),mdi=rma(mdm,14).map((x,i)=>x==null||!a14[i]?null:100*x/a14[i]);
+     const dx=pdi.map((x,i)=>x==null||mdi[i]==null?null:100*Math.abs(x-mdi[i])/((x+mdi[i])||1)),adx=rma(dx,14)[L];o.adx={v:adx||0,pdi:pdi[L],mdi:mdi[L]};}
+    {const ma=sma(tp,20),md=roll(tp,20,w=>{const m=w.reduce((s,x)=>s+x,0)/20;return w.reduce((s,x)=>s+Math.abs(x-m),0)/20;});
+     const cci=tp.map((x,i)=>ma[i]==null?null:(x-ma[i])/(0.015*(md[i]||1e-9)));o.cci={a:cci[L],b:cci[P]};}
+    o.wr=hh14[L]===ll14[L]?-50:(hh14[L]-price)/(hh14[L]-ll14[L])*-100;
+    {let pos=0,neg=0;for(let i=L-13;i<=L;i++){const f=tp[i]*v[i];if(tp[i]>tp[i-1])pos+=f;else if(tp[i]<tp[i-1])neg+=f;}o.mfi=neg===0?100:100-100/(1+pos/neg);}
+    {const obv=[0];for(let i=1;i<n;i++)obv.push(obv[i-1]+(c[i]>c[i-1]?v[i]:c[i]<c[i-1]?-v[i]:0));const om=sma(obv,20);o.obv={v:obv[L],ma:om[L],prev5:obv[L-5]};}
+    {let pv=0,vv=0;for(let i=L-23;i<=L;i++){pv+=tp[i]*v[i];vv+=v[i];}o.vwap=vv?pv/vv:price;}
+    {const a10=rma(tr,10);let dir=1,fu=null,fl=null;
+     for(let i=0;i<n;i++){if(a10[i]==null)continue;const hl=(h[i]+l[i])/2,bu=hl+3*a10[i],bl=hl-3*a10[i];
+       if(fu===null){fu=bu;fl=bl;dir=c[i]>hl?1:-1;}
+       else{const pu=fu,pl=fl;fu=(bu<pu||c[i-1]>pu)?bu:pu;fl=(bl>pl||c[i-1]<pl)?bl:pl;if(dir===1&&c[i]<pl)dir=-1;else if(dir===-1&&c[i]>pu)dir=1;}}
+     o.st={dir,level:dir===1?fl:fu};}
+    {const hh9=rMax(h,9),ll9=rMin(l,9),hh26=rMax(h,26),ll26=rMin(l,26),hh52=rMax(h,52),ll52=rMin(l,52);
+     const tk=(hh9[L]+ll9[L])/2,kj=(hh26[L]+ll26[L])/2,j=L-26;
+     const sa=((hh9[j]+ll9[j])/2+(hh26[j]+ll26[j])/2)/2,sb=(hh52[j]+ll52[j])/2;o.ichi={tk,kj,top:Math.max(sa,sb),bot:Math.min(sa,sb)};}
+    {let up=true,af=.02,ep=h[0],sar=l[0],dirs=[null],flip=false;
+     for(let i=1;i<n;i++){sar=sar+af*(ep-sar);flip=false;
+       if(up){sar=Math.min(sar,l[i-1],i>1?l[i-2]:l[i-1]);if(l[i]<sar){up=false;sar=ep;ep=l[i];af=.02;flip=true;}else if(h[i]>ep){ep=h[i];af=Math.min(af+.02,.2);}}
+       else{sar=Math.max(sar,h[i-1],i>1?h[i-2]:h[i-1]);if(h[i]>sar){up=true;sar=ep;ep=h[i];af=.02;flip=true;}else if(l[i]<ep){ep=l[i];af=Math.min(af+.02,.2);}}
+       dirs.push(up?1:-1);}
+     o.psar={dir:dirs[L],flip:dirs[L]!==dirs[L-1],v:sar};}
+    o.roc12=(price/c[L-12]-1)*100;
+    {const per=25;let bh=L-per,bl=L-per;for(let i=L-per;i<=L;i++){if(h[i]>=h[bh])bh=i;if(l[i]<=l[bl])bl=i;}
+     o.aroon={up:(per-(L-bh))/per*100,dn:(per-(L-bl))/per*100};}
+    {let mv=0,sv=0;for(let i=L-19;i<=L;i++){mv+=h[i]===l[i]?0:((c[i]-l[i])-(h[i]-c[i]))/(h[i]-l[i])*v[i];sv+=v[i];}o.cmf=sv?mv/sv:0;}
+    {const per=20,hh=Math.max(...h.slice(L-per,L)),ll=Math.min(...l.slice(L-per,L));o.donchian={hi:hh,lo:ll,pos:(price-ll)/((hh-ll)||1)};}
+    {const mid=e20[L],a10=rma(tr,10)[L];o.keltner={lo:mid-2*a10,mid,up:mid+2*a10};}
+    {const e1=ema(c,15),e2=ema(e1,15),e3=ema(e2,15);o.trix=(e3[L]/e3[P]-1)*100;}
+    {const bp=[],trr=[];for(let i=0;i<n;i++){const pc=i?c[i-1]:c[i];bp.push(c[i]-Math.min(l[i],pc));trr.push(Math.max(h[i],pc)-Math.min(l[i],pc));}
+     const sm2=(a,k)=>{let s=0;for(let i=n-k;i<n;i++)s+=a[i];return s;},f=k=>sm2(bp,k)/(sm2(trr,k)||1);o.ult=100*(4*f(7)+2*f(14)+f(28))/7;}
+    o.elder={bull:h[L]-e13[L],bear:l[L]-e13[L]};
+    {const w=c.slice(L-19),m=w.reduce((s,x)=>s+x,0)/20,sd=Math.sqrt(w.reduce((s,x)=>s+(x-m)**2,0)/20)||1e-9;o.z={z:(price-m)/sd,m,sd};}
+    o.mom=price-c[L-10];
+    {const P0=(h[L]+l[L]+c[L])/3;o.pivot={p:P0,r1:2*P0-l[L],s1:2*P0-h[L]};}
+    o.vAvg=v.slice(L-21,L-1).reduce((s,x)=>s+x,0)/20;
+    {let qv=0;for(let i=Math.max(0,L-23);i<=L;i++)qv+=v[i]*c[i];o.qv=qv;o.vLast=v[L];}
+    /* موارد وابسته به تایم‌فریم (پنل تحلیل چارت) */
+    {const rets=[];for(let i=L-19;i<=L;i++)rets.push(Math.log(c[i]/c[i-1]));const m=rets.reduce((s,x)=>s+x,0)/20,sd=Math.sqrt(rets.reduce((s,x)=>s+(x-m)**2,0)/19);o.hv=sd*Math.sqrt(365*864e5/ms)*100;}
+    {const m=Math.min(L-1,Math.round(30*864e5/ms));let s=0;for(let i=L-m;i<L;i++)s+=v[i];o.vr30={ratio:v[L-1]/(s/m||1),days:Math.min(30,Math.round(m*ms/864e5))};}
+    o.volOsc=(ema(v,5)[L]/ema(v,20)[L]-1)*100;
+    return o;
+  }
+};
+
+function analyze(K,ms){
   const n=K.length;if(n<120)return null;
-  const h=K.map(k=>k.h),l=K.map(k=>k.l),c=K.map(k=>k.c),v=K.map(k=>k.v);
-  const L=n-1,P=n-2,price=c[L];
-  const tr=K.map((k,i)=>i===0?k.h-k.l:Math.max(k.h-k.l,Math.abs(k.h-c[i-1]),Math.abs(k.l-c[i-1])));
-  const atr=rma(tr,14)[L]||price*0.01,atrPct=atr/price*100;
-  const tp=K.map(k=>(k.h+k.l+k.c)/3);
-  const votes=[];let adxV=0;
+  const C=TA.core(K,ms),price=C.price,atr=C.atr,atrPct=C.atrPct;
+  const votes=[];
   const add=(id,val,detail)=>votes.push({id,name:IND.find(x=>x[0]===id)[1],vote:clamp(isFinite(val)?val:0,-1,1),detail});
 
-  const e20=ema(c,20),e50=ema(c,50),e200=ema(c,200);
-  add('ema2050',price>e20[L]&&e20[L]>e50[L]?1:price<e20[L]&&e20[L]<e50[L]?-1:(e20[L]>e50[L]?.3:-.3),'EMA20 '+fmt(e20[L]));
-  add('ema50200',e200[L]==null?0:(e50[L]>e200[L]?.8:-.8),e200[L]==null?'داده کافی نیست':(e50[L]>e200[L]?'EMA50 بالای EMA200':'EMA50 زیر EMA200'));
-
-  {const m=30;let sx=0,sy=0,sxy=0,sxx=0;for(let i=0;i<m;i++){const y=c[n-m+i];sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;}
-   const slope=(m*sxy-sx*sy)/(m*sxx-sx*sx);
-   add('linreg',Math.tanh(slope*m/(2*atr)),'شیب '+(slope*m/price*100).toFixed(2)+'٪');}
-
-  const rs=rsiCalc(c,14),r=rs[L];
-  add('rsi',r<=30?1:r<=40?.4:r>=70?-1:r>=60?-.4:0,r.toFixed(1));
-
-  {const e12=ema(c,12),e26=ema(c,26),ml=c.map((_,i)=>e12[i]!=null&&e26[i]!=null?e12[i]-e26[i]:null),sg=ema(ml,9);
-   const hs=ml.map((x,i)=>x!=null&&sg[i]!=null?x-sg[i]:null),a=hs[L],b=hs[P];
-   add('macd',a>0?(a>b?1:.4):(a<b?-1:-.4),'هیستوگرام '+(a/price*100).toFixed(3)+'٪');}
-
-  const hh14=rMax(h,14),ll14=rMin(l,14);
-  {const raw=c.map((x,i)=>hh14[i]==null?null:(hh14[i]===ll14[i]?50:(x-ll14[i])/(hh14[i]-ll14[i])*100));
-   const K1=sma(raw,3),D1=sma(K1,3),k=K1[L],d=D1[L];
-   add('stoch',k<20?(k>d?1:.4):k>80?(k<d?-1:-.4):(k>d?.2:-.2),'K '+k.toFixed(1)+' / D '+d.toFixed(1));}
-
-  {const rm=rMax(rs,14),rn=rMin(rs,14),raw=rs.map((x,i)=>rm[i]==null?null:(rm[i]===rn[i]?.5:(x-rn[i])/(rm[i]-rn[i])));
-   const k1=sma(raw,3),d1=sma(k1,3),k=k1[L]*100,d=d1[L]*100;
-   add('stochrsi',k<20?(k>d?1:.4):k>80?(k<d?-1:-.4):(k>d?.2:-.2),'K '+k.toFixed(1));}
-
-  {const mid=sma(c,20),sdv=roll(c,20,w=>{const m=w.reduce((s,x)=>s+x,0)/20;return Math.sqrt(w.reduce((s,x)=>s+(x-m)**2,0)/20);});
-   const up=mid[L]+2*sdv[L],lo=mid[L]-2*sdv[L],pb=(price-lo)/((up-lo)||1);
-   add('bb',pb<.05?1:pb<.2?.5:pb>.95?-1:pb>.8?-.5:(pb-.5)*.4,'%B '+(pb*100).toFixed(0));}
-
-  {const pdm=[null],mdm=[null];for(let i=1;i<n;i++){const u=h[i]-h[i-1],d=l[i-1]-l[i];pdm.push(u>d&&u>0?u:0);mdm.push(d>u&&d>0?d:0);}
-   const a14=rma(tr.map((x,i)=>i===0?null:x),14),pdi=rma(pdm,14).map((x,i)=>x==null||!a14[i]?null:100*x/a14[i]),mdi=rma(mdm,14).map((x,i)=>x==null||!a14[i]?null:100*x/a14[i]);
-   const dx=pdi.map((x,i)=>x==null||mdi[i]==null?null:100*Math.abs(x-mdi[i])/((x+mdi[i])||1)),adx=rma(dx,14)[L];adxV=adx||0;
-   add('adx',(pdi[L]>mdi[L]?1:-1)*Math.min((adx||0)/40,1),'ADX '+(adx||0).toFixed(1)+(pdi[L]>mdi[L]?' (+DI برتر)':' (−DI برتر)'));}
-
-  {const ma=sma(tp,20),md=roll(tp,20,w=>{const m=w.reduce((s,x)=>s+x,0)/20;return w.reduce((s,x)=>s+Math.abs(x-m),0)/20;});
-   const cci=tp.map((x,i)=>ma[i]==null?null:(x-ma[i])/(0.015*(md[i]||1e-9))),a=cci[L],b=cci[P];
-   add('cci',a<-100?(a>b?1:.5):a>100?(a<b?-1:-.5):clamp(a/200,-.5,.5),a.toFixed(0));}
-
-  {const wr=hh14[L]===ll14[L]?-50:(hh14[L]-price)/(hh14[L]-ll14[L])*-100;
-   add('wpr',wr<-80?.8:wr>-20?-.8:(wr+50)/100,wr.toFixed(0));}
-
-  {let pos=0,neg=0;for(let i=L-13;i<=L;i++){const f=tp[i]*v[i];if(tp[i]>tp[i-1])pos+=f;else if(tp[i]<tp[i-1])neg+=f;}
-   const m=neg===0?100:100-100/(1+pos/neg);
-   add('mfi',m<20?1:m<35?.4:m>80?-1:m>65?-.4:0,m.toFixed(0));}
-
-  {const obv=[0];for(let i=1;i<n;i++)obv.push(obv[i-1]+(c[i]>c[i-1]?v[i]:c[i]<c[i-1]?-v[i]:0));
-   const om=sma(obv,20);
-   add('obv',Math.sign(obv[L]-om[L])*.7+Math.sign(obv[L]-obv[L-5])*.3,obv[L]>om[L]?'بالای میانگین':'زیر میانگین');}
-
-  {let pv=0,vv=0;for(let i=L-23;i<=L;i++){pv+=tp[i]*v[i];vv+=v[i];}const vw=vv?pv/vv:price;
-   add('vwap',clamp((price-vw)/(atr*1.5),-1,1),'VWAP '+fmt(vw));}
-
-  {const a10=rma(tr,10);let dir=1,fu=null,fl=null;
-   for(let i=0;i<n;i++){if(a10[i]==null)continue;const hl=(h[i]+l[i])/2,bu=hl+3*a10[i],bl=hl-3*a10[i];
-     if(fu===null){fu=bu;fl=bl;dir=c[i]>hl?1:-1;}
-     else{const pu=fu,pl=fl;fu=(bu<pu||c[i-1]>pu)?bu:pu;fl=(bl>pl||c[i-1]<pl)?bl:pl;
-       if(dir===1&&c[i]<pl)dir=-1;else if(dir===-1&&c[i]>pu)dir=1;}}
-   add('supertrend',dir,dir===1?'روند صعودی':'روند نزولی');}
-
-  {const hh9=rMax(h,9),ll9=rMin(l,9),hh26=rMax(h,26),ll26=rMin(l,26),hh52=rMax(h,52),ll52=rMin(l,52);
-   const tk=(hh9[L]+ll9[L])/2,kj=(hh26[L]+ll26[L])/2,j=L-26;
-   const sa=((hh9[j]+ll9[j])/2+(hh26[j]+ll26[j])/2)/2,sb=(hh52[j]+ll52[j])/2,top=Math.max(sa,sb),bot=Math.min(sa,sb);
-   add('ichimoku',(price>top?.5:price<bot?-.5:0)+(tk>kj?.5:-.5),price>top?'بالای ابر':price<bot?'زیر ابر':'داخل ابر');}
-
-  {let up=true,af=.02,ep=h[0],sar=l[0],dirs=[null],flip=false;
-   for(let i=1;i<n;i++){sar=sar+af*(ep-sar);flip=false;
-     if(up){sar=Math.min(sar,l[i-1],i>1?l[i-2]:l[i-1]);if(l[i]<sar){up=false;sar=ep;ep=l[i];af=.02;flip=true;}else if(h[i]>ep){ep=h[i];af=Math.min(af+.02,.2);}}
-     else{sar=Math.max(sar,h[i-1],i>1?h[i-2]:h[i-1]);if(h[i]>sar){up=true;sar=ep;ep=h[i];af=.02;flip=true;}else if(l[i]<ep){ep=l[i];af=Math.min(af+.02,.2);}}
-     dirs.push(up?1:-1);}
-   add('psar',dirs[L]*(dirs[L]!==dirs[L-1]?1:.7),dirs[L]===1?'زیر قیمت (صعودی)':'بالای قیمت (نزولی)');}
-
-  {const roc=(price/c[L-12]-1)*100;add('roc',Math.tanh(roc/(atrPct*3)),roc.toFixed(2)+'٪');}
-
-  {const per=25;
-   let bh=L-per,bl=L-per;for(let i=L-per;i<=L;i++){if(h[i]>=h[bh])bh=i;if(l[i]<=l[bl])bl=i;}
-   const au=(per-(L-bh))/per*100,ad=(per-(L-bl))/per*100;
-   add('aroon',(au-ad)/100,'↑'+au.toFixed(0)+' ↓'+ad.toFixed(0));}
-
-  {let mv=0,sv=0;for(let i=L-19;i<=L;i++){mv+=h[i]===l[i]?0:((c[i]-l[i])-(h[i]-c[i]))/(h[i]-l[i])*v[i];sv+=v[i];}
-   const cmf=sv?mv/sv:0;add('cmf',clamp(cmf*3,-1,1),cmf.toFixed(2));}
-
-
-  {const per=20,hh=Math.max(...h.slice(L-per,L)),ll=Math.min(...l.slice(L-per,L)),pos=(price-ll)/((hh-ll)||1);
-   add('donchian',price>hh?1:price<ll?-1:(pos-.5)*.8,fmt(ll)+' تا '+fmt(hh));}
-  {const mid=ema(c,20)[L],a10=rma(tr,10)[L],up=mid+2*a10,lo=mid-2*a10;
-   add('keltner',price>up?.7:price<lo?-.7:(price-mid)/((up-mid)||1)*.5,fmt(lo)+' / '+fmt(mid)+' / '+fmt(up));}
-  {const e1=ema(c,15),e2=ema(e1,15),e3=ema(e2,15),tx=(e3[L]/e3[P]-1)*100;
-   add('trix',Math.tanh(tx/(atrPct*.12)),tx.toFixed(3));}
-  {const bp=[],trr=[];for(let i=0;i<n;i++){const pc=i?c[i-1]:c[i];bp.push(c[i]-Math.min(l[i],pc));trr.push(Math.max(h[i],pc)-Math.min(l[i],pc));}
-   const sm=(a,k)=>{let s=0;for(let i=n-k;i<n;i++)s+=a[i];return s;},f=k=>sm(bp,k)/(sm(trr,k)||1),uo=100*(4*f(7)+2*f(14)+f(28))/7;
-   add('ult',uo<30?.8:uo>70?-.8:(uo-50)/60,uo.toFixed(1));}
-  {const e13=ema(c,13)[L],bull=h[L]-e13,bear=l[L]-e13;
-   add('elder',clamp((bull+bear)/(2*atr),-1,1),bull.toFixed(2)+' / '+bear.toFixed(2));}
-  {const w=c.slice(L-19),m=w.reduce((s,x)=>s+x,0)/20,sd=Math.sqrt(w.reduce((s,x)=>s+(x-m)**2,0)/20)||1e-9,z=(price-m)/sd;
-   add('zscore',clamp(-z/3,-1,1),z.toFixed(2));}
-  {const mo=price-c[L-10];add('mom',Math.tanh(mo/(2*atr)),mo.toFixed(2));}
-  {const P0=(h[L]+l[L]+c[L])/3,R1=2*P0-l[L],S1=2*P0-h[L];
-   add('pivot',price>R1?.6:price>P0?.3:price<S1?-.6:-.3,'P '+fmt(P0));}
-  const vAvg=v.slice(L-21,L-1).reduce((s,x)=>s+x,0)/20;
-  let qv=0;for(let i=Math.max(0,L-23);i<=L;i++)qv+=v[i]*c[i];
-  const regime=adxV>=25?'trend':adxV<=18?'range':'mixed';
-  const sr=srLevels(K,atr);
-  return {votes,price,atr,atrPct,sr,volRatio:vAvg?v[L]/vAvg:1,adx:adxV,regime,e20last:e20[L],quoteVol24:qv,closes:c.slice(-130),smc:smcScan(K,atr)};
+  add('ema2050',price>C.e20&&C.e20>C.e50?1:price<C.e20&&C.e20<C.e50?-1:(C.e20>C.e50?.3:-.3),'EMA20 '+fmt(C.e20));
+  add('ema50200',C.e200==null?0:(C.e50>C.e200?.8:-.8),C.e200==null?'داده کافی نیست':(C.e50>C.e200?'EMA50 بالای EMA200':'EMA50 زیر EMA200'));
+  add('linreg',Math.tanh(C.lr.slope*C.lr.m/(2*atr)),'شیب '+(C.lr.slope*C.lr.m/price*100).toFixed(2)+'٪');
+  {const r=C.rsi;add('rsi',r<=30?1:r<=40?.4:r>=70?-1:r>=60?-.4:0,r.toFixed(1));}
+  {const a=C.macd.hist,b=C.macd.hist1;add('macd',a>0?(a>b?1:.4):(a<b?-1:-.4),'هیستوگرام '+(a/price*100).toFixed(3)+'٪');}
+  {const k=C.stoch.k,d=C.stoch.d;add('stoch',k<20?(k>d?1:.4):k>80?(k<d?-1:-.4):(k>d?.2:-.2),'K '+k.toFixed(1)+' / D '+d.toFixed(1));}
+  {const k=C.stochrsi.k,d=C.stochrsi.d;add('stochrsi',k<20?(k>d?1:.4):k>80?(k<d?-1:-.4):(k>d?.2:-.2),'K '+k.toFixed(1));}
+  {const pb=C.bb.pb;add('bb',pb<.05?1:pb<.2?.5:pb>.95?-1:pb>.8?-.5:(pb-.5)*.4,'%B '+(pb*100).toFixed(0));}
+  {const a=C.adx,up=a.pdi>a.mdi;add('adx',(up?1:-1)*Math.min(a.v/40,1),'ADX '+a.v.toFixed(1)+(up?' (+DI برتر)':' (−DI برتر)'));}
+  {const a=C.cci.a,b=C.cci.b;add('cci',a<-100?(a>b?1:.5):a>100?(a<b?-1:-.5):clamp(a/200,-.5,.5),a.toFixed(0));}
+  {const wr=C.wr;add('wpr',wr<-80?.8:wr>-20?-.8:(wr+50)/100,wr.toFixed(0));}
+  {const m=C.mfi;add('mfi',m<20?1:m<35?.4:m>80?-1:m>65?-.4:0,m.toFixed(0));}
+  add('obv',Math.sign(C.obv.v-C.obv.ma)*.7+Math.sign(C.obv.v-C.obv.prev5)*.3,C.obv.v>C.obv.ma?'بالای میانگین':'زیر میانگین');
+  add('vwap',clamp((price-C.vwap)/(atr*1.5),-1,1),'VWAP '+fmt(C.vwap));
+  add('supertrend',C.st.dir,C.st.dir===1?'روند صعودی':'روند نزولی');
+  {const I=C.ichi;add('ichimoku',(price>I.top?.5:price<I.bot?-.5:0)+(I.tk>I.kj?.5:-.5),price>I.top?'بالای ابر':price<I.bot?'زیر ابر':'داخل ابر');}
+  add('psar',C.psar.dir*(C.psar.flip?1:.7),C.psar.dir===1?'زیر قیمت (صعودی)':'بالای قیمت (نزولی)');
+  add('roc',Math.tanh(C.roc12/(atrPct*3)),C.roc12.toFixed(2)+'٪');
+  add('aroon',(C.aroon.up-C.aroon.dn)/100,'↑'+C.aroon.up.toFixed(0)+' ↓'+C.aroon.dn.toFixed(0));
+  add('cmf',clamp(C.cmf*3,-1,1),C.cmf.toFixed(2));
+  {const D=C.donchian;add('donchian',price>D.hi?1:price<D.lo?-1:(D.pos-.5)*.8,fmt(D.lo)+' تا '+fmt(D.hi));}
+  {const k=C.keltner;add('keltner',price>k.up?.7:price<k.lo?-.7:(price-k.mid)/((k.up-k.mid)||1)*.5,fmt(k.lo)+' / '+fmt(k.mid)+' / '+fmt(k.up));}
+  add('trix',Math.tanh(C.trix/(atrPct*.12)),C.trix.toFixed(3));
+  add('ult',C.ult<30?.8:C.ult>70?-.8:(C.ult-50)/60,C.ult.toFixed(1));
+  add('elder',clamp((C.elder.bull+C.elder.bear)/(2*atr),-1,1),C.elder.bull.toFixed(2)+' / '+C.elder.bear.toFixed(2));
+  add('zscore',clamp(-C.z.z/3,-1,1),C.z.z.toFixed(2));
+  add('mom',Math.tanh(C.mom/(2*atr)),C.mom.toFixed(2));
+  {const p=C.pivot;add('pivot',price>p.r1?.6:price>p.p?.3:price<p.s1?-.6:-.3,'P '+fmt(p.p));}
+  const adxV=C.adx.v,regime=adxV>=25?'trend':adxV<=18?'range':'mixed',sr=srLevels(K,atr),c=K.map(k=>k.c);
+  return {votes,price,atr,atrPct,sr,volRatio:C.vAvg?C.vLast/C.vAvg:1,adx:adxV,regime,e20last:C.e20,quoteVol24:C.qv,closes:c.slice(-130),smc:smcScan(K,atr),core:C};
+}
+/* نمای کامل برای پنل تحلیل چارت (جایگزین fullAnalysis؛ همه از TA.core) */
+function fullView(an,tf,live){
+  if(!an||!an.core)return null;const C=an.core,price=live!=null?live:C.price,R={price,atr:C.atr,tf};
+  R.trend={up:C.e9>C.e21,e9:C.e9,e21:C.e21};R.rsi=C.rsi;R.stoch={k:C.stoch.k,d:C.stoch.d};
+  const m=C.macd;let cross='none';if(m.hist>0&&(m.hist1<=0||m.hist2<=0))cross='up';else if(m.hist<0&&(m.hist1>=0||m.hist2>=0))cross='down';
+  R.macd={hist:m.hist,cross,pos:m.hist>0};R.roc=(price/C.c12-1)*100;R.adx={v:C.adx.v,up:C.adx.pdi>C.adx.mdi};
+  R.wr=C.hh14===C.ll14?-50:clamp((C.hh14-price)/(C.hh14-C.ll14)*-100,-100,0);R.cci=C.cci.a;R.mfi=C.mfi;
+  R.obv={up:C.obv.v>C.obv.ma&&C.obv.v>C.obv.prev5,down:C.obv.v<C.obv.ma&&C.obv.v<C.obv.prev5};
+  R.sar={v:C.psar.v,up:C.psar.dir===1};R.aroon={up:C.aroon.up,dn:C.aroon.dn};R.donchian={lo:C.donchian.lo,hi:C.donchian.hi};
+  R.keltner={...C.keltner};R.trix=C.trix;R.ult=C.ult;R.elder={...C.elder};R.hv=C.hv;R.z=(price-C.z.m)/C.z.sd;
+  {const b=C.bb;R.bb={lo:b.lo,mid:b.mid,up:b.up,pb:(price-b.lo)/((b.up-b.lo)||1)};}
+  R.mom=price-C.c10;R.pivot={p:C.pivot.p,r1:C.pivot.r1,s1:C.pivot.s1};R.volRatio=C.vr30.ratio;R.volDays=C.vr30.days;R.volOsc=C.volOsc;R.vwap=C.vwap;
+  R.smc=an.smc;R.sr=an.sr;return R;
 }
 
 
@@ -671,54 +705,6 @@ function smcScan(K,atr){
   if(st.loc!=null)q+=st.loc<.4?.15:st.loc>.6?-.15:0;
   out.score=clamp(s+q,-1,1);
   return out;
-}
-
-function psarCalc(h,l){
-  const n=h.length;let up=true,af=.02,ep=h[0],sar=l[0];
-  for(let i=1;i<n;i++){sar=sar+af*(ep-sar);
-    if(up){sar=Math.min(sar,l[i-1],i>1?l[i-2]:l[i-1]);if(l[i]<sar){up=false;sar=ep;ep=l[i];af=.02;}else if(h[i]>ep){ep=h[i];af=Math.min(af+.02,.2);}}
-    else{sar=Math.max(sar,h[i-1],i>1?h[i-2]:h[i-1]);if(h[i]>sar){up=true;sar=ep;ep=h[i];af=.02;}else if(l[i]<ep){ep=l[i];af=Math.min(af+.02,.2);}}}
-  return {sar,up};
-}
-/* همهٔ مقادیر پنل تحلیل کامل برای یک تایم‌فریم (کندل‌های بسته + قیمت زنده) */
-function fullAnalysis(K,tf,live){
-  const n=K.length;if(n<120)return null;
-  const h=K.map(k=>k.h),l=K.map(k=>k.l),c=K.map(k=>k.c),v=K.map(k=>k.v),L=n-1,P=n-2,price=live!=null?live:c[L],ms=TFMS[tf]||36e5;
-  const tr=K.map((k,i)=>i===0?k.h-k.l:Math.max(k.h-k.l,Math.abs(k.h-c[i-1]),Math.abs(k.l-c[i-1])));
-  const atr=rma(tr,14)[L],tp=K.map(k=>(k.h+k.l+k.c)/3),R={price,atr,tf};
-  const e9=ema(c,9)[L],e21=ema(c,21)[L];R.trend={up:e9>e21,e9,e21};
-  const rs=rsiCalc(c,14);R.rsi=rs[L];
-  const hh14=rMax(h,14),ll14=rMin(l,14),raw=c.map((x,i)=>hh14[i]==null?null:(hh14[i]===ll14[i]?50:(x-ll14[i])/(hh14[i]-ll14[i])*100)),K1=sma(raw,3),D1=sma(K1,3);
-  R.stoch={k:K1[L],d:D1[L]};
-  const e12=ema(c,12),e26=ema(c,26),ml=c.map((_,i)=>e12[i]!=null&&e26[i]!=null?e12[i]-e26[i]:null),sg=ema(ml,9),hs=ml.map((x,i)=>x!=null&&sg[i]!=null?x-sg[i]:null);
-  let cross='none';if(hs[L]>0&&(hs[L-1]<=0||hs[L-2]<=0))cross='up';else if(hs[L]<0&&(hs[L-1]>=0||hs[L-2]>=0))cross='down';
-  R.macd={hist:hs[L],cross,pos:hs[L]>0};
-  R.roc=(price/c[L-14]-1)*100;
-  {const pdm=[null],mdm=[null];for(let i=1;i<n;i++){const u=h[i]-h[i-1],d=l[i-1]-l[i];pdm.push(u>d&&u>0?u:0);mdm.push(d>u&&d>0?d:0);}
-   const a14=rma(tr.map((x,i)=>i===0?null:x),14),pdi=rma(pdm,14).map((x,i)=>x==null||!a14[i]?null:100*x/a14[i]),mdi=rma(mdm,14).map((x,i)=>x==null||!a14[i]?null:100*x/a14[i]);
-   const dx=pdi.map((x,i)=>x==null||mdi[i]==null?null:100*Math.abs(x-mdi[i])/((x+mdi[i])||1));R.adx={v:rma(dx,14)[L]||0,up:pdi[L]>mdi[L]};}
-  R.wr=hh14[L]===ll14[L]?-50:clamp((hh14[L]-price)/(hh14[L]-ll14[L])*-100,-100,0);
-  {const ma=sma(tp,20),md=roll(tp,20,w=>{const m=w.reduce((s,x)=>s+x,0)/20;return w.reduce((s,x)=>s+Math.abs(x-m),0)/20;});R.cci=(tp[L]-ma[L])/(0.015*(md[L]||1e-9));}
-  {let pos=0,neg=0;for(let i=L-13;i<=L;i++){const f=tp[i]*v[i];if(tp[i]>tp[i-1])pos+=f;else if(tp[i]<tp[i-1])neg+=f;}R.mfi=neg===0?100:100-100/(1+pos/neg);}
-  {const obv=[0];for(let i=1;i<n;i++)obv.push(obv[i-1]+(c[i]>c[i-1]?v[i]:c[i]<c[i-1]?-v[i]:0));const om=sma(obv,20);R.obv={up:obv[L]>om[L]&&obv[L]>obv[L-5],down:obv[L]<om[L]&&obv[L]<obv[L-5]};}
-  {const ps=psarCalc(h,l);R.sar={v:ps.sar,up:ps.up};}
-  {const per=25;let bh=L-per,bl=L-per;for(let i=L-per;i<=L;i++){if(h[i]>=h[bh])bh=i;if(l[i]<=l[bl])bl=i;}R.aroon={up:(per-(L-bh))/per*100,dn:(per-(L-bl))/per*100};}
-  R.donchian={lo:Math.min(...l.slice(L-19)),hi:Math.max(...h.slice(L-19))};
-  {const mid=ema(c,20)[L],a10=rma(tr,10)[L];R.keltner={lo:mid-2*a10,mid,up:mid+2*a10};}
-  {const e1=ema(c,15),e2=ema(e1,15),e3=ema(e2,15);R.trix=(e3[L]/e3[P]-1)*100;}
-  {const bp=[],trr=[];for(let i=0;i<n;i++){const pc=i?c[i-1]:c[i];bp.push(c[i]-Math.min(l[i],pc));trr.push(Math.max(h[i],pc)-Math.min(l[i],pc));}
-   const sm2=(a,k)=>{let s=0;for(let i=n-k;i<n;i++)s+=a[i];return s;},f=k=>sm2(bp,k)/(sm2(trr,k)||1);R.ult=100*(4*f(7)+2*f(14)+f(28))/7;}
-  {const e13=ema(c,13)[L];R.elder={bull:h[L]-e13,bear:l[L]-e13};}
-  {const rets=[];for(let i=L-19;i<=L;i++)rets.push(Math.log(c[i]/c[i-1]));const m=rets.reduce((s,x)=>s+x,0)/20,sd=Math.sqrt(rets.reduce((s,x)=>s+(x-m)**2,0)/19);R.hv=sd*Math.sqrt(365*864e5/ms)*100;}
-  {const w=c.slice(L-19),m=w.reduce((s,x)=>s+x,0)/20,sd=Math.sqrt(w.reduce((s,x)=>s+(x-m)**2,0)/20)||1e-9;R.z=(price-m)/sd;
-   const mid=m,up=m+2*sd,lo=m-2*sd,pb=(price-lo)/((up-lo)||1);R.bb={lo,mid,up,pb};}
-  R.mom=price-c[L-10];
-  {const P0=(h[L]+l[L]+c[L])/3;R.pivot={p:P0,r1:2*P0-l[L],s1:2*P0-h[L]};}
-  {const m=Math.min(L-1,Math.round(30*864e5/ms));let s=0;for(let i=L-m;i<L;i++)s+=v[i];R.volRatio=v[L-1]/(s/m||1);R.volDays=Math.min(30,Math.round(m*ms/864e5));
-   const ev5=ema(v,5)[L],ev20=ema(v,20)[L];R.volOsc=(ev5/ev20-1)*100;
-   let pv=0,vv=0;for(let i=L-19;i<=L;i++){pv+=tp[i]*v[i];vv+=v[i];}R.vwap=vv?pv/vv:price;}
-  R.smc=smcScan(K,atr);R.sr=srLevels(K,atr);
-  return R;
 }
 
 function htfTrend(K){
@@ -780,28 +766,31 @@ function buildPlan(an,dir,live,P){
 }
 
 function scoreSignal(an,st,ctx,entryPrice){
-  st=st||{};ctx=ctx||{};const w=st.w||{},fx=st.fxw||{},P=st.params||DEFAULT_PARAMS;
+  st=st||{};ctx=ctx||{};const w=st.w||{},fx=st.fxw||{},P=modeParams(st.params||DEFAULT_PARAMS);
   const raw=rawOf(an,w,an.regime),dir=raw>=0?'LONG':'SHORT',sg=dir==='LONG'?1:-1;
   const agree=an.votes.filter(x=>x.vote*sg>.25).length,against=an.votes.filter(x=>x.vote*sg<-.25).length;
   const live=entryPrice||an.price,atr=an.atr,{sup,res}=an.sr;
-  let sc=clamp(Math.abs(raw)/.45,0,1)*56+clamp((agree-against)/(an.votes.length*.7),0,1)*18;
+  const bd={};
+  bd.ind=clamp(Math.abs(raw)/.45,0,1)*56;
+  bd.agree=clamp((agree-against)/(an.votes.length*.7),0,1)*18;
   const al=(r,t)=>Math.abs(r||0)<t?0:(Math.sign(r)===sg?1:-1),fm=fx.mtf??1;
-  sc+=(al(ctx.h4,.12)*10+(ctx.d1||0)*sg*5+al(ctx.m15,.08)*4)*fm;
-  sc+=(ctx.news||0)*sg*7*(fx.news??1);
-  sc+=(ctx.deriv||0)*sg*7*(fx.deriv??1);
-  sc+=an.smc.score*sg*8*(fx.smc??1);
-  if(ctx.fng!=null){if(ctx.fng<=20)sc+=sg>0?2:-3;else if(ctx.fng>=80)sc+=sg>0?-3:2;}
-  if(ctx.btc!=null){const c=Math.abs(ctx.corr??.6),o=al(ctx.btc,.2);sc+=o===-1?-12*c*(fx.btc??1):o===1?4*c:0;}
-  if(ctx.h4s){const al4=sg>0?'bull':'bear';sc+=ctx.h4s===al4?6:(ctx.h4s==='range'?0:-10);}
-  {const ext=(live-an.e20last)*sg/atr;if(ext>2.2)sc-=10;}
-  if(ctx.eventSoon)sc-=10;
+  bd.mtf=(al(ctx.h4,.12)*10+(ctx.d1||0)*sg*5+al(ctx.m15,.08)*4)*fm;
+  bd.news=(ctx.news||0)*sg*7*(fx.news??1);
+  bd.deriv=(ctx.deriv||0)*sg*7*(fx.deriv??1);
+  bd.smc=an.smc.score*sg*8*(fx.smc??1);
+  bd.fng=0;if(ctx.fng!=null){if(ctx.fng<=20)bd.fng=sg>0?2:-3;else if(ctx.fng>=80)bd.fng=sg>0?-3:2;}
+  bd.btc=0;if(ctx.btc!=null){const c=Math.abs(ctx.corr??.6),o=al(ctx.btc,.2);bd.btc=o===-1?-12*c*(fx.btc??1):o===1?4*c:0;}
+  bd.h4s=0;if(ctx.h4s){const al4=sg>0?'bull':'bear';bd.h4s=ctx.h4s===al4?6:(ctx.h4s==='range'?0:-10);}
+  {const ext=(live-an.e20last)*sg/atr;bd.ext=ext>2.2?-10:0;}
+  bd.event=ctx.eventSoon?-10:0;
   const plan=buildPlan(an,dir,live,P),opp=dir==='LONG'?res[0]:sup[0],own=dir==='LONG'?sup[0]:res[0];
-  if(opp){const d=Math.abs(opp.p-plan.entry)/atr;sc+=d<1?-12:d<2?-5:0;}
-  if(own&&Math.abs(plan.entry-own.p)/atr<=1.2)sc+=6;
-  if(an.volRatio>1.4)sc+=4;
-  sc=clamp(Math.round(sc),0,100);
+  bd.opp=0;if(opp){const d=Math.abs(opp.p-plan.entry)/atr;bd.opp=d<1?-12:d<2?-5:0;}
+  bd.own=own&&Math.abs(plan.entry-own.p)/atr<=1.2?6:0;
+  bd.vol=an.volRatio>1.4?4:0;
+  let sc=Object.values(bd).reduce((x,y)=>x+y,0);
+  sc=clamp(Math.round(sc),0,100);for(const k in bd)bd[k]=Math.round(bd[k]);
   const fxv={mtf:clamp((ctx.h4||0)+(ctx.d1||0)*.5+(ctx.m15||0)*.5,-1,1),news:ctx.news||0,deriv:ctx.deriv||0,smc:an.smc.score,btc:ctx.btc||0};
-  return {dir,score:sc,raw,agree,against,plan,fx:fxv,regime:an.regime};
+  return {dir,score:sc,raw,agree,against,plan,fx:fxv,regime:an.regime,breakdown:bd};
 }
 /* امتیاز تنظیم‌شده با آنچه سیستم از نتایج یاد گرفته (کالیبراسیون باند، نماد، رژیم) */
 function adjusted(score,feat,st){
@@ -917,7 +906,8 @@ const BROADCAST={
    اگر شروع دوره نزدیک یکی از آن‌ها باشد، امتیازها کمی کم می‌شود. */
 const EVENTS=[];
 
-const CYC=10*36e5,PER=10,R_DEF=5,MS15=9e5,KEY='radar.v6';
+const CYC=10*36e5,R_DEF=5,MS15=9e5,KEY='radar.v6';
+const PER=modeCfg().per;
 
 /* ======================================================================
    داده: Binance، آینهٔ Binance، Bybit، OKX (مستقیم از مرورگر کاربر)
@@ -926,7 +916,21 @@ const $=s=>document.querySelector(s);
 const fa=n=>Number(n).toLocaleString('fa-IR');
 const pct=(a,b)=>{const p=(a-b)/b*100;return (p>=0?'+':'')+p.toFixed(2)+'٪';};
 function ago(t,now){const m=Math.max(0,Math.round((now-t)/6e4));if(m<1)return 'همین الان';if(m<60)return fa(m)+' دقیقه پیش';const h=Math.floor(m/60);return fa(h)+' ساعت'+(m%60?' و '+fa(m%60)+' دقیقه':'')+' پیش';}
-async function jget(u,ms=12000){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);try{const r=await fetch(u,{signal:c.signal});if(!r.ok){const e=new Error('HTTP '+r.status);e.http=true;throw e;}return await r.json();}finally{clearTimeout(t);}}
+async function jget(u,ms=12000){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  try{
+    const r=await fetch(u,{signal:c.signal});
+    if(!r.ok){
+      const e=new Error('HTTP '+r.status);e.http=true;
+      if(r.status===403||r.status===451)e.code='GEO';else if(r.status===429)e.code='RATE';else if(r.status>=500)e.code='SERVER';
+      throw e;
+    }
+    return await r.json();
+  }catch(err){
+    if(err&&err.name==='AbortError'){const e=new Error('timeout');e.code='TIMEOUT';e.http=true;throw e;}
+    throw err;
+  }finally{clearTimeout(t);}
+}
 const binSrc=base=>({max:1000,
   klines:async(s,tf,n)=>(await jget(`${base}/api/v3/klines?symbol=${s}USDT&interval=${tf}&limit=${n}`)).map(k=>({t:k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]})),
   prices:async syms=>{let d;try{d=await jget(base+'/api/v3/ticker/price?symbols='+encodeURIComponent(JSON.stringify(syms.map(s=>s+'USDT'))));}catch(e){if(!e.http)throw e;d=(await jget(base+'/api/v3/ticker/price')).filter(x=>x.symbol.endsWith('USDT'));}const m={};d.forEach(x=>m[x.symbol.slice(0,-4)]=+x.price);return m;}});
@@ -940,10 +944,11 @@ const SRC=[binSrc('https://api.binance.com'),binSrc('https://data-api.binance.vi
     return d.data.map(k=>({t:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]})).reverse();},
   prices:async()=>{const m={};(await jget('https://www.okx.com/api/v5/market/tickers?instType=SPOT')).data.forEach(x=>{if(x.instId.endsWith('-USDT'))m[x.instId.slice(0,-5)]=+x.last;});return m;}}];
 let srcIdx=0,lastSrc=0;
+const ecR=e=>({GEO:3,RATE:2,TIMEOUT:1}[e&&e.code]||0);
 async function klines(sym,tf,n){
   let netOnly=true,err;
   for(let k=0;k<SRC.length;k++){const i=(srcIdx+k)%SRC.length;
-    try{const r=await SRC[i].klines(sym,tf,Math.min(n,SRC[i].max));if(i!==srcIdx&&netOnly)srcIdx=i;lastSrc=i;return r;}catch(e){err=e;if(e.http)netOnly=false;}}
+    try{const r=await SRC[i].klines(sym,tf,Math.min(n,SRC[i].max));if(i!==srcIdx&&netOnly)srcIdx=i;lastSrc=i;return r;}catch(e){if(!err||ecR(e)>=ecR(err))err=e;if(e.http)netOnly=false;}}
   throw err||new Error('fail');
 }
 const LIM={'15m':1000,'1h':1000,'4h':500,'1d':400};
@@ -1028,11 +1033,11 @@ async function buildBoardAt(j,W,prev){
      const rr=x.sc.plan.R/x.sc.plan.entry,okR=rr>=.003&&rr<=.09;
      const structOK=st.trend!==(sg>0?'bear':'bull')||st.choch===dd,chasing=(x.live-x.an.e20last)*sg/x.an.atr>2.2;
      const btcAgainst=ctx.btc!=null&&Math.abs(ctx.btc)>=.25&&Math.sign(ctx.btc)===-sg;
-     x.tier=(okR&&x.sc.score>=66&&x.tfAgree>=2&&!opp(ctx.h4,.08)&&(ctx.d1||0)*sg>=0&&structOK&&!chasing&&!btcAgainst)?'A':
-            (okR&&x.sc.score>=56&&x.tfAgree>=2&&!opp(ctx.h4,.2)&&!chasing&&!btcAgainst)?'B':'C';}
+     x.tier=(okR&&x.sc.score>=modeCfg().minScore+6&&x.tfAgree>=2&&!opp(ctx.h4,.08)&&(ctx.d1||0)*sg>=0&&structOK&&!chasing&&!btcAgainst)?'A':
+            (okR&&x.sc.score>=modeCfg().minScore&&x.tfAgree>=2&&!opp(ctx.h4,.2)&&!chasing&&!btcAgainst)?'B':'C';}
     await sleep0();
   }
-  const cand=top.filter(x=>x.ctx).sort((a,b)=>(a.tier<b.tier?-1:a.tier>b.tier?1:0)||b.adj-a.adj||(a.sym<b.sym?-1:1)),picked=[],dc={LONG:0,SHORT:0};
+  const cand=top.filter(x=>x.ctx&&x.sc.score>=modeCfg().minScore).sort((a,b)=>(a.tier<b.tier?-1:a.tier>b.tier?1:0)||b.adj-a.adj||(a.sym<b.sym?-1:1)),picked=[],dc={LONG:0,SHORT:0};
   const okR=x=>{const r=x.sc.plan.R/x.sc.plan.entry;return r>=.003&&r<=.09;};
   const pass=(tiers,max)=>{for(const x of cand){if(picked.length>=max)break;if(picked.includes(x)||!tiers.includes(x.tier))continue;
     if(!okR(x)||dc[x.sc.dir]>=7)continue;
@@ -1043,14 +1048,14 @@ async function buildBoardAt(j,W,prev){
   return picked.map(x=>{const p=x.sc.plan,pend=p.type==='limit',votes={};x.an.votes.forEach(v=>votes[v.id]=v.vote);
     return {id:j+'-'+x.sym,cyc:j,sym:x.sym,dir:x.sc.dir,entry:p.entry,type:p.type,pending:pend,filled:!pend,expAt:pend?T+P.pendingHours*36e5:null,
       tp:p.tp,sl:p.sl,curSl:p.sl,R:p.R,score:x.sc.score,adj:Math.round(x.adj),regime:x.sc.regime,tfAgree:x.tfAgree,
-      newsL:x.ctx.news>.15?'مثبت':x.ctx.news<-.15?'منفی':'خنثی',riskPct:riskPct(x.sc.score),why:whyOf(x),tier:x.tier,votes,fx:x.sc.fx,
+      newsL:x.ctx.news>.15?'مثبت':x.ctx.news<-.15?'منفی':'خنثی',riskPct:riskPct(x.sc.score),why:whyOf(x),breakdown:x.sc.breakdown,tier:x.tier,votes,fx:x.sc.fx,
       t:T,chk:T,stage:0,closed:false,result:null,mfe:0,mae:0};});
 }
 
 let PROG=()=>{};
 async function computeAll(k){
-  let R=R_DEF;
-  try{const b=await getK('BTC','1h');while(R>0&&sliceAt(b,'1h',(k-R)*CYC,300).length<280)R--;}catch(e){throw new Error('no data');}
+  let R=LITE?2:R_DEF;
+  try{const b=await getK('BTC','1h');while(R>0&&sliceAt(b,'1h',(k-R)*CYC,300).length<280)R--;}catch(e){if(e&&e.code)throw e;throw new Error('no data');}
   const all=[];
   for(let j=k-R;j<=k;j++){
     PROG(`تحلیل ${fa(UNIVERSE.length)} ارز و یادگیری از دوره‌های قبل (${fa(j-(k-R)+1)} از ${fa(R+1)})`,(j-(k-R))/(R+1));
@@ -1103,13 +1108,24 @@ function dailyRows(){
 const sgn=(x,d=1)=>(x>=0?'+':'')+x.toFixed(d);
 /* دلایل سیگنال */
 function whyOf(x){
-  const sg=x.sc.dir==='LONG'?1:-1,out=[];
-  const top=[...x.an.votes].map(v=>({n:v.name,s:v.vote*sg})).filter(v=>v.s>.3).sort((a,b)=>b.s-a.s).slice(0,3).map(v=>v.n);out.push(...top);
+  const sg=x.sc.dir==='LONG'?1:-1,pros=[],cons=[];
+  const sorted=[...x.an.votes].map(v=>({n:v.name,s:v.vote*sg})).sort((a,b)=>Math.abs(b.s)-Math.abs(a.s));
+  sorted.filter(v=>v.s>.25).slice(0,3).forEach(v=>pros.push(v.n));
+  sorted.filter(v=>v.s<-.25).slice(0,2).forEach(v=>cons.push(v.n));
   const sm=x.an.smc,st=sm.struct,d=sg>0?'bull':'bear';
-  if(st.choch===d)out.push('CHOCH');else if(st.bos===d)out.push('BOS');
-  if(sm.sweep&&sm.sweep.dir===d)out.push('شکار نقدینگی');
-  if(sm.ob[d])out.push('اردر بلاک');
-  return out.slice(0,6);
+  if(st.choch===d)pros.push('CHOCH');else if(st.bos===d)pros.push('BOS');
+  if(sm.sweep&&sm.sweep.dir===d)pros.push('شکار نقدینگی');
+  if(sm.ob[d])pros.push('اردر بلاک');
+  return {pros:pros.slice(0,5),cons:cons.slice(0,3)};
+}
+/* سازگار با سیگنال‌های قدیمی ذخیره‌شده (آرایه) و جدید (آبجکت) */
+const whyPros=w=>Array.isArray(w)?w:((w&&w.pros)||[]),whyCons=w=>(w&&!Array.isArray(w)&&w.cons)||[];
+const SBL={ind:'اندیکاتورها',agree:'هم‌جهتی',mtf:'چند تایم‌فریم',news:'اخبار',deriv:'فاندینگ/OI',smc:'اسمارت مانی',fng:'ترس و طمع',btc:'بیت‌کوین',h4s:'ساختار ۴ ساعته',ext:'کشیدگی قیمت',event:'رویداد مهم',opp:'مانع مقابل',own:'حمایت/مقاومت خودی',vol:'حجم'};
+function breakdownHTML(s){
+  const bd=s.breakdown;if(!bd)return '';
+  const rows=Object.entries(bd).filter(([k,v])=>v!==0||k==='ind').map(([k,v])=>`<div class="sb-row"><span>${SBL[k]||k}</span><div class="sb-bar"><i style="width:${Math.min(100,Math.abs(v)/56*100)}%;background:${v>=0?'#0ecb81':'#f6465d'}"></i></div><b class="num">${v>=0?'+':'−'}${fa(Math.abs(v))}</b></div>`).join('');
+  const sum=Object.values(bd).reduce((a,b)=>a+b,0),diff=s.score-sum;
+  return `<details class="sbx"><summary>چرا این امتیاز؟ (${fa(s.score)})</summary><div class="score-breakdown">${rows}${Math.abs(diff)>=1?`<div class="sb-row"><span>سقف/کف ۰ تا ۱۰۰</span><b class="num">${diff>=0?'+':'−'}${fa(Math.abs(diff))}</b></div>`:''}<div class="sb-total"><span>جمع</span><b class="num">${fa(s.score)}</b></div></div></details>`;
 }
 
 /* ======================================================================
@@ -1434,6 +1450,12 @@ function demoOrder(dir){
   toast(F.orders.length>before?'سفارش لیمیت ثبت شد ✓':'سفارش اجرا شد ✓');
   FORM.tab=F.orders.length>before?'ord':'pos';FORM.hint=null;updateDemo();
 }
+/* حجم پوزیشن بر اساس ریسک واقعی سیگنال: ریسک (٪ از اکوییتی) ÷ فاصلهٔ SL، با سقف موجودی */
+function demoUsdFromRisk(s,c){
+  const equity=fEquity(),riskUsd=equity*((s.riskPct||.5)/100),slDist=Math.abs(s.sl-s.entry)/s.entry;
+  const notional=slDist>0?riskUsd/slDist:0,maxNotional=fAvail()*c.lev/(1+c.lev*F_FEE_T);
+  return Math.min(notional||fAvail()*.05*c.lev,maxNotional);
+}
 function demoFromSignal(id){
   const s=ALL.find(x=>x.id===id)||HIST[id];if(!s){toast('سیگنال پیدا نشد.');return;}
   const stt=statusOf(s);if(!['ACT','PEND'].includes(stt)){toast('این سیگنال دیگر قابل ورود نیست.');return;}
@@ -1441,7 +1463,7 @@ function demoFromSignal(id){
   if(!demoBlocked(s.sym)){c.lev=Math.min(levOf(s),maxLev(s.sym));c.mode='isolated';fSave();}
   FORM={...FORM,sym:s.sym,type:stt==='PEND'?'limit':'market',price:stt==='PEND'?String(+s.entry.toPrecision(8)):'',tpsl:true,
     tp:String(+s.tp[1].toPrecision(8)),sl:String(+s.sl.toPrecision(8)),hint:s.dir,tab:'pos',
-    usd:String(Math.max(5,Math.floor(fAvail()*.05*c.lev)))};
+    usd:String(Math.max(5,Math.floor(demoUsdFromRisk(s,c))))};
   setTab('demo');syncFormInputs();updateDemo();pollLive();
   toast('فرم از سیگنال پر شد؛ جهت پیشنهادی با کادر ضخیم مشخص است. تأیید کن.');
 }
@@ -1479,9 +1501,11 @@ function card(s,now){
     <div class="crow sym"><span>نماد</span><b class="num">${s.sym}/USDT</b></div>
     <div class="ctags"><span class="ct y">${fa(levOf(s))}×</span><span class="ct">${s.type==='limit'?'لیمیت':'بازاری'}</span><span class="ct">${fa(s.tfAgree||0)} از ۳ تایم‌فریم</span></div>
     <div class="roe">با اهرم ${fa(levOf(s))}×: TP1 ≈ +${fa(Math.round(t1p*levOf(s)))}٪ | SL ≈ −${fa(Math.round(Math.min(100,slp*levOf(s))))}٪ از مارجین</div>
-    ${s.why&&s.why.length?`<div class="why">${s.why.slice(0,4).join('، ')}</div>`:''}
-    <div class="cst ${cls}">${st}</div>${live?`<div class="live num">${live}</div>`:''}
-    <div class="cbtn"><button class="btn xs" data-copy="${s.id}">کپی</button><button class="btn xs c" data-an="${s.sym}" data-sig="${s.id}">تحلیل</button>${canDemo?`<button class="btn xs y" data-demo="${s.id}">دمو</button>`:''}</div>
+    ${whyPros(s.why).length?`<div class="why" style="color:#0a6b3c">✅ ${whyPros(s.why).slice(0,4).join('، ')}</div>`:''}${whyCons(s.why).length?`<div class="why" style="color:#a02020">⚠️ مخالف: ${whyCons(s.why).join('، ')}</div>`:''}
+    ${breakdownHTML(s)}
+    <div class="cst ${cls}">${st}</div>${live?`<div class="live num">${live}</div>`:''}${stt==='PEND'&&s.expAt?`<div class="live num" style="font-size:10px">انقضا: ${fa(Math.max(0,Math.round((s.expAt-now)/36e5)))} ساعت دیگر</div>`:''}
+    <div class="cbtn"><button class="btn xs" data-copy="${s.id}">کپی</button><button class="btn xs c" data-an="${s.sym}" data-sig="${s.id}">تحلیل</button><button class="btn xs y" data-copilot="${s.id}">چه کنم؟</button>${canDemo?`<button class="btn xs y" data-demo="${s.id}">دمو</button>`:''}</div>
+    <div class="note" style="font-size:9.5px;opacity:.6;text-align:center;margin-top:4px">توصیهٔ مالی نیست · SL اجباری</div>
   </article>`;
 }
 function ph(i,text){return `<article class="card ph"><div class="chd"><span class="dir">سیگنال ${fa(i)}</span></div><div class="tm">${text}</div>${crow('قیمت ورود')}${crow('TP1')}${crow('TP2')}${crow('TP3')}${crow('SL')}<div class="crow sym"><span>نماد</span><b>—</b></div></article>`;}
@@ -1514,16 +1538,49 @@ function renderFree(){
   $('#cycleTxt').textContent=`دورهٔ ساعت ${tt}: ${fa(board.length)} سیگنال`;
   $('#cycleLeft').textContent=`${fa(h)} ساعت و ${fa(mi)} دقیقه تا سیگنال‌های بعدی`;
   if(!busy)$('#cycleBar').style.width=Math.min(100,(now-T)/CYC*100)+'%';
-  const slots=[];
-  for(let i=0;i<PER;i++){
-    if(board[i])slots.push(statusOf(board[i])==='SL'?stoppedTile(board[i]):card(board[i],now));
-    else slots.push(ph(i+1,busy?'در حال تحلیل':(ALL.some(s=>s.cyc===k)?'بازار شرایط کافی نداد':'بدون داده')));
+  const cnt=freeCounts(),fbtn=(k,t,n)=>`<button data-ff="${k}" class="${FREE_FILTER===k?'on':''}">${t} (${fa(n)})</button>`;
+  $('#ffBox').innerHTML=`<div class="note" style="text-align:center;margin:0 0 6px">حالت: <b>${modeCfg().label}</b> · حداقل امتیاز ${fa(modeCfg().minScore)}${LITE?' · حالت سبک (دستگاه با منابع محدود)':''}</div><div class="seg" id="freeFilter" style="margin:0 0 8px">${fbtn('live','فعال',cnt.live)}${fbtn('won','سودده',cnt.won)}${fbtn('all','همه',cnt.all)}</div>`;
+  if(FREE_FILTER==='live'){
+    const slots=[];
+    for(let i=0;i<PER;i++){
+      if(board[i])slots.push(statusOf(board[i])==='SL'?stoppedTile(board[i]):card(board[i],now));
+      else slots.push(ph(i+1,busy?'در حال تحلیل':(ALL.some(s=>s.cyc===k)?'بازار شرایط کافی نداد':'بدون داده')));
+    }
+    $('#feed').innerHTML=slots.join('');
+    const older=allSigs().filter(s=>s.cyc<k&&ACTIVE_ST.includes(statusOf(s))).sort((a,b)=>b.t-a.t).slice(0,30);
+    $('#olderBox').innerHTML=older.length?`<h3 class="sec">سیگنال‌های فعال از دوره‌های قبل</h3><div class="grid2">${older.map(s=>card(s,now)).join('')}</div>`:'';
+  }else{
+    const list=allSigs().filter(FREE_FILTER==='won'?isWon:()=>true).sort((a,b)=>b.t-a.t).slice(0,60);
+    $('#feed').innerHTML=list.length?list.map(s=>card(s,now)).join(''):'<p class="note" style="grid-column:1/-1">'+(FREE_FILTER==='won'?'هنوز سیگنال سودده‌ای ثبت نشده است. با باز بودن صفحه در دوره‌های بعد پر می‌شود.':'هنوز سیگنالی ثبت نشده است.')+'</p>';
+    $('#olderBox').innerHTML='';
   }
-  $('#feed').innerHTML=slots.join('');
-  const note=!busy&&board.length&&board.length<PER?`<p class="note">فقط ${fa(board.length)} سیگنال از فیلتر کیفیت گذشت (چند تایم‌فریم هم‌جهت، ساختار بازار، بدون مخالفت بیت‌کوین). سیگنال ضعیف برای پر کردن جا نیامده است.</p>`:'';
-  $('#feedNote').innerHTML=note;safe(()=>cycGauges(board));
+  const note=FREE_FILTER==='live'&&!busy&&board.length&&board.length<PER?`<p class="note">فقط ${fa(board.length)} سیگنال از فیلتر کیفیت گذشت (چند تایم‌فریم هم‌جهت، ساختار بازار، بدون مخالفت بیت‌کوین). سیگنال ضعیف برای پر کردن جا نیامده است.</p>`:'';
+  $('#feedNote').innerHTML=note;safe(()=>cycGauges(board));safe(renderStats);
+}
+function renderStats(){
+  const all=Object.values(HIST),res=all.filter(s=>s.filled&&(s.stage>=1||s.result==='SL')),tp=res.filter(s=>s.stage>=1).length,sl=res.length-tp;
+  $('#prevStats').innerHTML=`<div class="stat"><b class="num">${fa(res.length)}</b><span>سیگنال به نتیجه رسیده</span></div><div class="stat"><b class="num">${fa(tp)}</b><span>رسیدن به سود</span></div><div class="stat"><b class="num">${fa(sl)}</b><span>استاپ</span></div><div class="stat"><b class="num">${res.length?fa(Math.round(tp/res.length*100))+'٪':'—'}</b><span>نرخ برد</span></div>`;
+  $('#prevStats').insertAdjacentHTML('beforeend',perfCells());
+  $('#dailyBox').innerHTML=dailyTable();
 }
 
+function perfStats(){
+  const closed=Object.values(HIST).filter(s=>s.closed&&s.filled&&realR(s)!=null);
+  if(closed.length<5)return null;
+  const rs=closed.map(realR),wins=rs.filter(r=>r>0),losses=rs.filter(r=>r<0),sw=wins.reduce((a,b)=>a+b,0),sl=losses.reduce((a,b)=>a+b,0);
+  const winRate=wins.length/rs.length*100,expectancy=rs.reduce((a,b)=>a+b,0)/rs.length,profitFactor=sl<0?Math.abs(sw/sl):(sw>0?null:0);
+  const byDay={};closed.forEach(s=>{const k=dayKey(s.t);(byDay[k]=byDay[k]||[]).push(realR(s));});
+  const da=Object.values(byDay).map(a=>a.reduce((x,y)=>x+y,0)/a.length),mean=da.reduce((a,b)=>a+b,0)/(da.length||1),sd=Math.sqrt(da.reduce((a,b)=>a+(b-mean)**2,0)/(da.length||1));
+  const sharpe=da.length>=3&&sd>0?mean/sd*Math.sqrt(365):null;
+  let eq=0,peak=0,mdd=0;[...closed].sort((a,b)=>a.t-b.t).forEach(s=>{eq+=realR(s);peak=Math.max(peak,eq);mdd=Math.max(mdd,peak-eq);});
+  return {n:rs.length,winRate,profitFactor,expectancy,sharpe,mdd,total:eq};
+}
+function perfCells(){
+  const p=perfStats();
+  if(!p)return '<p class="note" style="grid-column:1/-1">آمار حرفه‌ای (Profit Factor، Sharpe، افت سرمایه) بعد از ۵ سیگنال بسته‌شده نمایش داده می‌شود.</p>';
+  const c=(v,l)=>`<div class="stat"><b class="num">${v}</b><span>${l}</span></div>`;
+  return c(fa(Math.round(p.winRate))+'٪','نرخ برد واقعی')+c(p.profitFactor==null?'∞':(p.profitFactor>=1?'▲ ':'▼ ')+p.profitFactor.toFixed(2),'Profit Factor')+c((p.expectancy>=0?'▲ ':'▼ ')+Math.abs(p.expectancy).toFixed(2)+'R','Expectancy')+c(p.sharpe==null?'—':p.sharpe.toFixed(2),'Sharpe (تقریبی)')+c(p.mdd.toFixed(1)+'R','بیشترین افت')+c((p.total>=0?'▲ ':'▼ ')+Math.abs(p.total).toFixed(1)+'R','جمع نتیجه');
+}
 /* ---------- بخش ۲: سیگنال قبلی (فقط سودده و باز) ---------- */
 function dailyTable(){
   const rows=dailyRows();if(!rows.length)return '<p class="note">هنوز دیتایی نیست.</p>';
@@ -1535,16 +1592,6 @@ function dailyTable(){
     learn+=`ضریب استاپ ${fa(s.slAtr)} برابر ATR و TP1 ${fa(s.tp1R)} برابر ریسک؛ بعد از هر دوره از نتایج اصلاح می‌شوند.</p>`;}
   return `<div class="scroll"><table class="tb"><thead><tr><th>روز</th><th>سیگنال</th><th>TP1</th><th>TP2/3</th><th>SL</th><th>برد</th><th>بازده (اهرم پیشنهادی)</th></tr></thead><tbody>${tr}</tbody></table></div>${learn}<p class="note">بازده با مارجین برابر برای هر سیگنال و خروج ۴۰٪/۳۰٪/۳۰٪ در TP1/TP2/TP3 حساب شده، بدون کارمزد.</p>`;
 }
-function renderPrev(){
-  const now=Date.now(),all=Object.values(HIST);
-  const res=all.filter(s=>s.filled&&(s.stage>=1||s.result==='SL')),tp=res.filter(s=>s.stage>=1).length,sl=res.length-tp;
-  const list=all.filter(s=>s.cyc<K_NOW&&(s.stage>=1||!s.closed)).sort((a,b)=>b.t-a.t).slice(0,60);
-  const avg=res.length?res.reduce((a,s)=>a+(roe(s)||0),0)/res.length:null;
-  $('#prevStats').innerHTML=`<div class="stat"><b class="num">${fa(res.length)}</b><span>سیگنال به نتیجه رسیده</span></div><div class="stat"><b class="num">${fa(tp)}</b><span>رسیدن به سود</span></div><div class="stat"><b class="num">${fa(sl)}</b><span>استاپ</span></div><div class="stat"><b class="num">${res.length?fa(Math.round(tp/res.length*100))+'٪':'—'}</b><span>نرخ برد</span></div>`;
-  $('#dailyBox').innerHTML=dailyTable();
-  $('#prevGrid').innerHTML=list.length?list.map(s=>card(s,now)).join(''):'<p class="note" style="grid-column:1/-1">هنوز سیگنال سودده‌ای ثبت نشده است. با باز بودن صفحه در دوره‌های بعد پر می‌شود.</p>';
-}
-
 /* ---------- بخش ۴: چارت تمام‌صفحه ---------- */
 const SECS=['ساختار و نقدینگی','داده بازار','اندیکاتورهای پیشرفته','نوسان و حجم','روند و مومنتوم','قدرت اندیکاتورها','حمایت و مقاومت'];
 function chipsHTML(){
@@ -1553,7 +1600,7 @@ function chipsHTML(){
 }
 function sheetHTML(){
   const M=CT,s=M.sig;let h=`<div class="shead"><b>تحلیل ${M.sym}/${M.tf}</b><button class="btn xs" id="sheetX" aria-label="بستن">✕</button></div>`;
-  if(s){const L=s.dir==='LONG';h+=`<div class="box" style="margin-top:0"><b>${s.sym}/USDT</b> <span class="pill ${L?'l':'s'}">${L?'لانگ':'شورت'}</span> قدرت <b class="num">${fa(s.score)}٪</b>${s.why&&s.why.length?`<div class="why" style="padding:4px 0 0">دلایل سیگنال: ${s.why.join('، ')}</div>`:''}
+  if(s){const L=s.dir==='LONG';h+=`<div class="box" style="margin-top:0"><b>${s.sym}/USDT</b> <span class="pill ${L?'l':'s'}">${L?'لانگ':'شورت'}</span> قدرت <b class="num">${fa(s.score)}٪</b>${whyPros(s.why).length?`<div class="why" style="padding:4px 0 0">دلایل سیگنال: ${whyPros(s.why).join('، ')}</div>`:''}${whyCons(s.why).length?`<div class="why" style="padding:4px 0 0">مخالف: ${whyCons(s.why).join('، ')}</div>`:''}
     ${['ACT','PEND'].includes(statusOf(s))?`<div style="margin-top:8px"><button class="btn xs" data-demo="${s.id}">ورود دمو با اهرم ${fa(levOf(s))}×</button></div>`:''}</div>`;}
   h+=topHTML();
   h+=`<div class="seg wrapseg" id="secSeg">${SECS.map((t,i)=>`<button data-sec="${i}" class="${M.sec===i?'on':''}">${t}</button>`).join('')}</div><div class="box" id="secBody">${M.loading?'<p class="note">در حال دریافت و تحلیل...</p>':M.err?'<p class="note">'+M.err+'</p>':secHTML(M.sec)}</div>`;
@@ -1582,7 +1629,7 @@ async function loadAn(){
     const [K,lm]=await Promise.all([klines(M.sym,M.tf,LIM[M.tf]),liveMarket(M.sym)]);
     if(CT!==M||K.length===0)return;
     const ms=TFMS[M.tf],closed=K.length&&K.at(-1).t+ms>Date.now()?K.slice(0,-1):K;
-    M.K=K;M.live=lm;M.cl=closed;M.an=analyze(closed.slice(-300));M.full=fullAnalysis(closed.slice(-300),M.tf,K.at(-1).c);
+    M.K=K;M.live=lm;M.cl=closed;M.an=analyze(closed.slice(-300),TFMS[M.tf]);M.full=fullView(M.an,M.tf,K.at(-1).c);
     const c=closed.map(k=>k.c);M.e20=ema(c,20);M.e50=ema(c,50);
     try{M.sr=srLevels(closed.slice(-300),M.an?M.an.atr:closed.at(-1).c*.01);}catch(e){M.sr=null;}
     M.exi=store.get('radar.ex',0)%EXPL.length;store.set('radar.ex',(M.exi+1)%EXPL.length);M.chk=Date.now();
@@ -1643,7 +1690,7 @@ function toggleSheet(){$('#sheet').classList.toggle('open');}
 /* ---------- ناوبری و رویدادها ---------- */
 function renderActive(){
   safe(renderHead);
-  if(TAB==='free')safe(renderFree);else if(TAB==='prev')safe(renderPrev);else if(TAB==='demo')safe(renderDemo);else if(TAB==='chart')safe(()=>{if(CT.K)drawChart();});else if(TAB==='ind')safe(renderInd);
+  if(TAB==='free')safe(renderFree);else if(TAB==='demo')safe(renderDemo);else if(TAB==='chart')safe(()=>{if(CT.K)drawChart();});else if(TAB==='ind')safe(renderInd);
 }
 function setTab(t){
   TAB=t;$$('.pane').forEach(p=>p.classList.toggle('on',p.id==='tab-'+t));$$('.nav button').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);b.classList.toggle('off',!on);});
@@ -1715,6 +1762,11 @@ window.addEventListener('resize',()=>{setNavH();if(TAB==='chart')safe(()=>{if(CT
    افزونه‌ها: تم، چارت حرفه‌ای، توضیحات ۲۰گانه، ابزارها، هشدار قیمت
    ====================================================================== */
 const store={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+let FREE_FILTER=store.get('radar.ff','live');if(!['live','won','all'].includes(FREE_FILTER))FREE_FILTER='live';
+const ACTIVE_ST=['ACT','PEND','S1','S2'],WON_ST=['S1','S2','TP1','TP2','TP3'];
+const allSigs=()=>{const m=new Map();Object.values(HIST).forEach(x=>m.set(x.id,x));ALL.forEach(x=>m.set(x.id,x));return [...m.values()];};
+const isWon=x=>WON_ST.includes(statusOf(x))||(x.closed&&x.stage>=1);
+function freeCounts(){const a=allSigs();return {live:a.filter(x=>ACTIVE_ST.includes(statusOf(x))).length,won:a.filter(isWon).length,all:a.length};}
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fs=v=>v==null||isNaN(v)?'—':fa(v);
 const isDark=()=>document.documentElement.dataset.theme==='dark';
@@ -1912,8 +1964,8 @@ async function refreshSR(){
   const M=CT;if(TAB!=='chart'||M.loading||!M.K||document.hidden||!navigator.onLine)return;
   try{
     const K=await klines(M.sym,M.tf,LIM[M.tf]);if(CT!==M||!K.length)return;
-    const ms=TFMS[M.tf],closed=K.at(-1).t+ms>Date.now()?K.slice(0,-1):K,an=analyze(closed.slice(-300));if(!an)return;
-    M.K=K;M.cl=closed;M.an=an;M.full=fullAnalysis(closed.slice(-300),M.tf,K.at(-1).c)||M.full;
+    const ms=TFMS[M.tf],closed=K.at(-1).t+ms>Date.now()?K.slice(0,-1):K,an=analyze(closed.slice(-300),ms);if(!an)return;
+    M.K=K;M.cl=closed;M.an=an;M.full=fullView(an,M.tf,K.at(-1).c)||M.full;
     const c=closed.map(k=>k.c);M.e20=ema(c,20);M.e50=ema(c,50);M.sr=srLevels(closed.slice(-300),an.atr);M.chk=Date.now();
     drawChart();const sb=$('#secBody');if(sb&&M.sec===6)sb.innerHTML=srTableHTML();
   }catch(e){}
@@ -2025,7 +2077,7 @@ function watchHTML(){
 TFN.watch=async()=>watchHTML();
 function checkAlerts(){
   const al=store.get('radar.alerts',[]);let ch=false;
-  al.forEach(a=>{if(a.done)return;const p=LP[a.sym];if(p==null)return;if((a.dir==='up'&&p>=a.p)||(a.dir==='dn'&&p<=a.p)){a.done=true;ch=true;const m=`🔔 ${a.sym} به ${fmt(a.p)} رسید (اکنون ${fmt(p)})`;toast(m);try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}try{if('Notification' in window&&Notification.permission==='granted')new Notification('رادار کریپتو',{body:m});}catch(e){}}});
+  al.forEach(a=>{if(a.done)return;const p=LP[a.sym];if(p==null)return;if((a.dir==='up'&&p>=a.p)||(a.dir==='dn'&&p<=a.p)){a.done=true;ch=true;const m=`🔔 ${a.sym} به ${fmt(a.p)} رسید (اکنون ${fmt(p)})`;toast(m);notifyTelegram(m);try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}try{if('Notification' in window&&Notification.permission==='granted')new Notification('رادار کریپتو',{body:m});}catch(e){}}});
   if(ch){store.set('radar.alerts',al);const o=$('#tOut');if(!$('#tools').hidden&&TS.tool==='watch'&&o)o.innerHTML=watchHTML();}
 }
 /* ترس و طمع و خبر */
@@ -2061,6 +2113,7 @@ document.addEventListener('click',e=>{
   const tl=q('[data-tool]');if(tl){openTool(tl.dataset.tool);return;}
   if(t.id==='tRun'){runTool();return;}
   const tf=q('[data-ttf]');if(tf){TS.tf=tf.dataset.ttf;$$('#tTf button').forEach(b=>b.classList.toggle('on',b===tf));runTool();return;}
+  const ff=q('[data-ff]');if(ff){FREE_FILTER=ff.dataset.ff;store.set('radar.ff',FREE_FILTER);safe(renderFree);return;}
   const sf=q('[data-scf]');if(sf&&SCAN){SCM=sf.dataset.scf;$('#tOut').innerHTML=scanHTML(SCAN.rows,SCM);return;}
   if(q('#tools')&&q('[data-an]'))closeTools();
   const ly=q('[data-layer]');if(ly){LAY[ly.dataset.layer]=LAY[ly.dataset.layer]?0:1;store.set('radar.layers',LAY);renderLayers();drawChart();return;}
@@ -2090,20 +2143,20 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#tools').hidden
    ====================================================================== */
 const ix={
  sma(a,n){const o=Array(a.length).fill(null);let s=0;for(let i=0;i<a.length;i++){s+=a[i];if(i>=n)s-=a[i-n];if(i>=n-1)o[i]=s/n;}return o;},
- ema(a,n){const k=2/(n+1),o=[];let p=null;for(let i=0;i<a.length;i++){p=p==null?a[i]:a[i]*k+p*(1-k);o.push(p);}return o;},
- rma(a,n){const o=[];let p=null;for(let i=0;i<a.length;i++){p=p==null?a[i]:(p*(n-1)+a[i])/n;o.push(p);}return o;},
+ ema(a,n){return TA.fill(TA.ema(a,n));},
+ rma(a,n){return TA.fill(TA.rma(a,n));},
  wma(a,n){const o=Array(a.length).fill(null),w=n*(n+1)/2;for(let i=n-1;i<a.length;i++){let s=0;for(let j=0;j<n;j++)s+=a[i-j]*(n-j);o[i]=s/w;}return o;},
- sd(a,i,n){let m=0;for(let j=i-n+1;j<=i;j++)m+=a[j];m/=n;let s=0;for(let j=i-n+1;j<=i;j++)s+=(a[j]-m)**2;return Math.sqrt(s/n);},
+ sd(a,i,n){const st=Math.max(0,i-n+1),len=i-st+1;if(len<2)return 0;let m=0;for(let j=st;j<=i;j++)m+=a[j];m/=len;let s=0;for(let j=st;j<=i;j++)s+=(a[j]-m)**2;return Math.sqrt(s/len);},
  hh(a,i,n){let m=-Infinity;for(let j=Math.max(0,i-n+1);j<=i;j++)if(a[j]>m)m=a[j];return m;},
  ll(a,i,n){let m=Infinity;for(let j=Math.max(0,i-n+1);j<=i;j++)if(a[j]<m)m=a[j];return m;},
  sum(a,i,n){let s=0;for(let j=Math.max(0,i-n+1);j<=i;j++)s+=a[j];return s;},
- rsi(c,n){const g=[0],l=[0];for(let i=1;i<c.length;i++){const d=c[i]-c[i-1];g.push(Math.max(d,0));l.push(Math.max(-d,0));}const ag=ix.rma(g,n),al=ix.rma(l,n);return ag.map((x,i)=>al[i]===0?100:100-100/(1+x/al[i]));}
+ rsi(c,n){return TA.fill(TA.rsi(c,n));}
 };
 const IXG=['روند','مومنتوم','حجم','نوسان','قیمت'],IXW={'روند':1,'مومنتوم':.8,'حجم':.7,'نوسان':.4,'قیمت':.7};
 const nf=(x,d=1)=>x==null||!isFinite(x)?'—':x.toFixed(d);
 function ixCompute(K,btc){
   const n=K.length,o=K.map(k=>k.o),h=K.map(k=>k.h),l=K.map(k=>k.l),c=K.map(k=>k.c),v=K.map(k=>k.v),i=n-1,px=c[i],R=[],meta={px};
-  const add=(g,name,val,sig,str)=>{if(typeof val==='string'&&val.includes('NaN')){val='—';sig=0;}R.push({g,n:name,v:val,s:sig,k:Math.max(.1,Math.min(1,str==null?(sig?.6:.2):str))});};
+  const add=(g,name,val,sig,str)=>{if((typeof val==='number'&&!isFinite(val))||(typeof val==='string'&&val.includes('NaN'))){val='—';sig=0;}R.push({g,n:name,v:val,s:sig,k:Math.max(.1,Math.min(1,str==null?(sig?.6:.2):str))});};
   const T=fn=>{try{fn();}catch(e){}};
   const sgn3=(x,d)=>x>d?1:x<-d?-1:0,gap=(a,b)=>Math.min(1,Math.abs(a/b-1)*25+.25);
   const sma=p=>ix.sma(c,p),ema=p=>ix.ema(c,p);
@@ -2181,7 +2234,7 @@ function ixCompute(K,btc){
   T(()=>{const w=h.slice(i-24,i),H=Math.max(...w),L=Math.min(...l.slice(i-24,i)),C=c[i-1],P=(H+L+C)/3;add('قیمت','پیوت کلاسیک',`P ${fmt(P)} · R1 ${fmt(2*P-L)} · S1 ${fmt(2*P-H)}`,px>P?1:-1,gap(px,P));});
   T(()=>{const hi=ix.hh(h,i,100),lo=ix.ll(l,i,100),p=(px-lo)/(hi-lo);add('قیمت','موقعیت در رنج ۱۰۰ کندل',nf(p*100,0)+'٪',p>.8?1:p<.2?-1:0,Math.abs(p-.5)*2);});
   T(()=>{const hi=ix.hh(h,i,100),lo=ix.ll(l,i,100),rt=(hi-px)/(hi-lo);add('قیمت','سطح فیبوناچی',`بازگشت ${nf(rt*100,0)}٪ از سقف`,px>(hi+lo)/2?1:-1,Math.abs(rt-.5)*1.6+.15);});
-  T(()=>{const b=Math.abs(c[i]-o[i]),r=(h[i]-l[i])||1,uw=h[i]-Math.max(o[i],c[i]),lw=Math.min(o[i],c[i])-l[i],sm=ix.sma(c,20)[i];let t='بدون الگو',s=0;
+  T(()=>{if(i<1)return add('قیمت','الگوی کندلی','داده کم',0,.1);const b=Math.abs(c[i]-o[i]),r=(h[i]-l[i])||1,uw=h[i]-Math.max(o[i],c[i]),lw=Math.min(o[i],c[i])-l[i],sm=ix.sma(c,20)[i];let t='بدون الگو',s=0;
     if(c[i-1]<o[i-1]&&c[i]>o[i]&&c[i]>=o[i-1]&&o[i]<=c[i-1]){t='Engulfing صعودی';s=1;}
     else if(c[i-1]>o[i-1]&&c[i]<o[i]&&c[i]<=o[i-1]&&o[i]>=c[i-1]){t='Engulfing نزولی';s=-1;}
     else if(b>0&&lw>=2*b&&uw<=.5*b&&px<sm){t='چکش (Hammer)';s=1;}
@@ -2259,6 +2312,35 @@ function ixCompute(K,btc){
   T(()=>{const m=ix.sma(c,200)[i];if(m==null)return add('قیمت','فاصله از SMA 200','داده کم',0,.1);const d=(px/m-1)*100;add('قیمت','فاصله از SMA 200',nf(d,1)+'٪'+(Math.abs(d)>25?' · کشیده':''),d>25?-1:d>0?1:d<-25?1:-1,Math.min(1,Math.abs(d)/30+.1));});
   T(()=>{const w=c.slice(-250),p=w.filter(x=>x<=px).length/w.length*100;add('قیمت','صدک قیمت (۲۵۰ کندل)',nf(p,0)+' از ۱۰۰',p>80?1:p<20?-1:0,Math.abs(p-50)/50);});
   T(()=>{meta.macdUp=hist[i]>0&&hist[i-1]<=0;meta.macdDn=hist[i]<0&&hist[i-1]>=0;meta.brkUp=px>ix.hh(h,i-1,20);meta.brkDn=px<ix.ll(l,i-1,20);meta.volSp=(meta.volRatio||0)>2;});
+  /* ===== هماهنگی با TA.core: مقادیر مشترک با analyze دقیقاً یکی‌اند ===== */
+  T(()=>{
+    const C=TA.core(K,36e5);meta.core=C;
+    const ov=(name,g,val,sig,str,old)=>{const o={g,n:name,v:val,s:sig,k:Math.max(.1,Math.min(1,str==null?(sig?.6:.2):str))};if((typeof val==='number'&&!isFinite(val))||(typeof val==='string'&&val.includes('NaN'))){o.v='—';o.s=0;}const q=R.findIndex(x=>x.n===(old||name));if(q>=0)R[q]=o;else R.push(o);};
+    {const r=C.rsi;ov('RSI (14)','مومنتوم',nf(r)+(r<30?' · اشباع فروش':r>70?' · اشباع خرید':''),r<30?1:r>70?-1:r>55?1:r<45?-1:0,Math.min(1,Math.abs(r-50)/30+.1));meta.rsi=r;}
+    {const m=C.macd;ov('MACD (12,26,9)','روند',m.hist>0?'بالای سیگنال':'زیر سیگنال',m.hist>0?1:-1,Math.min(1,Math.abs(m.hist)/px*2000+.3));
+     ov('هیستوگرام MACD','روند',nf(m.hist/px*100,3)+'٪',m.hist>0&&m.hist>m.hist1?1:m.hist<0&&m.hist<m.hist1?-1:0,.5);}
+    {const k=C.stoch.k,d=C.stoch.d;ov('استوکاستیک (14,3,3)','مومنتوم',`K ${nf(k,0)} / D ${nf(d,0)}`,k<20?1:k>80?-1:Math.abs(k-d)<2?0:k>d?1:-1,Math.abs(k-50)/50);}
+    {const k=C.stochrsi.k,d=C.stochrsi.d;ov('استوک RSI','مومنتوم',`K ${nf(k,0)} / D ${nf(d,0)}`,k<20?1:k>80?-1:Math.abs(k-d)<2?0:k>d?1:-1,Math.abs(k-50)/50);}
+    {const pb=C.bb.pb;ov('بولینگر %B (20,2)','نوسان',nf(pb*100,0)+'٪',pb<.1?1:pb>.9?-1:0,Math.abs(pb-.5)*2);}
+    {const a=C.adx;ov('ADX / DI (14)','روند',`ADX ${nf(a.v)} · +DI ${nf(a.pdi,0)} / −DI ${nf(a.mdi,0)}`,a.v>=20?(a.pdi>a.mdi?1:-1):0,Math.min(1,a.v/45));meta.adx=a.v;}
+    {const a=C.cci.a;ov('CCI (20)','مومنتوم',nf(a,0),a<-100?1:a>100?-1:0,Math.min(1,Math.abs(a)/200+.1));}
+    {const w=C.wr;ov('ویلیامز %R (14)','مومنتوم',nf(w),w<-80?1:w>-20?-1:0,Math.abs(w+50)/50);}
+    {const m=C.mfi;ov('MFI (14)','مومنتوم',nf(m),m<20?1:m>80?-1:0,Math.abs(m-50)/50);meta.mfi=m;}
+    {const r=C.roc12;ov('ROC (12)','مومنتوم',nf(r,2)+'٪',sgn3(r,.5),Math.min(1,Math.abs(r)/6+.2));}
+    {const m=C.mom/C.c10*100;ov('مومنتوم (10)','مومنتوم',nf(m,2)+'٪',sgn3(m,.5),Math.min(1,Math.abs(m)/6+.2));}
+    {const t=C.trix;ov('TRIX (15)','روند',nf(t,3)+'٪',sgn3(t,.01),Math.min(1,Math.abs(t)*8+.2));}
+    {const u=C.ult;ov('آلتیمیت اسیلاتور','مومنتوم',nf(u),u<30?1:u>70?-1:0,Math.abs(u-50)/50);}
+    {const z=C.z.z;ov('Z-Score (20)','قیمت',nf(z,2),z<-2?1:z>2?-1:0,Math.min(1,Math.abs(z)/3+.1));}
+    {const a=C.aroon,os=a.up-a.dn;ov('آرون (25)','روند',`بالا ${nf(a.up,0)} / پایین ${nf(a.dn,0)}`,os>50?1:os<-50?-1:0,Math.abs(os)/100);}
+    ov('VWAP (24)','روند',fmt(C.vwap),px>C.vwap?1:-1,gap(px,C.vwap),'VWAP (20)');
+    ov('پارابولیک SAR','روند',fmt(C.psar.v),C.psar.dir,gap(px,C.psar.v));
+    ov('سوپرترند (10,3)','روند',fmt(C.st.level),C.st.dir,gap(px,C.st.level));
+    {const k=C.keltner;ov('کلتنر (20, 2)','نوسان',px>k.up?'شکست بالا':px<k.lo?'شکست پایین':'داخل کانال',px>k.up?1:px<k.lo?-1:0,.6,'کلتنر (20, 1.5)');}
+    {const D=C.donchian,p=D.pos;ov('دانچیان (20)','روند',nf(Math.max(0,Math.min(1,p))*100,0)+'٪ از کانال'+(px>D.hi?' · شکست سقف':px<D.lo?' · شکست کف':''),px>D.hi?1:px<D.lo?-1:p>.7?1:p<.3?-1:0,Math.abs(Math.max(0,Math.min(1,p))-.5)*2);}
+    {const I=C.ichi;ov('ایچیموکو (ابر)','روند',px>I.top?'بالای ابر':px<I.bot?'زیر ابر':'داخل ابر',px>I.top?1:px<I.bot?-1:0,.7);ov('تنکان / کیجون','روند',fmt(I.tk)+' / '+fmt(I.kj),I.tk>I.kj?1:-1,gap(I.tk,I.kj));}
+    ov('OBV','حجم',C.obv.v>C.obv.ma?'بالای میانگین ۲۰':'زیر میانگین ۲۰',C.obv.v>C.obv.ma?1:-1,.6);
+    {const m=C.cmf;ov('CMF (20)','حجم',nf(m,3),sgn3(m,.05),Math.min(1,Math.abs(m)*4+.2));}
+  });
   return {list:R,meta};
 }
 function ixSum(list){
@@ -2281,7 +2363,7 @@ async function ixGet(sym,tf,force,live){
 const FCACHE={};
 async function ixFull(sym,force){
   const c0=FCACHE[sym];if(!force&&c0&&Date.now()-c0.t<90000)return c0;
-  const TFS=['15m','1h','4h','1d'],W={'15m':.15,'1h':.25,'4h':.3,'1d':.3};
+  const TFS=LITE?['1h','4h']:['15m','1h','4h','1d'],W={'15m':.15,'1h':.25,'4h':.3,'1d':.3};
   const [res,lm]=await Promise.all([Promise.all(TFS.map(tf=>ixGet(sym,tf,force).catch(()=>null))),liveMarket(sym).catch(()=>({}))]);
   const tfs={};TFS.forEach((tf,k)=>{if(res[k])tfs[tf]=res[k];});if(Object.keys(tfs).length<2)throw new Error('داده کافی نیست');
   let comp=0,ws=0;Object.keys(tfs).forEach(tf=>{comp+=tfs[tf].sum.sc*W[tf];ws+=W[tf];});comp/=ws;
@@ -2377,7 +2459,7 @@ function renderIndOut(){
   const o=$('#indOut');if(!o)return;indSyncUI();
   if(IXS.loading){o.innerHTML='<p class="note">در حال دریافت و محاسبهٔ اندیکاتورها…</p>';return;}
   if(IXS.err){o.innerHTML=`<p class="note">${IXS.err}</p>`;return;}
-  if(IXS.view==='ind')o.innerHTML=IXS.data?indListHTML(IXS.data):'';else o.innerHTML=IXS.full?fullHTML(IXS.full):'';
+  if(IXS.view==='ind')o.innerHTML=IXS.data?indListHTML(IXS.data):'';else o.innerHTML=IXS.full?fullHTML(IXS.full):fullStartBox();
 }
 async function indLoad(force,silent){
   indShell();const si=$('#iSym');if(si){const v=si.value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'');if(v)IXS.sym=v;}
@@ -2386,13 +2468,19 @@ async function indLoad(force,silent){
   catch(e){console.error(e);if(!silent)IXS.err='دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن و نماد را چک کن.';}
   IXS.loading=false;renderIndOut();const st=$('#iStamp');if(st)st.textContent='به‌روزرسانی: '+new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})+' · خودکار هر ۲ دقیقه';
 }
-function renderInd(){indShell();indSyncUI();const have=IXS.view==='ind'?IXS.data:IXS.full;if(!have&&!IXS.loading)indLoad(false);else renderIndOut();}
+const fullStartBox=()=>`<div class="box" style="text-align:center"><p class="note">تحلیل جامع چهار تایم‌فریم را اجرا کن. حدود ۵ تا ۱۵ ثانیه طول می‌کشد.</p><button class="btn" id="iStartFull">شروع تحلیل جامع</button></div>`;
+function renderInd(){
+  indShell();indSyncUI();const have=IXS.view==='ind'?IXS.data:IXS.full;
+  if(IXS.view==='full'&&!have&&!IXS.loading){$('#indOut').innerHTML=fullStartBox();return;}
+  if(!have&&!IXS.loading)indLoad(false);else renderIndOut();
+}
 document.addEventListener('click',e=>{
   const t=e.target,q=s=>t.closest(s);
   const iv=q('[data-iv]');if(iv){IXS.view=iv.dataset.iv;renderInd();return;}
   const tf=q('[data-itf]');if(tf){IXS.tf=tf.dataset.itf;IXS.data=null;indLoad(false);return;}
   const g=q('[data-igrp]');if(g){IXS.grp=g.dataset.igrp;renderIndOut();return;}
   const st=q('[data-ist]');if(st){IXS.st=st.dataset.ist;renderIndOut();return;}
+  if(t.id==='iStartFull'){IXS.full=null;indLoad(true);return;}
   if(t.id==='iRun'){IXS.data=null;IXS.full=null;indLoad(true);return;}
   if(t.id==='iRef'){IXS.full=null;indLoad(true);return;}
   if(t.id==='iCopy'&&IXS.full){copyText(fullText(IXS.full),t);return;}
@@ -2521,7 +2609,7 @@ setTimeout(()=>pulseLoad(false),900);setInterval(()=>{if(!document.hidden&&navig
 window.addEventListener('online',()=>pulseLoad(true));
 
 /* ---------- ۱۱۶ اندیکاتور: به‌روزرسانی خودکار و کندل زنده ---------- */
-setInterval(()=>{if(TAB==='ind'&&!document.hidden&&navigator.onLine&&!IXS.loading)indLoad(true,true);},120000);
+setInterval(()=>{if(TAB==='ind'&&!document.hidden&&navigator.onLine&&!IXS.loading&&(IXS.view==='ind'||IXS.full))indLoad(true,true);},120000);
 
 /* ---------- نمودارهای کمکی ---------- */
 function sparkSVG(arr,color){
@@ -2638,6 +2726,49 @@ document.addEventListener('click',e=>{
   const lv=q('[data-ilive]');if(lv){IXS.live=lv.dataset.ilive==='1';IXS.data=null;indLoad(true);return;}
 });
 
+/* ======================================================================
+   نسخهٔ ۷: Copilot «چه کنم؟»، هشدار تلگرام، تنظیم حالت‌ها و حالت سبک
+   ====================================================================== */
+let CPTXT='';
+function copilotText(s){
+  const L=s.dir==='LONG',lev=levOf(s),slp=Math.abs(s.entry-s.sl)/s.entry*100,liq=95/lev,rp=s.riskPct||.5,rec=Math.max(1,Math.min(5,Math.round(lev/3)));
+  const ln=[`📊 ${s.sym}/USDT — ${L?'لانگ':'شورت'}`,`قدرت سیگنال: ${fa(s.score)} از ۱۰۰ · حالت ${modeCfg().label}`,'',
+    `✅ ورود: ${fmt(s.entry)}${s.type==='limit'?' (سفارش لیمیت)':' (بازاری)'}`,
+    `⛔ حد ضرر: ${fmt(s.sl)} — فاصله ${slp.toFixed(2)}٪`,
+    `🎯 هدف ۱: ${fmt(s.tp[0])} → ۴۰٪ پوزیشن را ببند و حد ضرر را به نقطهٔ ورود ببر`,
+    `🎯 هدف ۲: ${fmt(s.tp[1])} → ۳۰٪ ببند`,
+    `🎯 هدف ۳: ${fmt(s.tp[2])} → ۳۰٪ باقی‌مانده`,'',
+    `💡 اهرم را پایین بگیر؛ پیشنهاد ${fa(rec)}× (سقف امن ${fa(lev)}× — در آن سقف لیکوئید حدود ${liq.toFixed(1)}٪ دورتر از ورود و حد ضرر ${slp.toFixed(2)}٪ است)`,
+    `⚠️ ریسک پیشنهادی این معامله: ${fa(rp)}٪ از سرمایه. حجم پوزیشن = (سرمایه × ریسک) ÷ فاصلهٔ حد ضرر`,''];
+  if(whyPros(s.why).length)ln.push(`✅ موافق: ${whyPros(s.why).join('، ')}`);
+  if(whyCons(s.why).length)ln.push(`⚠️ مخالف: ${whyCons(s.why).join('، ')}`);
+  ln.push('','📌 این تحلیل آماری است؛ توصیهٔ مالی نیست و هیچ تضمینی ندارد. همیشه حد ضرر بگذار.');
+  return ln.join('\n');
+}
+async function notifyTelegram(text){
+  const token=store.get('tg.token',''),chat=store.get('tg.chatId','');if(!token||!chat)return false;
+  try{const r=await fetch(`https://api.telegram.org/bot${encodeURIComponent(token)}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text})});return r.ok;}catch(e){return false;}
+}
+TFN.set=async()=>`<div class="box"><b>حالت معاملاتی</b><div class="seg" id="modeSeg" style="margin-top:8px">${Object.entries(MODES).map(([k,m])=>`<button data-mode="${k}" class="${ACTIVE_MODE===k?'on':''}">${m.label}</button>`).join('')}</div><p class="note">حداقل امتیاز ${fa(modeCfg().minScore)} · حداکثر ${fa(modeCfg().per)} سیگنال در هر دوره · SL ${fa(modeCfg().slAtr)} برابر ATR · هدف‌ها ${modeCfg().tpR.map(fa).join(' / ')} برابر ریسک. با تغییر حالت، سیگنال‌ها دوباره تحلیل می‌شوند.</p></div>
+<div class="box"><b>تم</b><div class="seg" style="margin-top:8px"><button data-th="light" class="${isDark()?'':'on'}">روشن ☀️</button><button data-th="dark" class="${isDark()?'on':''}">تاریک 🌙</button></div></div>
+<div class="box"><b>حالت سبک</b><div class="seg" style="margin-top:8px">${[['auto','خودکار'],['on','روشن'],['off','خاموش']].map(([k,t])=>`<button data-lite="${k}" class="${LITE_PREF===k?'on':''}">${t}</button>`).join('')}</div><p class="note">در حالت سبک یادگیری از دوره‌های قبل کمتر و تحلیل جامع روی دو تایم‌فریم انجام می‌شود تا دستگاه ضعیف کند نشود. وضعیت فعلی: <b>${LITE?'فعال':'غیرفعال'}</b>.</p></div>
+<div class="box"><b>اعلان هشدار</b><p class="note">برای نمایش هشدار قیمت وقتی مرورگر در پس‌زمینه است.</p><button class="btn" id="notifBtn">فعال‌سازی اعلان</button></div>
+<div class="box"><b>هشدار تلگرام (اختیاری)</b><p class="note">هشدارهای قیمت به ربات تلگرام خودت هم ارسال می‌شود. توکن فقط روی همین دستگاه ذخیره می‌شود و در فایل پشتیبان نمی‌آید؛ برای ارسال معمولاً به VPN نیاز داری.</p><label class="lbl">توکن ربات</label><input class="fin" id="tgToken" type="password" autocomplete="off" placeholder="123456:ABC..." value="${esc(store.get('tg.token',''))}"><label class="lbl">Chat ID</label><input class="fin" id="tgChatId" autocomplete="off" inputmode="text" placeholder="-100123..." value="${esc(store.get('tg.chatId',''))}"><div class="acts"><button class="btn xs" id="tgSave">ذخیره</button><button class="btn xs off" id="tgTest">تست</button></div></div>
+<div class="box"><b>حافظهٔ تحلیل</b><p class="note">اگر تحلیل‌ها قدیمی یا خراب به نظر می‌رسند، کش تحلیل را پاک کن (حساب دمو و تنظیمات می‌ماند).</p><button class="btn" id="clrCache">پاک‌کردن کش تحلیل</button></div>`;
+document.addEventListener('click',e=>{
+  const t=e.target,q=s=>t.closest(s);
+  const cp=q('[data-copilot]');
+  if(cp){const s=ALL.find(x=>x.id===cp.dataset.copilot)||HIST[cp.dataset.copilot];if(!s){toast('سیگنال پیدا نشد.');return;}CPTXT=copilotText(s);openModal(`<b>دستیار معامله</b><div class="cpre">${esc(CPTXT)}</div><div class="two"><button class="btn" id="cpCopy">کپی</button><button class="btn off" id="mCancel">بستن</button></div>`);return;}
+  if(t.id==='cpCopy'){copyText(CPTXT,t);return;}
+  const md=q('[data-mode]');
+  if(md&&MODES[md.dataset.mode]){if(md.dataset.mode===ACTIVE_MODE)return;store.set('radar.mode',md.dataset.mode);try{localStorage.removeItem(KEY);}catch(er){}toast('حالت عوض شد؛ در حال تحلیل دوباره…');setTimeout(()=>location.reload(),600);return;}
+  const lt=q('[data-lite]');
+  if(lt){store.set('radar.lite',lt.dataset.lite);try{localStorage.removeItem(KEY);}catch(er){}toast('ذخیره شد؛ در حال بارگذاری دوباره…');setTimeout(()=>location.reload(),600);return;}
+  if(t.id==='tgSave'||t.id==='tgTest'){store.set('tg.token',($('#tgToken').value||'').trim());store.set('tg.chatId',($('#tgChatId').value||'').trim());
+    if(t.id==='tgSave'){toast('ذخیره شد ✓');return;}
+    notifyTelegram('✅ تست رادار سیگنال کریپتو').then(ok=>toast(ok?'پیام تست ارسال شد ✓':'ارسال نشد؛ توکن، Chat ID و VPN را بررسی کن.'));return;}
+});
+
 let polling=false;
 async function pollLive(){
   if(polling)return;polling=true;
@@ -2663,10 +2794,16 @@ async function main(){
       await simulateSigs(ALL);await simulateHistOpen();mergeHist();cacheSave();}
     else{renderActive();ALL=await computeAll(K_NOW);limited=lastSrc===3;SUMM=summarize(ALL);mergeHist();await simulateHistOpen();mergeHist();cacheSave();}
     if(!ALL.some(s=>s.cyc===K_NOW)){errMsg=useCache()?OFFMSG:'تحلیل بازار انجام نشد. اینترنت یا VPN را بررسی کن.';}
-  }catch(e){errMsg=useCache()?OFFMSG:'دریافت داده از صرافی‌ها انجام نشد. اینترنت یا VPN را بررسی کن.';}
+  }catch(e){
+    const code=e&&e.code,cached=useCache();
+    if(code==='GEO')errMsg='دسترسی به صرافی از موقعیت شما مسدود است. VPN را روشن کن.';
+    else if(code==='RATE')errMsg='درخواست‌ها به صرافی زیاد است. یک دقیقه صبر کن و دوباره تلاش کن.';
+    else if(code==='TIMEOUT')errMsg='زمان پاسخ صرافی به پایان رسید. اینترنت یا VPN را بررسی کن.';
+    else errMsg=cached?OFFMSG:'دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن.';
+  }
   busy=false;$('#prog').textContent='';renderActive();pollLive().then(()=>futCatchup()).then(()=>renderActive());
 }
-{let t='free';try{t=localStorage.getItem('radar.tab')||'free';}catch(e){}if(!['free','prev','demo','chart','ind'].includes(t))t='free';TAB=t;}
+{let t='free';try{t=localStorage.getItem('radar.tab')||'free';}catch(e){}if(t==='prev')t='free';if(!['free','demo','chart','ind'].includes(t))t='free';TAB=t;}
 setNavH();
 setTab(TAB);
 main();
