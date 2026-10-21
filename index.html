@@ -439,6 +439,41 @@ html[data-theme=dark] .hmcell{border-color:#3d6272}
 .hmb{flex:1;min-height:54px;font-size:16px;border-radius:18px}
 .hmcnt{font-weight:700;font-size:14px}
 @media(min-width:900px){.hmdet{max-width:760px;margin-inline:auto}}
+
+/* ===== نقشهٔ جهت بازار ===== */
+[hidden]{display:none!important}
+.mp{margin:10px 0 14px;color:var(--ink)}
+.mp-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.mp-hd h2{margin:0;font-size:18px;line-height:1.5}
+.mp-hd p{margin:0;font-size:12px;opacity:.8}
+.mp-sum{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.mp-tf{background:var(--card);border:2px solid #000;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px}
+html[data-theme=dark] .mp-tf,html[data-theme=dark] .mp-row{border-color:var(--line)}
+.mp-tf .t{display:flex;align-items:center;justify-content:space-between;font-weight:700}
+.mp-tf .t em{font-style:normal;font-size:12px;opacity:.75}
+.mp-st{display:flex;align-items:center;gap:8px;border:2px solid #000;border-radius:14px;padding:8px 10px;font-weight:800;font-size:15px;color:#000}
+.mp-st i{font-style:normal;font-size:18px;line-height:1}
+.mp-up{background:#7ee8b4}.mp-dn{background:#ff9aa8}.mp-fl{background:var(--c4)}.mp-na{background:#d9d9d9}
+.mp-bar{display:flex;height:10px;border-radius:99px;overflow:hidden;border:1.5px solid #000;background:#fff}
+.mp-bar b{display:block;height:100%}
+.mp-bar .u{background:#0ecb81}.mp-bar .f{background:var(--c4)}.mp-bar .d{background:#f6465d}
+.mp-cnt{display:flex;justify-content:space-between;font-size:11px;gap:4px}
+.mp-flt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mp-flt button{font:inherit;font-size:12px;font-weight:700;border:2px solid #000;border-radius:999px;background:var(--card);color:var(--ink);padding:3px 12px;cursor:pointer}
+.mp-flt button.on{background:var(--c4);color:#000}
+.mp-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.mp-head,.mp-row{display:grid;grid-template-columns:64px repeat(4,1fr);gap:6px;align-items:center}
+.mp-head{font-size:11px;font-weight:700;text-align:center;opacity:.8;padding:0 8px}
+.mp-row{background:var(--card);border:2px solid #000;border-radius:16px;padding:6px 8px}
+.mp-row>.btn{justify-self:start}
+.mp-c{border:2px solid #000;border-radius:12px;padding:5px 2px;text-align:center;font-size:11px;font-weight:800;line-height:1.35;color:#000;display:flex;flex-direction:column;align-items:center}
+.mp-c i{font-style:normal;font-size:13px}
+.mp-lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;margin:10px 0 2px;align-items:center}
+.mp-lg span{display:inline-flex;align-items:center;gap:5px}
+.mp-lg u{width:12px;height:12px;border:1.5px solid #000;border-radius:4px;display:inline-block}
+.mp-msg{padding:14px;text-align:center;font-size:13px;border:2px dashed var(--line);border-radius:16px}
+@media(min-width:720px){.mp-sum{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1000px){.mp-grid{grid-template-columns:1fr 1fr}.mp-grid .mp-head{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -454,8 +489,10 @@ html[data-theme=dark] .hmcell{border-color:#3d6272}
 
 <section id="tab-free" class="pane">
   <div id="bc"></div>
+  <div id="mpBox"></div>
   <div id="fgCard"></div>
   <div id="pulse"></div>
+  <div id="sigLegacy" hidden>
   <div class="cycle">
     <div class="r"><span id="cycleTxt"></span><span id="cycleLeft"></span></div>
     <div class="meter"><i id="cycleBar"></i></div>
@@ -467,8 +504,9 @@ html[data-theme=dark] .hmcell{border-color:#3d6272}
   <div class="grid2" id="feed"></div>
   <div id="olderBox"></div>
   <div id="feedNote"></div>
+  </div>
   <div id="guide"></div>
-  <details class="box" id="statsBox"><summary>📈 آمار عملکرد و گزارش روزانه</summary><div class="stats" id="prevStats"></div><div id="perfBox"></div><div id="dailyBox"></div></details>
+  <details class="box" id="statsBox" hidden><summary>📈 آمار عملکرد و گزارش روزانه</summary><div class="stats" id="prevStats"></div><div id="perfBox"></div><div id="dailyBox"></div></details>
 </section>
 
 <section id="tab-demo" class="pane">
@@ -505,7 +543,7 @@ html[data-theme=dark] .hmcell{border-color:#3d6272}
 </div>
 
 <nav class="nav" id="nav" aria-label="بخش‌ها">
-  <button class="btn on" data-tab="free"><i>📡</i>سیگنال رایگان</button>
+  <button class="btn on" data-tab="free"><i>🗺️</i>نقشه بازار</button>
   <button class="btn off" data-tab="demo"><i>💹</i>فیوچرز دمو</button>
   <button class="btn off" data-tab="chart"><i>📈</i>چارت تحلیلی</button>
   <button class="btn off" data-tab="ind"><i>🧪</i>اندیکاتورها</button>
@@ -2930,6 +2968,82 @@ setInterval(()=>{if(!document.hidden&&(TAB==='demo'||TAB==='chart'))pollLive();}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(Math.floor(Date.now()/CYC)!==K_NOW)main();else renderActive();}});
 setInterval(()=>{if(!document.hidden)renderActive();},60000);
 
+</script>
+
+<script>
+/* ===== نقشهٔ جهت بازار (جایگزین بخش سیگنال) ===== */
+const MP={tfs:['15m','1h','4h','1d'],syms:UNIVERSE.slice(0,20),rows:null,t:0,loading:false,done:0,total:0,filter:'all',err:false};
+const MPN={up:['صعودی','▲','mp-up'],dn:['نزولی','▼','mp-dn'],fl:['ثابت','▬','mp-fl'],na:['—','','mp-na']};
+const mpState=n=>n==null?'na':n>.08?'up':n<-.08?'dn':'fl';
+async function mpLoad(force){
+  if(MP.loading)return;
+  if(!force&&MP.rows&&Date.now()-MP.t<5*60000)return;
+  if(document.hidden||!navigator.onLine)return;
+  MP.loading=true;MP.err=false;MP.done=0;MP.total=MP.syms.length*MP.tfs.length;mpRender();
+  const out=[];
+  try{
+    await pool(MP.syms,4,async sym=>{
+      const r={s:sym,n:{}};
+      for(const tf of MP.tfs){
+        try{const K=await klines(sym,tf,400),cl=cl2(K,tf),an=analyze(cl.slice(-300));
+          r.n[tf]=an&&an.votes.length?an.votes.reduce((a,v)=>a+v.vote,0)/an.votes.length:null;}
+        catch(e){r.n[tf]=null;}
+        MP.done++;await sleep0();
+      }
+      out.push(r);
+      if(out.length%4===0&&TAB==='free'){MP.rows=out.slice();mpRender();}
+    });
+  }catch(e){console.error(e);}
+  const order=new Map(MP.syms.map((s,i)=>[s,i]));
+  out.sort((a,b)=>order.get(a.s)-order.get(b.s));
+  MP.loading=false;
+  if(out.some(r=>MP.tfs.some(tf=>r.n[tf]!=null))){MP.rows=out;MP.t=Date.now();}else if(!MP.rows)MP.err=true;
+  mpRender();
+}
+function mpRender(){
+  const box=document.querySelector('#mpBox');if(!box)return;
+  const rows=MP.rows;
+  let h=`<div class="mp"><div class="mp-hd"><div><h2>🗺️ نقشهٔ جهت بازار</h2><p>جهت غالب هر ارز در چهار تایم‌فریم؛ فقط تصویر وضعیت است، نه سیگنال خرید یا فروش.</p></div><button class="btn xs" id="mpRefresh"${MP.loading?' disabled':''}>${MP.loading?`در حال تحلیل ${fa(Math.min(MP.done,MP.total))} از ${fa(MP.total)}…`:'↻ به‌روزرسانی'}</button></div>`;
+  if(!rows||!rows.length){
+    h+=`<div class="mp-msg">${MP.err?'دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن و دوباره تلاش کن.':'در حال ساخت نقشه…'}</div></div>`;
+    box.innerHTML=h;return;
+  }
+  /* خلاصهٔ هر تایم‌فریم */
+  h+='<div class="mp-sum">';
+  for(const tf of MP.tfs){
+    const c={up:0,dn:0,fl:0,na:0};let sum=0,k=0;
+    for(const r of rows){const v=r.n[tf];c[mpState(v)]++;if(v!=null){sum+=v;k++;}}
+    const tot=c.up+c.dn+c.fl||1,st=k?mpState(sum/k):'na',m=MPN[st];
+    const pc=x=>Math.round(x/tot*100);
+    h+=`<div class="mp-tf"><div class="t"><span>${tf}</span><em>${fa(tot)} ارز</em></div>
+      <div class="mp-st ${m[2]}"><i>${m[1]}</i>${m[0]}</div>
+      <div class="mp-bar" aria-hidden="true"><b class="u" style="width:${pc(c.up)}%"></b><b class="f" style="width:${pc(c.fl)}%"></b><b class="d" style="width:${100-pc(c.up)-pc(c.fl)}%"></b></div>
+      <div class="mp-cnt"><span>▲ ${fa(pc(c.up))}٪</span><span>▬ ${fa(pc(c.fl))}٪</span><span>▼ ${fa(pc(c.dn))}٪</span></div></div>`;
+  }
+  h+='</div>';
+  /* فیلتر هم‌جهتی */
+  const cnt=r=>{const x={up:0,dn:0,fl:0};MP.tfs.forEach(tf=>{const s=mpState(r.n[tf]);if(x[s]!=null)x[s]++;});return x;};
+  const F=[['all','همه'],['up','بیشتر صعودی'],['dn','بیشتر نزولی'],['fl','ثابت / نامشخص']];
+  const pass=r=>{const x=cnt(r);return MP.filter==='all'||(MP.filter==='up'&&x.up>=3)||(MP.filter==='dn'&&x.dn>=3)||(MP.filter==='fl'&&x.up<3&&x.dn<3);};
+  const list=rows.filter(pass);
+  h+=`<div class="mp-flt" id="mpFlt">${F.map(([k,t])=>`<button data-mpf="${k}" class="${MP.filter===k?'on':''}">${t}</button>`).join('')}</div>`;
+  h+='<div class="mp-grid"><div class="mp-head"><span></span>'+MP.tfs.map(tf=>`<span>${tf}</span>`).join('')+'</div>';
+  h+=list.length?list.map(r=>`<div class="mp-row"><button class="btn xs" data-an="${r.s}">${r.s}</button>${MP.tfs.map(tf=>{const m=MPN[mpState(r.n[tf])];return `<div class="mp-c ${m[2]}"><i>${m[1]}</i>${m[0]}</div>`;}).join('')}</div>`).join(''):'<div class="mp-msg" style="grid-column:1/-1">ارزی با این شرط پیدا نشد.</div>';
+  h+='</div>';
+  h+=`<div class="mp-lg"><span><u class="mp-up"></u>صعودی</span><span><u class="mp-fl"></u>ثابت (بدون جهت مشخص)</span><span><u class="mp-dn"></u>نزولی</span><span style="opacity:.75">${MP.t?'آخرین به‌روزرسانی: '+new Date(MP.t).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}):''}</span></div>
+    <p class="note">جهت = میانگین رأی ۲۸ اندیکاتور روی کندل‌های بسته‌شدهٔ هر تایم‌فریم. روی نام هر ارز بزن تا چارت و تحلیل کاملش باز شود. توصیهٔ مالی نیست.</p></div>`;
+  box.innerHTML=h;
+}
+document.addEventListener('click',e=>{
+  const t=e.target;if(!t.closest)return;
+  if(t.id==='mpRefresh'){mpLoad(true);return;}
+  const f=t.closest('[data-mpf]');if(f){MP.filter=f.dataset.mpf;mpRender();}
+});
+(function(){
+  const _rf=renderFree;
+  renderFree=function(){try{_rf();}finally{try{mpRender();mpLoad(false);}catch(e){console.error(e);}}};
+  mpRender();
+})();
 </script>
 </body>
 </html>
