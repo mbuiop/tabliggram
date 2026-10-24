@@ -512,36 +512,36 @@ body:has(#tab-chart.on) .aifab,body.imm .aifab,body.lock .aifab{display:none}
 /* ===== دکمه‌های پلاستیکی مدرن — تم روشن (زرد ملایم + متن مشکی) / تم تیره (نئون فیروزه‌ای+زرد + متن سفید) ===== */
 :root{
   --spin:#000;
-  --b-top:rgba(255,255,255,.75);
-  --b1:#fffbe3;--b2:#fff0a0;--b3:#f2d84a;--bbd:#c9ae10;
-  --bsh:inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -4px 7px rgba(170,135,0,.28),0 3px 8px rgba(150,120,0,.32);
-  --o1:#ffee5c;--o2:#ffd51a;--o3:#e8b800;--obd:#8f7400;
-  --osh:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -5px 8px rgba(150,110,0,.35),0 0 15px rgba(255,200,0,.75),0 4px 9px rgba(150,120,0,.35);
+  --b-top:rgba(255,255,255,.45);
+  --b1:#fdf9e6;--b2:#f6ecb8;--b3:#e8d884;--bbd:#cdb94a;
+  --bsh:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -3px 6px rgba(150,120,0,.16),0 2px 5px rgba(120,100,0,.2);
+  --o1:#f7e27a;--o2:#efcb3c;--o3:#d9ad1c;--obd:#a38600;
+  --osh:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 7px rgba(140,100,0,.26),0 0 6px rgba(230,180,0,.3),0 3px 7px rgba(120,100,0,.26);
   --f1:#ffffff;--f2:#fffbe8;--f3:#f6eeb8;--fbd:#dcc84a;
-  --fsh:inset 0 1.5px 0 #fff,inset 0 -3px 6px rgba(170,135,0,.18),0 2px 6px rgba(150,120,0,.22);
-  --y1:#ffe08a;--y2:#ffbf2e;--y3:#e8960c;--ybd:#9a6400;
-  --ysh:inset 0 1.5px 0 rgba(255,255,255,.85),inset 0 -4px 7px rgba(150,80,0,.35),0 0 12px rgba(255,170,0,.55),0 3px 8px rgba(150,100,0,.3);
-  --tsh:0 1px 0 rgba(255,255,255,.65);
-  --segbg:#fff8d6;--segbd:#d9bf1c;--segsh:inset 0 2px 5px rgba(170,135,0,.25),0 0 0 rgba(0,0,0,0);
-  --navbg:rgba(255,255,255,.93);--navbd:#e3c400;--navsh:0 -3px 18px rgba(200,160,0,.28),inset 0 1.5px 0 #fff;
-  --pulse:rgba(255,200,0,.95);
+  --fsh:inset 0 1px 0 #fff,inset 0 -3px 6px rgba(170,135,0,.12),0 2px 4px rgba(120,100,0,.16);
+  --y1:#f6d48a;--y2:#e8b64e;--y3:#cf9526;--ybd:#a56f10;
+  --ysh:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -4px 7px rgba(150,80,0,.28),0 0 5px rgba(230,160,0,.25),0 3px 6px rgba(120,90,0,.26);
+  --tsh:0 1px 0 rgba(255,255,255,.5);
+  --segbg:#faf5dc;--segbd:#d6c25a;--segsh:inset 0 2px 5px rgba(170,135,0,.25),0 0 0 rgba(0,0,0,0);
+  --navbg:rgba(255,255,255,.93);--navbd:#dcc84a;--navsh:0 -3px 12px rgba(170,140,0,.16),inset 0 1px 0 #fff;
+  --pulse:rgba(230,180,0,.45);
 }
 html[data-theme=dark]{
   --spin:#fff;
   --ink:#fff;--mut:#fff;
-  --b-top:rgba(255,255,255,.34);
-  --b1:#1d4f82;--b2:#0b2442;--b3:#071626;--bbd:#22d3ff;
-  --bsh:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 14px rgba(34,211,255,.28),0 0 12px rgba(34,211,255,.55),0 5px 9px rgba(0,0,0,.35);
-  --o1:#46dcf5;--o2:#12a6d6;--o3:#0a6a96;--obd:#c4faff;
-  --osh:inset 0 2px 0 rgba(255,255,255,.75),inset 0 -5px 9px rgba(0,60,100,.5),0 0 20px rgba(34,211,255,.95),0 5px 10px rgba(0,0,0,.35);
-  --f1:#143a62;--f2:#0a1f38;--f3:#06121f;--fbd:rgba(34,211,255,.5);
-  --fsh:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -4px 8px rgba(0,0,0,.5),0 0 8px rgba(34,211,255,.3),0 5px 9px rgba(0,0,0,.3);
-  --y1:#4a4a10;--y2:#2a2a08;--y3:#171704;--ybd:#ffe600;
-  --ysh:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 14px rgba(255,230,0,.25),0 0 13px rgba(255,230,0,.6),0 5px 9px rgba(0,0,0,.35);
-  --tsh:0 1px 2px rgba(0,0,0,.8),0 0 8px rgba(34,211,255,.55);
-  --segbg:#08182a;--segbd:rgba(34,211,255,.65);--segsh:inset 0 2px 7px rgba(0,0,0,.65),0 0 10px rgba(34,211,255,.3);
-  --navbg:linear-gradient(180deg,rgba(20,48,82,.94),rgba(6,16,30,.97));--navbd:#22d3ff;--navsh:0 -4px 24px rgba(34,211,255,.3),inset 0 1.5px 0 rgba(255,255,255,.28);
-  --pulse:rgba(34,211,255,.95);
+  --b-top:rgba(255,255,255,.17);
+  --b1:#1a4470;--b2:#0c2240;--b3:#081628;--bbd:#3fb0d4;
+  --bsh:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -4px 8px rgba(0,0,0,.45),inset 0 0 10px rgba(34,211,255,.1),0 0 6px rgba(34,211,255,.25),0 4px 8px rgba(0,0,0,.35);
+  --o1:#3a9fbe;--o2:#1a7d9c;--o3:#10587a;--obd:#8fd4e8;
+  --osh:inset 0 1.5px 0 rgba(255,255,255,.35),inset 0 -5px 9px rgba(0,40,70,.5),0 0 9px rgba(34,211,255,.4),0 4px 8px rgba(0,0,0,.35);
+  --f1:#143a62;--f2:#0a1f38;--f3:#06121f;--fbd:rgba(63,176,212,.35);
+  --fsh:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -4px 8px rgba(0,0,0,.45),0 4px 8px rgba(0,0,0,.3);
+  --y1:#403f14;--y2:#27270a;--y3:#161605;--ybd:#d4bd2a;
+  --ysh:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -4px 8px rgba(0,0,0,.45),inset 0 0 10px rgba(255,230,0,.1),0 0 6px rgba(255,230,0,.25),0 4px 8px rgba(0,0,0,.35);
+  --tsh:0 1px 2px rgba(0,0,0,.8);
+  --segbg:#08182a;--segbd:rgba(63,176,212,.5);--segsh:inset 0 2px 7px rgba(0,0,0,.6),0 0 6px rgba(34,211,255,.12);
+  --navbg:linear-gradient(180deg,rgba(20,48,82,.94),rgba(6,16,30,.97));--navbd:#3fb0d4;--navsh:0 -4px 14px rgba(34,211,255,.12),inset 0 1px 0 rgba(255,255,255,.18);
+  --pulse:rgba(34,211,255,.45);
 }
 
 /* ---------- رنگ متن: روشن = مشکی ، تیره = سفید ---------- */
@@ -556,8 +556,8 @@ html:not([data-theme=dark]) ::placeholder{color:rgba(0,0,0,.55)!important}
 
 /* پس‌زمینهٔ صفحه */
 body{background:transparent!important}
-html:not([data-theme=dark]){background:radial-gradient(800px 420px at 0% 0%,rgba(255,226,0,.13),transparent 60%),var(--bg) fixed!important}
-html[data-theme=dark]{background:radial-gradient(900px 520px at 100% -5%,rgba(34,211,255,.17),transparent 60%),radial-gradient(700px 520px at 0% 105%,rgba(255,230,0,.13),transparent 60%),linear-gradient(180deg,#0e1a20,#0a1014) fixed!important}
+html:not([data-theme=dark]){background:radial-gradient(800px 420px at 0% 0%,rgba(235,215,90,.10),transparent 60%),var(--bg) fixed!important}
+html[data-theme=dark]{background:radial-gradient(900px 520px at 100% -5%,rgba(34,211,255,.08),transparent 60%),radial-gradient(700px 520px at 0% 105%,rgba(255,230,0,.05),transparent 60%),linear-gradient(180deg,#0e1a20,#0a1014) fixed!important}
 
 /* ---------- پایهٔ دکمه‌ها ---------- */
 .btn,.seg button,.nav button,.mp-flt button,#modalX,.msg .x{
@@ -576,17 +576,17 @@ html[data-theme=dark]{background:radial-gradient(900px 520px at 100% -5%,rgba(34
 
 /* فعال */
 .btn.on,.seg button.on,.nav button.on,.mp-flt button.on{
-  background:linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.14) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--o1) 0,var(--o2) 55%,var(--o3) 100%)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.3) 0,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--o1) 0,var(--o2) 55%,var(--o3) 100%)!important;
   border-color:var(--obd)!important;box-shadow:var(--osh)!important;
 }
 /* خاموش */
 .btn.off,.nav button.off{
-  background:linear-gradient(180deg,rgba(255,255,255,.45) 0,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--f1) 0,var(--f2) 55%,var(--f3) 100%)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0,rgba(255,255,255,.06) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--f1) 0,var(--f2) 55%,var(--f3) 100%)!important;
   border-color:var(--fbd)!important;box-shadow:var(--fsh)!important;
 }
 /* برجسته (کپی همه، چه کنم؟، دمو …) */
 .btn.y{
-  background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.12) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--y1) 0,var(--y2) 55%,var(--y3) 100%)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--y1) 0,var(--y2) 55%,var(--y3) 100%)!important;
   border-color:var(--ybd)!important;box-shadow:var(--ysh)!important;
 }
 .btn.c{border-color:#00c8d8!important}
@@ -594,7 +594,7 @@ html[data-theme=dark]{background:radial-gradient(900px 520px at 100% -5%,rgba(34
 /* کاشی‌های ابزار */
 .tile{border-radius:20px!important;border-width:2.5px!important}
 .tile:nth-child(3n){
-  background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.12) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--y1) 0,var(--y2) 55%,var(--y3) 100%)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--y1) 0,var(--y2) 55%,var(--y3) 100%)!important;
   border-color:var(--ybd)!important;box-shadow:var(--ysh)!important;
 }
 .tile i{filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
@@ -617,26 +617,26 @@ html[data-theme=dark]{background:radial-gradient(900px 520px at 100% -5%,rgba(34
 
 /* توست */
 html:not([data-theme=dark]) #toast{background:linear-gradient(180deg,var(--o1),var(--o3))!important;border-color:var(--obd)!important}
-html[data-theme=dark] #toast{background:linear-gradient(180deg,#1d4f82,#071626)!important;border:2px solid #ffe600!important;box-shadow:0 0 16px rgba(255,230,0,.45)!important}
+html[data-theme=dark] #toast{background:linear-gradient(180deg,#1d4f82,#071626)!important;border:2px solid #d4bd2a!important;box-shadow:0 0 8px rgba(255,230,0,.2)!important}
 
 /* غیرفعال */
 .btn:disabled,button:disabled{opacity:.5!important;filter:grayscale(.5)!important;transform:none!important}
 
 /* ---------- تم روشن: چند لمس زرد ملایم ---------- */
-html:not([data-theme=dark]) .card::before{background:linear-gradient(90deg,var(--c1),var(--c2) 60%,#ffe600)!important}
-html:not([data-theme=dark]) .card.S::before{background:linear-gradient(90deg,#ffe600,#fff77a,var(--c2))!important}
-html:not([data-theme=dark]) .hero{border-bottom:5px solid #ffe600!important}
+html:not([data-theme=dark]) .card::before{background:linear-gradient(90deg,var(--c1),var(--c2) 60%,#e8d45c)!important}
+html:not([data-theme=dark]) .card.S::before{background:linear-gradient(90deg,#e8d45c,#f5ea96,var(--c2))!important}
+html:not([data-theme=dark]) .hero{border-bottom:4px solid #e8d45c!important}
 
 /* ---------- تم تیره: فیروزه‌ای و زرد روی لبه‌ها و نوارها ---------- */
 html[data-theme=dark] :is(.nav,.hero,.thead,.seg,.card,.box,.stat,.item,.sheet,.fhead,.mbox,.cycle,.tk,.chip,.msg,.chartbox,.mp-tf,.mp-row){
-  border-color:rgba(34,211,255,.75) rgba(255,230,0,.8) rgba(34,211,255,.75) rgba(255,230,0,.8)!important;
+  border-color:rgba(63,176,212,.5) rgba(212,189,42,.55) rgba(63,176,212,.5) rgba(212,189,42,.55)!important;
 }
-html[data-theme=dark] .nav{box-shadow:var(--navsh),-8px 0 18px -10px rgba(255,230,0,.6),8px 0 18px -10px rgba(255,230,0,.6)!important}
-html[data-theme=dark] .card::before{background:linear-gradient(90deg,#22d3ff,#ffe600)!important}
-html[data-theme=dark] .card.S::before{background:linear-gradient(90deg,#ffe600,#22d3ff)!important}
-html[data-theme=dark] #cycleBar{background:linear-gradient(90deg,#22d3ff,#ffe600)!important}
-html[data-theme=dark] .hero{background:linear-gradient(120deg,#0b4a55 0,#0d5e73 45%,#6a5d00 130%)!important}
-html[data-theme=dark] .thead{background:linear-gradient(120deg,#0b4a55,#14708a 60%,#7a6a00)!important}
+html[data-theme=dark] .nav{box-shadow:var(--navsh),-8px 0 16px -12px rgba(255,230,0,.35),8px 0 16px -12px rgba(255,230,0,.35)!important}
+html[data-theme=dark] .card::before{background:linear-gradient(90deg,#3fb0d4,#d4bd2a)!important}
+html[data-theme=dark] .card.S::before{background:linear-gradient(90deg,#d4bd2a,#3fb0d4)!important}
+html[data-theme=dark] #cycleBar{background:linear-gradient(90deg,#3fb0d4,#d4bd2a)!important}
+html[data-theme=dark] .hero{background:linear-gradient(120deg,#0b4a55 0,#0d5e73 55%,#5a5000 135%)!important}
+html[data-theme=dark] .thead{background:linear-gradient(120deg,#0b4a55,#14708a 65%,#645800)!important}
 
 /* تم تیره: پس‌زمینهٔ تیره برای برچسب‌های رنگی تا متن سفید خوانا بماند */
 html[data-theme=dark] .dir{background:#12708f!important}
