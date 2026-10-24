@@ -4512,5 +4512,28 @@ document.addEventListener('keydown',e=>{
 });
 })();
 </script>
+<script>
+/* ===== دکمهٔ اشتراک‌گذاری ===== */
+(()=>{
+const TXT='بهترین ربات تحلیلگر ارز دیجیتال برای دریافت سیگنال ترید و تحلیل بازار مالی وارد ربات بشید و استفاده کنید کاملا رایگان\nhttps://t.me/UTYOB_Bot';
+const st=document.createElement('style');
+st.textContent='.shbtn{grid-column:1/-1}.shbtn .btn{width:100%;min-height:46px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}';
+document.head.appendChild(st);
+const bar=document.querySelector('.pabar');
+if(bar)bar.insertAdjacentHTML('beforeend','<div class="shbtn"><button class="btn off" id="shareBtn">📤 اشتراک‌گذاری</button></div>');
+async function copy(){
+  try{await navigator.clipboard.writeText(TXT);return true;}catch(e){}
+  try{const t=document.createElement('textarea');t.value=TXT;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();return ok;}catch(e){return false;}
+}
+document.addEventListener('click',async e=>{
+  if(!e.target.closest||!e.target.closest('#shareBtn'))return;
+  if(navigator.share){
+    try{await navigator.share({text:TXT});return;}catch(er){if(er&&er.name==='AbortError')return;}
+  }
+  const ok=await copy();
+  if(typeof toast==='function')toast(ok?'متن اشتراک‌گذاری کپی شد ✓ حالا هرجا خواستی بچسبان.':'کپی انجام نشد.');
+});
+})();
+</script>
 </body>
 </html>
