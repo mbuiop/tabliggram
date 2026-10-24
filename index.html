@@ -508,6 +508,160 @@ html[data-theme=dark] .mp-tf,html[data-theme=dark] .mp-row{border-color:var(--li
 .aifab{position:fixed;inset-inline-start:12px;bottom:calc(var(--navh,70px) + 12px + env(safe-area-inset-bottom,0px));z-index:45;display:flex;align-items:center;gap:6px;padding:6px 16px 6px 14px;min-height:46px;border-radius:999px;font-weight:800;font-size:13px}
 .aifab span{line-height:1}
 body:has(#tab-chart.on) .aifab,body.imm .aifab,body.lock .aifab{display:none}
+
+/* ===== دکمه‌های پلاستیکی مدرن — تم روشن (زرد ملایم + متن مشکی) / تم تیره (نئون فیروزه‌ای+زرد + متن سفید) ===== */
+:root{
+  --spin:#000;
+  --b-top:rgba(255,255,255,.75);
+  --b1:#fffbe3;--b2:#fff0a0;--b3:#f2d84a;--bbd:#c9ae10;
+  --bsh:inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -4px 7px rgba(170,135,0,.28),0 3px 8px rgba(150,120,0,.32);
+  --o1:#ffee5c;--o2:#ffd51a;--o3:#e8b800;--obd:#8f7400;
+  --osh:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -5px 8px rgba(150,110,0,.35),0 0 15px rgba(255,200,0,.75),0 4px 9px rgba(150,120,0,.35);
+  --f1:#ffffff;--f2:#fffbe8;--f3:#f6eeb8;--fbd:#dcc84a;
+  --fsh:inset 0 1.5px 0 #fff,inset 0 -3px 6px rgba(170,135,0,.18),0 2px 6px rgba(150,120,0,.22);
+  --y1:#ffe08a;--y2:#ffbf2e;--y3:#e8960c;--ybd:#9a6400;
+  --ysh:inset 0 1.5px 0 rgba(255,255,255,.85),inset 0 -4px 7px rgba(150,80,0,.35),0 0 12px rgba(255,170,0,.55),0 3px 8px rgba(150,100,0,.3);
+  --tsh:0 1px 0 rgba(255,255,255,.65);
+  --segbg:#fff8d6;--segbd:#d9bf1c;--segsh:inset 0 2px 5px rgba(170,135,0,.25),0 0 0 rgba(0,0,0,0);
+  --navbg:rgba(255,255,255,.93);--navbd:#e3c400;--navsh:0 -3px 18px rgba(200,160,0,.28),inset 0 1.5px 0 #fff;
+  --pulse:rgba(255,200,0,.95);
+}
+html[data-theme=dark]{
+  --spin:#fff;
+  --ink:#fff;--mut:#fff;
+  --b-top:rgba(255,255,255,.34);
+  --b1:#1d4f82;--b2:#0b2442;--b3:#071626;--bbd:#22d3ff;
+  --bsh:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 14px rgba(34,211,255,.28),0 0 12px rgba(34,211,255,.55),0 5px 9px rgba(0,0,0,.35);
+  --o1:#46dcf5;--o2:#12a6d6;--o3:#0a6a96;--obd:#c4faff;
+  --osh:inset 0 2px 0 rgba(255,255,255,.75),inset 0 -5px 9px rgba(0,60,100,.5),0 0 20px rgba(34,211,255,.95),0 5px 10px rgba(0,0,0,.35);
+  --f1:#143a62;--f2:#0a1f38;--f3:#06121f;--fbd:rgba(34,211,255,.5);
+  --fsh:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -4px 8px rgba(0,0,0,.5),0 0 8px rgba(34,211,255,.3),0 5px 9px rgba(0,0,0,.3);
+  --y1:#4a4a10;--y2:#2a2a08;--y3:#171704;--ybd:#ffe600;
+  --ysh:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 14px rgba(255,230,0,.25),0 0 13px rgba(255,230,0,.6),0 5px 9px rgba(0,0,0,.35);
+  --tsh:0 1px 2px rgba(0,0,0,.8),0 0 8px rgba(34,211,255,.55);
+  --segbg:#08182a;--segbd:rgba(34,211,255,.65);--segsh:inset 0 2px 7px rgba(0,0,0,.65),0 0 10px rgba(34,211,255,.3);
+  --navbg:linear-gradient(180deg,rgba(20,48,82,.94),rgba(6,16,30,.97));--navbd:#22d3ff;--navsh:0 -4px 24px rgba(34,211,255,.3),inset 0 1.5px 0 rgba(255,255,255,.28);
+  --pulse:rgba(34,211,255,.95);
+}
+
+/* ---------- رنگ متن: روشن = مشکی ، تیره = سفید ---------- */
+html:not([data-theme=dark]) body,
+html:not([data-theme=dark]) body *:not(svg *):not([style*="#0a6b3c"]):not([style*="#a02020"]){color:#000!important}
+html[data-theme=dark] body,
+html[data-theme=dark] body *:not(svg *){color:#fff!important}
+html[data-theme=dark] [style*="#0a6b3c"]{color:#5df2a0!important}
+html[data-theme=dark] [style*="#a02020"]{color:#ff7b8b!important}
+html[data-theme=dark] ::placeholder{color:rgba(255,255,255,.6)!important}
+html:not([data-theme=dark]) ::placeholder{color:rgba(0,0,0,.55)!important}
+
+/* پس‌زمینهٔ صفحه */
+body{background:transparent!important}
+html:not([data-theme=dark]){background:radial-gradient(800px 420px at 0% 0%,rgba(255,226,0,.13),transparent 60%),var(--bg) fixed!important}
+html[data-theme=dark]{background:radial-gradient(900px 520px at 100% -5%,rgba(34,211,255,.17),transparent 60%),radial-gradient(700px 520px at 0% 105%,rgba(255,230,0,.13),transparent 60%),linear-gradient(180deg,#0e1a20,#0a1014) fixed!important}
+
+/* ---------- پایهٔ دکمه‌ها ---------- */
+.btn,.seg button,.nav button,.mp-flt button,#modalX,.msg .x{
+  background:linear-gradient(180deg,var(--b-top) 0,rgba(255,255,255,.12) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--b1) 0,var(--b2) 55%,var(--b3) 100%)!important;
+  border-style:solid!important;border-color:var(--bbd)!important;
+  box-shadow:var(--bsh)!important;text-shadow:var(--tsh)!important;
+  transition:transform .12s ease,box-shadow .2s ease,filter .2s ease!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover,.seg button:hover,.nav button:hover,.mp-flt button:hover{filter:brightness(1.08)!important}
+.btn:active,.seg button:active,.nav button:active,.mp-flt button:active,#modalX:active,.msg .x:active{
+  transform:translateY(2px) scale(.97)!important;filter:brightness(.96)!important;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.4)!important;
+}
+.btn:focus-visible,.seg button:focus-visible,.nav button:focus-visible,.mp-flt button:focus-visible{outline:3px solid var(--spin)!important;outline-offset:2px}
+
+/* فعال */
+.btn.on,.seg button.on,.nav button.on,.mp-flt button.on{
+  background:linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.14) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--o1) 0,var(--o2) 55%,var(--o3) 100%)!important;
+  border-color:var(--obd)!important;box-shadow:var(--osh)!important;
+}
+/* خاموش */
+.btn.off,.nav button.off{
+  background:linear-gradient(180deg,rgba(255,255,255,.45) 0,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--f1) 0,var(--f2) 55%,var(--f3) 100%)!important;
+  border-color:var(--fbd)!important;box-shadow:var(--fsh)!important;
+}
+/* برجسته (کپی همه، چه کنم؟، دمو …) */
+.btn.y{
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.12) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--y1) 0,var(--y2) 55%,var(--y3) 100%)!important;
+  border-color:var(--ybd)!important;box-shadow:var(--ysh)!important;
+}
+.btn.c{border-color:#00c8d8!important}
+
+/* کاشی‌های ابزار */
+.tile{border-radius:20px!important;border-width:2.5px!important}
+.tile:nth-child(3n){
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.12) 46%,rgba(255,255,255,0) 47%),linear-gradient(180deg,var(--y1) 0,var(--y2) 55%,var(--y3) 100%)!important;
+  border-color:var(--ybd)!important;box-shadow:var(--ysh)!important;
+}
+.tile i{filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+.tile span{opacity:.85;text-shadow:none!important}
+
+/* سگمنت‌ها و چیپ‌ها */
+.seg{background:var(--segbg)!important;border:2px solid var(--segbd)!important;border-radius:16px!important;padding:3px;gap:3px;box-shadow:var(--segsh)!important}
+.seg button,.seg button:first-child{border:1.5px solid var(--bbd)!important;border-radius:12px!important}
+.seg button.on{border-color:var(--obd)!important}
+.mp-flt button{border-width:2px!important;border-radius:999px!important}
+
+/* نوار پایین */
+.nav{background:var(--navbg)!important;border:2px solid var(--navbd)!important;box-shadow:var(--navsh)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nav button{border-width:2px!important;border-radius:18px!important}
+.nav button.on{transform:translateY(-2px)}
+.nav button.on:active{transform:translateY(1px) scale(.97)!important}
+.nav button i{filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+
+#modalX,.msg .x{border-width:1.5px!important;border-radius:50%!important;line-height:1}
+
+/* توست */
+html:not([data-theme=dark]) #toast{background:linear-gradient(180deg,var(--o1),var(--o3))!important;border-color:var(--obd)!important}
+html[data-theme=dark] #toast{background:linear-gradient(180deg,#1d4f82,#071626)!important;border:2px solid #ffe600!important;box-shadow:0 0 16px rgba(255,230,0,.45)!important}
+
+/* غیرفعال */
+.btn:disabled,button:disabled{opacity:.5!important;filter:grayscale(.5)!important;transform:none!important}
+
+/* ---------- تم روشن: چند لمس زرد ملایم ---------- */
+html:not([data-theme=dark]) .card::before{background:linear-gradient(90deg,var(--c1),var(--c2) 60%,#ffe600)!important}
+html:not([data-theme=dark]) .card.S::before{background:linear-gradient(90deg,#ffe600,#fff77a,var(--c2))!important}
+html:not([data-theme=dark]) .hero{border-bottom:5px solid #ffe600!important}
+
+/* ---------- تم تیره: فیروزه‌ای و زرد روی لبه‌ها و نوارها ---------- */
+html[data-theme=dark] :is(.nav,.hero,.thead,.seg,.card,.box,.stat,.item,.sheet,.fhead,.mbox,.cycle,.tk,.chip,.msg,.chartbox,.mp-tf,.mp-row){
+  border-color:rgba(34,211,255,.75) rgba(255,230,0,.8) rgba(34,211,255,.75) rgba(255,230,0,.8)!important;
+}
+html[data-theme=dark] .nav{box-shadow:var(--navsh),-8px 0 18px -10px rgba(255,230,0,.6),8px 0 18px -10px rgba(255,230,0,.6)!important}
+html[data-theme=dark] .card::before{background:linear-gradient(90deg,#22d3ff,#ffe600)!important}
+html[data-theme=dark] .card.S::before{background:linear-gradient(90deg,#ffe600,#22d3ff)!important}
+html[data-theme=dark] #cycleBar{background:linear-gradient(90deg,#22d3ff,#ffe600)!important}
+html[data-theme=dark] .hero{background:linear-gradient(120deg,#0b4a55 0,#0d5e73 45%,#6a5d00 130%)!important}
+html[data-theme=dark] .thead{background:linear-gradient(120deg,#0b4a55,#14708a 60%,#7a6a00)!important}
+
+/* تم تیره: پس‌زمینهٔ تیره برای برچسب‌های رنگی تا متن سفید خوانا بماند */
+html[data-theme=dark] .dir{background:#12708f!important}
+html[data-theme=dark] .card.S .dir,html[data-theme=dark] .ct.y,html[data-theme=dark] .kv b.dn,html[data-theme=dark] .pill.s,html[data-theme=dark] .mp-fl,html[data-theme=dark] .mp-bar .f{background:#7a6a00!important}
+html[data-theme=dark] .q{background:#0b6f6c!important}
+html[data-theme=dark] .kv b.up,html[data-theme=dark] .crow.hit b,html[data-theme=dark] .pill.pos,html[data-theme=dark] .cst.win,html[data-theme=dark] .mp-up,html[data-theme=dark] .ixp.b{background:#0b6f4f!important}
+html[data-theme=dark] .crow.slr b,html[data-theme=dark] .pill.neg,html[data-theme=dark] .cst.loss,html[data-theme=dark] .mp-dn,html[data-theme=dark] .ixp.r{background:#98303f!important}
+html[data-theme=dark] .pill.l{background:#137aa0!important}
+html[data-theme=dark] .mp-na,html[data-theme=dark] .ixp.n{background:#3a4650!important}
+html[data-theme=dark] .chip.bad{background:#6b2a2a!important}
+
+/* ---------- لودینگ دکمه‌ها ---------- */
+@keyframes glSpin{to{transform:rotate(360deg)}}
+.btn.gl-loading:not(.aifab),.seg button.gl-loading,.mp-flt button.gl-loading{position:relative}
+.gl-loading{pointer-events:none!important}
+.gl-loading,.gl-loading *{color:transparent!important;text-shadow:none!important}
+.gl-loading>*{opacity:0}
+.gl-loading::after{content:"";position:absolute;inset:0;margin:auto;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(128,128,128,.35);border-top-color:var(--spin);animation:glSpin .7s linear infinite}
+.btn.xs.gl-loading::after{width:15px;height:15px;border-width:2px}
+.gl-spin{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(128,128,128,.35);border-top-color:var(--spin);animation:glSpin .7s linear infinite;vertical-align:-2px;margin-inline-end:6px}
+
+/* دکمهٔ شناور هوش مصنوعی */
+@keyframes glPulse{0%,100%{filter:drop-shadow(0 0 3px var(--pulse))}50%{filter:drop-shadow(0 0 13px var(--pulse))}}
+.aifab{animation:glPulse 2.8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.aifab,.gl-loading::after,.gl-spin{animation-duration:2s}.btn,.seg button,.nav button,.mp-flt button{transition:none!important}}
 </style>
 </head>
 <body>
@@ -2794,7 +2948,7 @@ let ISC=null,ISCM='top';
 const ISCF=[['top','قوی‌ترین صعودی'],['bot','قوی‌ترین نزولی'],['os','RSI اشباع فروش'],['ob','RSI اشباع خرید'],['sq','اسکوییز'],['bu','شکست سقف'],['bd','شکست کف'],['mu','کراس صعودی MACD'],['md','کراس نزولی MACD'],['vs','جهش حجم'],['dv','واگرایی صعودی'],['dr','واگرایی نزولی']];
 async function iscData(out){
   if(ISC&&Date.now()-ISC.t<5*60000)return ISC.rows;const rows=[];let n=0;
-  await pool(UNIVERSE,6,async s=>{try{const K=await klines(s,'1h',400),cl=K.slice(0,-1);if(cl.length>=210){const r=ixCompute(cl.slice(-400),null),sm=ixSum(r.list),m=r.meta;rows.push({s,px:K.at(-1).c,pct:sm.pct,vd:sm.vd,sc:sm.sc,b:sm.b,r:sm.r,rsi:m.rsi,sq:m.sq,bu:m.brkUp,bd:m.brkDn,mu:m.macdUp,md:m.macdDn,vs:m.volSp,dv:m.divBull,dr:m.divBear});}}catch(e){}n++;if(n%8===0&&$('#tOut'))$('#tOut').innerHTML=`<p class="note">اسکن ${fa(n)} از ${fa(UNIVERSE.length)} ارز…</p>`;});
+  await pool(UNIVERSE,6,async s=>{try{const K=await klines(s,'1h',400),cl=K.slice(0,-1);if(cl.length>=210){const r=ixCompute(cl.slice(-400),null),sm=ixSum(r.list),m=r.meta;rows.push({s,px:K.at(-1).c,pct:sm.pct,vd:sm.vd,sc:sm.sc,b:sm.b,r:sm.r,rsi:m.rsi,sq:m.sq,bu:m.brkUp,bd:m.brkDn,mu:m.macdUp,md:m.macdDn,vs:m.volSp,dv:m.divBull,dr:m.divBear});}}catch(e){}n++;if(n%8===0&&$('#tOut'))$('#tOut').innerHTML=`<p class="note"><span class="gl-spin"></span>در حال اسکن بازار…</p>`;});
   if(!rows.length)throw new Error('no');ISC={t:Date.now(),rows};return rows;
 }
 function iscHTML(rows,m){
@@ -3006,7 +3160,7 @@ async function mpLoad(force){
 function mpRender(){
   const box=document.querySelector('#mpBox');if(!box)return;
   const rows=MP.rows;
-  let h=`<div class="mp"><div class="mp-hd"><div><h2>🗺️ نقشهٔ جهت بازار</h2><p>جهت غالب هر ارز در چهار تایم‌فریم؛ فقط تصویر وضعیت است، نه سیگنال خرید یا فروش.</p></div><button class="btn xs" id="mpRefresh"${MP.loading?' disabled':''}>${MP.loading?`در حال تحلیل ${fa(Math.min(MP.done,MP.total))} از ${fa(MP.total)}…`:'↻ به‌روزرسانی'}</button></div>`;
+  let h=`<div class="mp"><div class="mp-hd"><div><h2>🗺️ نقشهٔ جهت بازار</h2><p>جهت غالب هر ارز در چهار تایم‌فریم؛ فقط تصویر وضعیت است، نه سیگنال خرید یا فروش.</p></div><button class="btn xs${MP.loading?' gl-loading':''}" id="mpRefresh"${MP.loading?' disabled':''}>${MP.loading?'در حال تحلیل':'↻ به‌روزرسانی'}</button></div>`;
   if(!rows||!rows.length){
     h+=`<div class="mp-msg">${MP.err?'دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن و دوباره تلاش کن.':'در حال ساخت نقشه…'}</div></div>`;
     box.innerHTML=h;return;
@@ -4657,6 +4811,19 @@ document.addEventListener('click',async e=>{
   const ok=await copy();
   if(typeof toast==='function')toast(ok?'متن اشتراک‌گذاری کپی شد ✓ حالا هرجا خواستی بچسبان.':'کپی انجام نشد.');
 });
+})();
+</script>
+<script>
+/* لودینگ دکمه‌ها: بعد از هر کلیک یک اسپینر کوتاه نمایش داده می‌شود */
+(function(){
+  var SEL='.btn,.seg button,.mp-flt button',
+      SKIP='label,.nav button,#modalX,#sheetX,#tClose,#tBack,#hmBack,#mCancel,#btnImmX,.msg .x,[data-xclose]';
+  document.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest?e.target.closest(SEL):null;
+    if(!b||b.disabled||b.matches(SKIP)||b.classList.contains('gl-loading'))return;
+    b.classList.add('gl-loading');
+    setTimeout(function(){b.classList.remove('gl-loading');},700);
+  },false);
 })();
 </script>
 </body>
