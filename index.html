@@ -3872,5 +3872,645 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='aSymP
 loadCat();
 })();
 </script>
+<script>
+/* ======================================================================
+   🧰 ابزارهای پیشرفتهٔ تحلیل شخصی (افزونه، بدون دست‌زدن به کد قبلی)
+   واگرایی · الگوی کندلی · اسکنر فشردگی نوسان · تقویم اقتصادی · ژورنال معاملات
+   ====================================================================== */
+(()=>{
+const XK='radar.px1';
+const TFS=['15m','1h','4h','1d'];
+const GRN='#0ecb81',RED='#f6465d',AMB='#e0b000',BLU='#249dc5',VIO='#8b6cf6';
+const DEF=()=>({tab:'sum',sym:'BTC',tf:'1h',syms:'',
+ view:{div:'one',can:'one',sq:'one'},
+ sum:{wDiv:1,wCan:1,wSq:1,wApp:1,useCal:1},
+ div:{piv:3,rsiP:14,look:120,ind:'rsi',hidden:1,maxGap:60,fresh:12,scanN:20},
+ can:{look:70,recent:3,ctx:1,scanN:20,on:{},w:{}},
+ sq:{len:20,bbk:2,kcm:1.5,look:120,scanN:30,pctMax:30},
+ cal:{ev:[],f:0},
+ jr:{e:[],setups:['شکست','پولبک','برگشت با واگرایی','الگوی کندلی','اسکوییز'],draft:{dir:'LONG',tf:'1h',emo:'آرام',disc:4},f:'all'}});
+let X=(()=>{const d=DEF(),s=store.get(XK,null);if(!s)return d;
+  const m=(a,b)=>{for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))a[k]=m(a[k]&&typeof a[k]==='object'?a[k]:{},b[k]);else a[k]=b[k];}return a;};return m(d,s);})();
+const sv=()=>store.set(XK,X);
+const R={sum:null,div:{},can:{},sq:{}},BZ={};            /* نتایج و وضعیت‌های در حال اجرا */
+const H=s=>esc(s);
+const n2=(x,d=2)=>x==null||!isFinite(x)?'—':(+x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const clampN=(x,a,b)=>Math.max(a,Math.min(b,x));
+const getP=(o,p)=>p.split('.').reduce((a,k)=>a==null?a:a[k],o);
+const setP=(o,p,v)=>{const a=p.split('.'),l=a.pop();let t=o;for(const k of a)t=t[k]||(t[k]={});t[l]=v;};
+
+/* ---------- استایل ---------- */
+const st=document.createElement('style');
+st.textContent=`
+.pxbtn{grid-column:1/-1}
+.pxbtn .btn{width:100%;min-height:46px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}
+.pxstrip{margin:0 0 10px}.pxstrip .btn{width:100%}
+#px{z-index:86}
+.pxt{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;margin-bottom:2px}
+.pxt::-webkit-scrollbar{display:none}
+.pxt .btn{flex:0 0 auto;padding:6px 13px;font-size:12.5px;white-space:nowrap}
+.pxc{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:12px 13px;margin-top:10px}
+.pxc h4{margin:0 0 6px;font-size:14px}
+.pxsub{font-size:11.5px;opacity:.8;margin:2px 0 8px;line-height:1.8}
+.pxk{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin-top:8px}
+.pxk>div{border:1.5px solid var(--line);border-radius:16px;padding:7px 10px;background:var(--card)}
+.pxk b{display:block;font-size:17px;line-height:1.5}.pxk span{font-size:11px;opacity:.85}
+.pxi{width:100%;min-height:38px;border:1.5px solid var(--line);border-radius:12px;padding:6px 10px;background:var(--card);color:inherit}
+.pxi.l{direction:ltr;text-align:left}
+textarea.pxi{min-height:112px;line-height:1.9;resize:vertical;padding:10px 12px;border-radius:16px}
+.pxf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pxf label,.pxl{display:flex;flex-direction:column;gap:3px;font-size:11.5px;font-weight:700}
+.pxf .w2{grid-column:1/-1}
+@media(min-width:760px){.pxf.c4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pxr{display:grid;grid-template-columns:104px 1fr 44px;gap:8px;align-items:center;font-size:12px;padding:3px 0}
+.pxr b{text-align:end}.pxr input[type=range]{width:100%;accent-color:var(--c1)}
+.pxsvg{width:100%;height:auto;display:block;direction:ltr;color:var(--ink);overflow:visible}
+.pxsvg text{fill:currentColor;font-family:inherit}
+.pxtb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 8px}
+.pxtb .pxi{flex:1 1 110px;width:auto;direction:ltr;text-align:left}
+.pxchips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.pxch{font-size:11px;font-weight:800;padding:2px 10px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);cursor:default;white-space:nowrap}
+.pxch.b{border-color:${GRN};color:#0a7a4a;background:rgba(14,203,129,.12)}
+.pxch.r{border-color:${RED};color:#b02a37;background:rgba(246,70,93,.12)}
+.pxch.n{border-color:${AMB};background:rgba(224,176,0,.14)}
+.pxch.v{border-color:${VIO};background:rgba(139,108,246,.14)}
+html[data-theme=dark] .pxch.b{color:#4fe3a6}html[data-theme=dark] .pxch.r{color:#ff8a96}
+.pxrow{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line)}
+.pxrow:last-child{border-bottom:0}
+.pxrow .s{font-weight:800;font-size:14px;direction:ltr}
+.pxrow .m{font-size:11.5px;line-height:1.7}
+.pxrow .btn{padding:2px 10px}
+.pxbar{display:grid;grid-template-columns:92px 1fr 62px;gap:8px;align-items:center;font-size:11.5px;margin:6px 0}
+.pxbar .tr{height:11px;border-radius:99px;background:var(--gtrack,#d7f3f8);overflow:hidden;position:relative}
+.pxbar .tr i{position:absolute;top:0;bottom:0;border-radius:99px}
+.pxbar b{text-align:end;direction:ltr}
+.pxmeter{height:9px;border-radius:99px;background:var(--gtrack,#d7f3f8);position:relative;overflow:hidden;margin:4px 0}
+.pxmeter i{position:absolute;top:0;bottom:0}
+.pxmeter:after{content:"";position:absolute;inset:0 calc(50% - 1px);background:currentColor;opacity:.35}
+.pxwarn{border:1.5px dashed ${AMB};border-radius:14px;padding:8px 12px;background:rgba(224,176,0,.13);font-size:12px;margin:8px 0;line-height:1.8}
+.pxwarn.r{border-color:${RED};background:rgba(246,70,93,.1)}
+.pxsb{display:flex;gap:6px;margin:2px 0 8px}
+.pxsb .btn{flex:1;padding:5px 8px;font-size:12.5px}
+.pxdays{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;direction:rtl}
+.pxday{border:1.5px solid var(--line);border-radius:12px;padding:4px 2px;text-align:center;font-size:10.5px;min-height:62px;background:var(--card)}
+.pxday.t{border-color:var(--c1);border-width:2.5px}
+.pxday b{display:block;font-size:13px}
+.pxday .d{display:inline-block;width:8px;height:8px;border-radius:50%;margin:1px}
+.pxheat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;direction:ltr;overflow-x:auto;padding-bottom:4px}
+.pxheat i{width:15px;height:15px;border-radius:4px;background:var(--gtrack,#d7f3f8);display:block}
+.pxlg{display:flex;gap:10px;font-size:10.5px;flex-wrap:wrap;margin-top:4px}
+.pxlg span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-inline-end:4px;background:var(--lc)}
+.pxtr{border:1.5px solid var(--line);border-radius:18px;padding:10px 12px;margin-top:8px;background:var(--card)}
+.pxtr .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.pxtr details summary{cursor:pointer;font-size:12px;font-weight:700;margin-top:6px}
+.pxtr.win{border-inline-start:6px solid ${GRN}}.pxtr.loss{border-inline-start:6px solid ${RED}}.pxtr.open{border-inline-start:6px solid ${AMB}}
+.pxst{display:inline-flex;gap:2px;direction:ltr}
+.pxst button{border:0;background:none;font-size:20px;cursor:pointer;padding:0 1px;opacity:.3;line-height:1}
+.pxst button.on{opacity:1}
+.pxcd{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;font-weight:800}
+.pxev{display:grid;grid-template-columns:6px 1fr auto;gap:10px;align-items:stretch;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;margin-top:8px;background:var(--card)}
+.pxev>u{display:block}.pxev>div{padding:8px 0}.pxev>aside{padding:8px 12px;text-align:center;align-self:center}
+.pxev.done{opacity:.5}
+.pxsvgwrap{overflow-x:auto}
+`;
+document.head.appendChild(st);
+
+/* ---------- محاسبات پایه ---------- */
+const smaA=(a,n)=>a.map((_,i)=>{if(i<n-1)return null;let s=0;for(let j=i-n+1;j<=i;j++){if(a[j]==null)return null;s+=a[j];}return s/n;});
+const emaA=(a,n)=>{const r=Array(a.length).fill(null),k=2/(n+1);let p=null;for(let i=0;i<a.length;i++){if(a[i]==null)continue;p=p==null?a[i]:a[i]*k+p*(1-k);r[i]=p;}return r;};
+const sdA=(a,n)=>a.map((_,i)=>{if(i<n-1)return null;const w=a.slice(i-n+1,i+1),m=w.reduce((s,x)=>s+x,0)/n;return Math.sqrt(w.reduce((s,x)=>s+(x-m)**2,0)/n);});
+const trA=cl=>cl.map((k,i)=>i?Math.max(k.h-k.l,Math.abs(k.h-cl[i-1].c),Math.abs(k.l-cl[i-1].c)):k.h-k.l);
+const atrA=(cl,n=14)=>smaA(trA(cl),n).map((v,i,a)=>v==null?(i?a[i-1]:null):v);
+function rsiA(c,n){const r=Array(c.length).fill(null);if(c.length<=n)return r;let g=0,l=0;
+  for(let i=1;i<=n;i++){const d=c[i]-c[i-1];g+=Math.max(d,0);l+=Math.max(-d,0);}g/=n;l/=n;r[n]=l?100-100/(1+g/l):100;
+  for(let i=n+1;i<c.length;i++){const d=c[i]-c[i-1];g=(g*(n-1)+Math.max(d,0))/n;l=(l*(n-1)+Math.max(-d,0))/n;r[i]=l?100-100/(1+g/l):100;}return r;}
+function macdH(c){const e1=emaA(c,12),e2=emaA(c,26),m=e1.map((x,i)=>x==null||e2[i]==null?null:x-e2[i]),s=emaA(m.map(x=>x==null?0:x),9);return m.map((x,i)=>x==null||i<34?null:x-s[i]);}
+function obvA(cl){let o=0;return cl.map((k,i)=>{if(i){o+=k.c>cl[i-1].c?k.v:k.c<cl[i-1].c?-k.v:0;}return o;});}
+function mfiA(cl,n=14){const tp=cl.map(k=>(k.h+k.l+k.c)/3);return cl.map((_,i)=>{if(i<n)return null;let p=0,q=0;for(let j=i-n+1;j<=i;j++){const f=tp[j]*cl[j].v;if(tp[j]>tp[j-1])p+=f;else if(tp[j]<tp[j-1])q+=f;}return q?100-100/(1+p/q):100;});}
+function linLast(a,n){const w=a.slice(-n);if(w.length<n||w.some(x=>x==null))return null;let sx=0,sy=0,sxy=0,sxx=0;w.forEach((y,x)=>{sx+=x;sy+=y;sxy+=x*y;sxx+=x*x;});const b=(n*sxy-sx*sy)/(n*sxx-sx*sx||1),a0=(sy-b*sx)/n;return a0+b*(n-1);}
+async function candles(sym,tf){const K=await klines(sym,tf,400);return cl2(K,tf);}
+const symsOf=n=>{const t=String(X.syms||'').toUpperCase().split(/[,\s،]+/).map(x=>x.replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'')).filter(Boolean);return t.length?[...new Set(t)].slice(0,60):UNIVERSE.slice(0,clampN(+n||20,5,60));};
+
+/* ---------- واگرایی ---------- */
+function pivots(cl,w){const hi=[],lo=[];for(let i=w;i<cl.length-w;i++){let H1=true,L1=true;
+  for(let j=1;j<=w;j++){if(cl[i].h<=cl[i-j].h||cl[i].h<cl[i+j].h)H1=false;if(cl[i].l>=cl[i-j].l||cl[i].l>cl[i+j].l)L1=false;}
+  if(H1)hi.push(i);if(L1)lo.push(i);}return{hi,lo};}
+const INDN={rsi:'RSI',macd:'MACD هیستوگرام',obv:'OBV',mfi:'MFI'};
+function indSeries(cl,cfg){const c=cl.map(k=>k.c);return cfg.ind==='macd'?macdH(c):cfg.ind==='obv'?obvA(cl):cfg.ind==='mfi'?mfiA(cl,cfg.rsiP):rsiA(c,cfg.rsiP);}
+function divAnalyze(cl,cfg){
+  const n=cl.length,ind=indSeries(cl,cfg),pv=pivots(cl,cfg.piv),from=Math.max(0,n-cfg.look),out=[];
+  const vals=ind.filter(x=>x!=null),rg=(Math.max(...vals)-Math.min(...vals))||1;
+  const pairs=(arr,hi)=>{const a=arr.filter(i=>i>=from&&ind[i]!=null);
+    for(let k=1;k<a.length;k++){const i1=a[k-1],i2=a[k],gap=i2-i1;if(gap<cfg.piv+1||gap>cfg.maxGap)continue;
+      const p1=hi?cl[i1].h:cl[i1].l,p2=hi?cl[i2].h:cl[i2].l,v1=ind[i1],v2=ind[i2];
+      let kind=null;
+      if(!hi){if(p2<p1&&v2>v1)kind='reg';else if(cfg.hidden&&p2>p1&&v2<v1)kind='hid';}
+      else{if(p2>p1&&v2<v1)kind='reg';else if(cfg.hidden&&p2<p1&&v2>v1)kind='hid';}
+      if(kind){const str=clampN(Math.round(Math.abs(v2-v1)/rg*220+Math.abs(p2/p1-1)*600),5,100);
+        out.push({type:hi?'bear':'bull',kind,i1,i2,p1,p2,v1,v2,str,age:n-1-i2});}}};
+  pairs(pv.lo,false);pairs(pv.hi,true);out.sort((a,b)=>a.age-b.age);
+  return {ind,pv,list:out,n};}
+const divTxt=d=>(d.type==='bull'?'صعودی ':'نزولی ')+(d.kind==='reg'?'معمولی':'پنهان');
+const divMean=d=>d.type==='bull'?(d.kind==='reg'?'احتمال برگشت به بالا':'ادامهٔ روند صعودی'):(d.kind==='reg'?'احتمال برگشت به پایین':'ادامهٔ روند نزولی');
+function divBias(r,cfg){let s=0;r.list.filter(d=>d.age<=cfg.fresh).forEach(d=>{s+=(d.type==='bull'?1:-1)*(d.kind==='reg'?1:.6)*(1-d.age/(cfg.fresh*1.6))*(.5+d.str/200);});return clampN(s,-1,1);}
+
+/* ---------- الگوی کندلی ---------- */
+const PAT=[
+ ['doji','دوجی (تردید)',0,1],['dragon','دوجی سنجاقک',1,1.5],['grave','دوجی سنگ‌قبر',-1,1.5],
+ ['hammer','چکش',1,2],['hang','مرد آویزان',-1,2],['invh','چکش وارونه',1,1.5],['star','ستارهٔ دنباله‌دار',-1,2],
+ ['bullE','پوشا صعودی',1,3],['bearE','پوشا نزولی',-1,3],['bullH','هارامی صعودی',1,1.5],['bearH','هارامی نزولی',-1,1.5],
+ ['pierce','نفوذی (Piercing)',1,2],['dark','ابر تیره',-1,2],['morn','ستارهٔ صبحگاهی',1,3],['even','ستارهٔ شامگاهی',-1,3],
+ ['sold','سه سرباز سفید',1,3],['crow','سه کلاغ سیاه',-1,3],['maruB','ماروبوزوی صعودی',1,1],['maruR','ماروبوزوی نزولی',-1,1],
+ ['twzB','انبر کف',1,1.5],['twzT','انبر سقف',-1,1.5]];
+const PATM=Object.fromEntries(PAT.map(p=>[p[0],p]));
+const patOn=k=>X.can.on[k]!==0,patW=k=>+(X.can.w[k]!=null?X.can.w[k]:PATM[k][3]);
+function candleScan(cl){
+  const n=cl.length,A=atrA(cl,14),out=[];
+  const bd=k=>Math.abs(k.c-k.o),rg=k=>(k.h-k.l)||1e-12,up=k=>k.c>k.o,dn=k=>k.c<k.o,uS=k=>k.h-Math.max(k.o,k.c),lS=k=>Math.min(k.o,k.c)-k.l;
+  const trd=i=>{if(i<6)return 0;const d=(cl[i-1].c-cl[i-6].c)/(A[i-1]||cl[i].c*.01);return d>1?1:d<-1?-1:0;};
+  const add=(i,key)=>{if(patOn(key))out.push({i,key,dir:PATM[key][2],w:patW(key),t:cl[i].t});};
+  for(let i=3;i<n;i++){
+    const k=cl[i],p=cl[i-1],q=cl[i-2],a=A[i]||rg(k),t=trd(i),cx=X.can.ctx;
+    const body=bd(k),r=rg(k);
+    if(body<=.1*r&&r>=.5*a){ if(lS(k)>=.65*r&&uS(k)<=.12*r&&(!cx||t<=0))add(i,'dragon');else if(uS(k)>=.65*r&&lS(k)<=.12*r&&(!cx||t>=0))add(i,'grave');else add(i,'doji'); }
+    else if(body>0&&r>=.6*a){
+      if(lS(k)>=2*body&&uS(k)<=.3*body+.05*r){ if(!cx||t<0)add(i,'hammer');else if(t>0)add(i,'hang'); }
+      else if(uS(k)>=2*body&&lS(k)<=.3*body+.05*r){ if(!cx||t<0)add(i,'invh');if(t>0)add(i,'star'); }
+    }
+    if(body>=.92*r&&r>=.8*a)add(i,up(k)?'maruB':'maruR');
+    if(bd(p)>.3*a){
+      if(dn(p)&&up(k)&&k.c>=p.o&&k.o<=p.c&&(!cx||t<=0))add(i,'bullE');
+      if(up(p)&&dn(k)&&k.c<=p.o&&k.o>=p.c&&(!cx||t>=0))add(i,'bearE');
+    }
+    if(bd(p)>.6*a&&bd(p)>=1.5*body){
+      if(dn(p)&&k.o>p.c&&k.c<p.o&&body>0&&(!cx||t<=0))add(i,'bullH');
+      if(up(p)&&k.o<p.c&&k.c>p.o&&body>0&&(!cx||t>=0))add(i,'bearH');
+    }
+    if(bd(p)>.5*a){
+      if(dn(p)&&up(k)&&k.o<p.c&&k.c>(p.o+p.c)/2&&k.c<p.o&&(!cx||t<=0))add(i,'pierce');
+      if(up(p)&&dn(k)&&k.o>p.c&&k.c<(p.o+p.c)/2&&k.c>p.o&&(!cx||t>=0))add(i,'dark');
+    }
+    if(bd(q)>.6*a&&bd(p)<.35*bd(q)){
+      if(dn(q)&&up(k)&&k.c>(q.o+q.c)/2)add(i,'morn');
+      if(up(q)&&dn(k)&&k.c<(q.o+q.c)/2)add(i,'even');
+    }
+    if(up(q)&&up(p)&&up(k)&&p.c>q.c&&k.c>p.c&&p.o>q.o&&p.o<q.c&&k.o>p.o&&k.o<p.c&&bd(q)>.5*a&&bd(p)>.5*a&&body>.5*a&&uS(k)<.35*body)add(i,'sold');
+    if(dn(q)&&dn(p)&&dn(k)&&p.c<q.c&&k.c<p.c&&p.o<q.o&&p.o>q.c&&k.o<p.o&&k.o>p.c&&bd(q)>.5*a&&bd(p)>.5*a&&body>.5*a&&lS(k)<.35*body)add(i,'crow');
+    if(Math.abs(p.l-k.l)<=.1*a&&dn(p)&&up(k)&&(!cx||t<0))add(i,'twzB');
+    if(Math.abs(p.h-k.h)<=.1*a&&up(p)&&dn(k)&&(!cx||t>0))add(i,'twzT');
+  }
+  return out;}
+function candleScore(list,n,recent){let s=0;list.filter(x=>x.i>=n-recent).forEach(x=>{s+=x.dir*x.w*(1-(n-1-x.i)/(recent+1));});return clampN(s/3,-1,1);}
+
+/* ---------- فشردگی نوسان (Squeeze) ---------- */
+function sqAnalyze(cl,cfg){
+  const c=cl.map(k=>k.c),n=cl.length,m=smaA(c,cfg.len),sd=sdA(c,cfg.len),tr=smaA(trA(cl),cfg.len);
+  const bbU=m.map((x,i)=>x==null?null:x+cfg.bbk*sd[i]),bbL=m.map((x,i)=>x==null?null:x-cfg.bbk*sd[i]);
+  const kcU=m.map((x,i)=>x==null||tr[i]==null?null:x+cfg.kcm*tr[i]),kcL=m.map((x,i)=>x==null||tr[i]==null?null:x-cfg.kcm*tr[i]);
+  const on=c.map((_,i)=>bbU[i]!=null&&kcU[i]!=null&&bbU[i]<kcU[i]&&bbL[i]>kcL[i]);
+  const bw=c.map((_,i)=>m[i]?(bbU[i]-bbL[i])/m[i]*100:null);
+  const dl=c.map((x,i)=>{if(i<cfg.len)return null;const w=cl.slice(i-cfg.len+1,i+1),hh=Math.max(...w.map(k=>k.h)),ll=Math.min(...w.map(k=>k.l));return x-((hh+ll)/2+m[i])/2;});
+  const mom=dl.map((_,i)=>i<cfg.len*2?null:linLast(dl.slice(0,i+1),cfg.len));
+  let run=0;for(let i=n-1;i>=0&&on[i];i--)run++;
+  let firedAgo=null;if(!on[n-1]){for(let i=n-2;i>=Math.max(0,n-6);i--){if(on[i]){firedAgo=n-1-i-1;break;}}}
+  const hist=bw.slice(-Math.max(cfg.look,60)).filter(x=>x!=null),cur=bw[n-1];
+  const pct=hist.length&&cur!=null?hist.filter(x=>x<=cur).length/hist.length*100:null;
+  const a=atrA(cl,14)[n-1]||1,mv=mom[n-1],mp=mom[n-2];
+  return {m,bbU,bbL,kcU,kcL,on,bw,mom,run,firedAgo,pct,mv,mp,mnorm:mv==null?0:mv/a,atr:a,n,
+    dir:mv==null?0:mv>0?1:-1,rise:mv!=null&&mp!=null?mv>mp:null,state:on[n-1]?'on':(firedAgo!=null&&firedAgo<=3?'fired':'off')};}
+
+/* ---------- چارت مدرن (SVG) ---------- */
+function chart(cl,o={}){
+  const W=640,H1=o.h||250,H2=o.sub?o.sub.h||96:0,gap=o.sub?14:0,pl=6,pr=56,pt=12,pb=16,tot=H1+gap+H2+(o.sub?18:6);
+  const n=cl.length,st=(W-pl-pr)/n,xx=i=>pl+(i+.5)*st;
+  let mn=Math.min(...cl.map(k=>k.l)),mx=Math.max(...cl.map(k=>k.h));
+  (o.over||[]).forEach(s=>s.v.forEach(x=>{if(x!=null){mn=Math.min(mn,x);mx=Math.max(mx,x);}}));
+  (o.hl||[]).forEach(l=>{if(l.y>mn*.9&&l.y<mx*1.1){mn=Math.min(mn,l.y);mx=Math.max(mx,l.y);}});
+  const pd=(mx-mn)*.06||mx*.01;mn-=pd;mx+=pd;
+  const y=v=>pt+(1-(v-mn)/(mx-mn))*(H1-pt-pb);
+  let s=`<svg class="pxsvg" viewBox="0 0 ${W} ${tot}" role="img"><defs><linearGradient id="pxg${o.id||0}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BLU}" stop-opacity=".35"/><stop offset="1" stop-color="${BLU}" stop-opacity="0"/></linearGradient></defs>`;
+  for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4,yy=y(v);s+=`<line x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}" stroke="currentColor" opacity=".1"/><text x="${W-pr+5}" y="${yy+3}" font-size="9" opacity=".7">${fmt(v)}</text>`;}
+  (o.zone||[]).forEach(z=>{const a=Math.max(0,z.a),b=Math.min(n-1,z.b);s+=`<rect x="${xx(a)-st/2}" y="${pt}" width="${(b-a+1)*st}" height="${H1-pt-pb}" fill="${z.c}" opacity=".12" rx="4"/>`;});
+  (o.over||[]).forEach(sr=>{let d='',pen=false;sr.v.forEach((v,i)=>{if(v==null){pen=false;return;}d+=(pen?'L':'M')+xx(i).toFixed(1)+' '+y(v).toFixed(1);pen=true;});
+    s+=`<path d="${d}" fill="none" stroke="${sr.c}" stroke-width="${sr.w||1.4}" ${sr.dash?'stroke-dasharray="4 3"':''} opacity="${sr.o||.9}" stroke-linejoin="round"/>`;});
+  cl.forEach((k,i)=>{const u=k.c>=k.o,c=u?GRN:RED,bt=y(Math.max(k.o,k.c)),bb=y(Math.min(k.o,k.c)),bw=Math.max(1.6,st*.62);
+    s+=`<line x1="${xx(i)}" x2="${xx(i)}" y1="${y(k.h)}" y2="${y(k.l)}" stroke="${c}" stroke-width="1.2"/><rect x="${xx(i)-bw/2}" y="${bt}" width="${bw}" height="${Math.max(1.2,bb-bt)}" rx="1.3" fill="${c}"/>`;});
+  (o.hl||[]).forEach(l=>{const yy=y(l.y);if(yy<pt||yy>H1-pb)return;s+=`<line x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}" stroke="${l.c||AMB}" stroke-dasharray="5 4" stroke-width="1.2"/><text x="${W-pr+5}" y="${yy-3}" font-size="9" fill="${l.c||AMB}" style="fill:${l.c||AMB}">${l.t||''}</text>`;});
+  (o.lines||[]).forEach(l=>{s+=`<line x1="${xx(l.i1)}" y1="${y(l.p1)}" x2="${xx(l.i2)}" y2="${y(l.p2)}" stroke="${l.c}" stroke-width="2" stroke-linecap="round" ${l.dash?'stroke-dasharray="5 4"':''}/><circle cx="${xx(l.i1)}" cy="${y(l.p1)}" r="3.2" fill="${l.c}"/><circle cx="${xx(l.i2)}" cy="${y(l.p2)}" r="3.2" fill="${l.c}"/>`;});
+  (o.marks||[]).forEach(m=>{const up=m.dir>0,cx=xx(m.i),yy=up?y(cl[m.i].l)+9:y(cl[m.i].h)-9;
+    if(m.dir===0){s+=`<circle cx="${cx}" cy="${y(cl[m.i].h)-8}" r="3.2" fill="${AMB}"/>`;return;}
+    s+=`<path d="${up?`M${cx} ${yy-5}l5 8h-10z`:`M${cx} ${yy+5}l5 -8h-10z`}" fill="${up?GRN:RED}" opacity=".95"/>`;
+    if(m.t)s+=`<text x="${cx}" y="${up?yy+17:yy-10}" font-size="8.5" text-anchor="middle" style="fill:${up?GRN:RED}">${m.t}</text>`;});
+  if(o.sub){const S=o.sub,y0=H1+gap,hh=H2,vals=S.series.flatMap(q=>q.v).filter(x=>x!=null);
+    let a=S.min!=null?S.min:Math.min(...vals),b=S.max!=null?S.max:Math.max(...vals);if(a===b){a-=1;b+=1;}const ys=v=>y0+(1-(v-a)/(b-a))*hh;
+    s+=`<rect x="${pl}" y="${y0}" width="${W-pl-pr}" height="${hh}" rx="10" fill="currentColor" opacity=".04"/>`;
+    (S.lines||[]).forEach(l=>{s+=`<line x1="${pl}" x2="${W-pr}" y1="${ys(l.y)}" y2="${ys(l.y)}" stroke="${l.c||'currentColor'}" stroke-dasharray="3 3" opacity=".45"/><text x="${W-pr+5}" y="${ys(l.y)+3}" font-size="9" opacity=".7">${l.y}</text>`;});
+    if(S.hist){const z=ys(0),bw=Math.max(1.4,st*.7);S.hist.v.forEach((v,i)=>{if(v==null)return;const p=S.hist.v[i-1],c=v>=0?(p!=null&&v>=p?GRN:'#7fd8b5'):(p!=null&&v<=p?RED:'#f2a0ac');s+=`<rect x="${xx(i)-bw/2}" y="${v>=0?ys(v):z}" width="${bw}" height="${Math.max(1,Math.abs(ys(v)-z))}" fill="${c}" rx="1"/>`;});
+      if(S.dots)S.dots.forEach((d,i)=>{s+=`<circle cx="${xx(i)}" cy="${z}" r="2.1" fill="${d?AMB:'#7a8a90'}"/>`;});}
+    S.series.forEach((q,qi)=>{let d='',pen=false,first=null,last=null;q.v.forEach((v,i)=>{if(v==null){pen=false;return;}d+=(pen?'L':'M')+xx(i).toFixed(1)+' '+ys(v).toFixed(1);pen=true;if(first==null)first=i;last=i;});
+      if(qi===0&&q.area&&first!=null)s+=`<path d="${d} L${xx(last)} ${y0+hh} L${xx(first)} ${y0+hh}Z" fill="url(#pxg${o.id||0})"/>`;
+      s+=`<path d="${d}" fill="none" stroke="${q.c}" stroke-width="1.6" stroke-linejoin="round"/>`;});
+    (S.lines2||[]).forEach(l=>{s+=`<line x1="${xx(l.i1)}" y1="${ys(l.v1)}" x2="${xx(l.i2)}" y2="${ys(l.v2)}" stroke="${l.c}" stroke-width="2" stroke-linecap="round"/><circle cx="${xx(l.i1)}" cy="${ys(l.v1)}" r="3" fill="${l.c}"/><circle cx="${xx(l.i2)}" cy="${ys(l.v2)}" r="3" fill="${l.c}"/>`;});
+    s+=`<text x="${pl+8}" y="${y0+13}" font-size="10" font-weight="700" opacity=".75">${S.label||''}</text>`;
+    const stp=Math.max(1,Math.floor(n/5));for(let i=0;i<n;i+=stp){const dt=new Date(cl[i].t);s+=`<text x="${xx(i)}" y="${tot-3}" font-size="8.5" opacity=".6" text-anchor="middle">${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}h</text>`;}}
+  return s+'</svg>';}
+
+/* ---------- اجزای نمایشی ---------- */
+const barRow=(label,val,max,col,txt)=>{const p=clampN(Math.abs(val)/(max||1),0,1)*50;return `<div class="pxbar"><span>${H(label)}</span><div class="tr"><i style="${val>=0?`left:50%;width:${p}%`:`right:50%;width:${p}%`};background:${col||(val>=0?GRN:RED)}"></i></div><b class="num">${txt!=null?txt:n2(val,0)}</b></div>`;};
+const biasBar=v=>`<div class="pxmeter"><i style="${v>=0?`left:50%;width:${Math.abs(v)*50}%`:`right:50%;width:${Math.abs(v)*50}%`};background:${v>=0?GRN:RED};border-radius:99px"></i></div>`;
+const verdict=v=>v>=.5?'صعودی قوی':v>=.15?'صعودی':v>-.15?'خنثی':v>-.5?'نزولی':'نزولی قوی';
+const vcls=v=>v>=.15?'b':v<=-.15?'r':'n';
+const kpi=(b,s,cls)=>`<div><b class="num ${cls||''}">${b}</b><span>${s}</span></div>`;
+const note=t=>`<p class="note" style="margin:6px 0">${t}</p>`;
+const inpR=(lab,path,min,max,step)=>{const v=getP(X,path);return `<div class="pxr"><span>${lab}</span><input type="range" min="${min}" max="${max}" step="${step||1}" value="${v}" data-s="${path}"><b class="num" data-sl="${path}">${v}</b></div>`;};
+const inpN=(lab,path,extra)=>`<label>${lab}<input class="pxi l" type="number" inputmode="decimal" step="any" data-s="${path}" value="${getP(X,path)}" ${extra||''}></label>`;
+const seg=(path,opts)=>`<div class="seg">${opts.map(([k,t])=>`<button data-x="set:${path}:${k}" class="${String(getP(X,path))===String(k)?'on':''}">${t}</button>`).join('')}</div>`;
+const tfSeg=()=>`<div class="seg" style="min-width:150px">${TFS.map(t=>`<button data-x="tf:${t}" class="${X.tf===t?'on':''}">${t}</button>`).join('')}</div>`;
+const symBar=(act,lbl)=>`<div class="pxtb"><input class="pxi l" id="pxSym" list="symlist" value="${H(X.sym)}" autocomplete="off" spellcheck="false" aria-label="نماد">${tfSeg()}<button class="btn xs" data-x="${act}">${lbl||'اجرا'}</button></div>`;
+const busyBox=t=>`<div class="pxc"><div class="pprog"><i id="pxPi" style="width:${BZ.p||8}%"></i></div><p class="note" id="pxPt">${t||'در حال دریافت و محاسبه…'}</p></div>`;
+const goBtn=(tool,s)=>`<button class="btn xs" data-x="go:${tool}:${s}">نمودار</button>`;
+const ago2=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'همین الان':m<60?fa(m)+' دقیقه پیش':fa(Math.floor(m/60))+' ساعت پیش';};
+
+/* ---------- پنل ---------- */
+const TABS=[['sum','🧭 خلاصه'],['div','📉 واگرایی'],['can','🕯️ الگوی کندلی'],['sq','🌀 فشردگی نوسان'],['cal','🗓️ تقویم اقتصادی'],['jr','📒 ژورنال']];
+const P=document.createElement('div');P.id='px';P.className='pnl';P.hidden=true;
+P.innerHTML='<div class="thead"><button class="btn xs" style="visibility:hidden">.</button><b>🧰 ابزارهای پیشرفتهٔ تحلیل</b><button class="btn xs" data-xclose aria-label="بستن">✕</button></div><div class="pbody" id="pxB"></div>';
+document.body.appendChild(P);
+const openX=tab=>{if(tab)X.tab=tab;P.hidden=false;document.body.classList.add('lock');render();};
+const closeX=()=>{P.hidden=true;const a=document.getElementById('pa'),f=document.getElementById('pf'),t=document.getElementById('tools');if((!a||a.hidden)&&(!f||f.hidden)&&(!t||t.hidden))document.body.classList.remove('lock');};
+const bar=document.querySelector('.pabar');
+if(bar)bar.insertAdjacentHTML('beforeend','<div class="pxbtn"><button class="btn" id="pxOpen">🧰 واگرایی · کندل · فشردگی · تقویم · ژورنال</button></div>');
+/* میان‌بر داخل خود پنل «تحلیل شخصی» */
+const paB=document.getElementById('paB');
+if(paB){const inj=()=>{if(!paB.querySelector('.pxstrip'))paB.insertAdjacentHTML('afterbegin','<div class="pxstrip"><button class="btn off" data-xopen="sum">🧰 ابزارهای پیشرفته: واگرایی، کندل، فشردگی، تقویم، ژورنال ←</button></div>');};
+  new MutationObserver(inj).observe(paB,{childList:true});inj();}
+
+function render(){
+  const b=document.getElementById('pxB');if(!b)return;const top=b.scrollTop;
+  let h=`<div class="pxt">${TABS.map(([k,t])=>`<button class="btn ${X.tab===k?'on':'off'}" data-x="tab:${k}">${t}</button>`).join('')}</div>`;
+  h+=({sum:sumHTML,div:divHTML,can:canHTML,sq:sqHTML,cal:calHTML,jr:jrHTML})[X.tab]();
+  b.innerHTML=h;b.scrollTop=top;}
+const rer=()=>{if(!P.hidden)render();};
+
+/* ======================================================================
+   خلاصه
+   ====================================================================== */
+async function runSum(){
+  if(BZ.sum)return;BZ.sum=1;BZ.p=15;rer();const sym=X.sym,tf=X.tf;
+  try{const cl=await candles(sym,tf);BZ.p=50;
+    const dv=divAnalyze(cl,X.div),cs=candleScan(cl),sq=sqAnalyze(cl,X.sq),n=cl.length;
+    let app=null;try{const d=await ixGet(sym,tf,false);app={vd:d.sum&&d.sum.vd,b:d.sum&&d.sum.b,n:d.sum&&d.sum.n,r:d.sum&&d.sum.r,pct:d.sum&&d.sum.pct,sc:d.sum&&typeof d.sum.pct==='number'?clampN((d.sum.pct-50)/50,-1,1):null};}catch(e){}
+    const dS=divBias(dv,X.div),cS=candleScore(cs,n,X.can.recent),qS=sq.state==='off'?0:sq.dir*(sq.state==='fired'?1:.35);
+    const W=X.sum,parts=[[dS,W.wDiv],[cS,W.wCan],[qS,W.wSq]];if(app&&app.sc!=null)parts.push([app.sc,W.wApp]);
+    const sw=parts.reduce((a,p)=>a+(+p[1]||0),0),tot=sw?parts.reduce((a,p)=>a+p[0]*(+p[1]||0),0)/sw:0;
+    R.sum={sym,tf,cl,dv,cs,sq,app,dS,cS,qS,tot,t:Date.now()};
+  }catch(e){R.sum={err:'دریافت داده انجام نشد؛ اینترنت یا VPN را بررسی کن.',sym,tf};}
+  BZ.sum=0;rer();}
+function calNear(){const now=Date.now();return X.cal.ev.filter(e=>!e.done&&e.t>now-36e5&&e.t<now+48*36e5&&e.imp>=2).sort((a,b)=>a.t-b.t);}
+function sumHTML(){
+  let h=`<div class="pxc"><h4>🧭 خلاصهٔ هوشمند یک ارز</h4><p class="pxsub">واگرایی + الگوی کندلی + فشردگی نوسان + موتور اصلی اپ، با وزن‌هایی که خودت تعیین می‌کنی در یک نتیجه جمع می‌شوند.</p>${symBar('runsum','تحلیل کن')}</div>`;
+  const near=X.sum.useCal?calNear():[];
+  if(near.length)h+=`<div class="pxwarn r">⚠️ رویداد مهم نزدیک: ${near.slice(0,3).map(e=>`<b>${H(e.title)}</b> (${cdTxt(e.t-Date.now())})`).join('، ')} — نوسان ناگهانی محتمل است؛ حجم و حد ضرر را با احتیاط تنظیم کن.</div>`;
+  if(BZ.sum)h+=busyBox();
+  else if(R.sum&&R.sum.err)h+=`<p class="note">${H(R.sum.err)}</p>`;
+  else if(R.sum){const r=R.sum,sq=r.sq;
+    h+=`<div class="pxc" style="text-align:center"><b class="num">${r.sym}/USDT · ${r.tf}</b><div class="gauges" style="grid-template-columns:minmax(130px,190px);justify-content:center">${gauge(Math.round((r.tot+1)*50),'امتیاز ترکیبی')}</div><span class="ixp ${ixCls(r.tot)} big">${verdict(r.tot)}</span><p class="note" style="margin:4px 0 0">آخرین تحلیل ${ago2(r.t)}</p></div>`;
+    h+=`<div class="pxc"><h4>سهم هر بخش</h4>
+     ${barRow('واگرایی',r.dS*100,100,null,verdict(r.dS))}${barRow('الگوی کندلی',r.cS*100,100,null,verdict(r.cS))}${barRow('فشردگی نوسان',r.qS*100,100,null,sq.state==='on'?'در فشردگی':sq.state==='fired'?'شکست تازه':'عادی')}
+     ${r.app&&r.app.sc!=null?barRow('موتور اصلی اپ',r.app.sc*100,100,null,r.app.vd||verdict(r.app.sc)):note('امتیاز موتور اصلی اپ در دسترس نبود؛ بدون آن محاسبه شد.')}</div>`;
+    const f=r.dv.list.filter(d=>d.age<=X.div.fresh);
+    h+=`<div class="pxc"><h4>نکته‌های کلیدی</h4><div class="pxchips">${f.slice(0,3).map(d=>`<span class="pxch ${d.type==='bull'?'b':'r'}">واگرایی ${divTxt(d)} · ${fa(d.age)} کندل قبل</span>`).join('')}${r.cs.filter(x=>x.i>=r.cl.length-X.can.recent).slice(0,4).map(x=>`<span class="pxch ${x.dir>0?'b':x.dir<0?'r':'n'}">${PATM[x.key][1]}</span>`).join('')}${sq.state==='on'?`<span class="pxch v">🌀 فشردگی ${fa(sq.run)} کندل</span>`:sq.state==='fired'?`<span class="pxch ${sq.dir>0?'b':'r'}">💥 شکست فشردگی ${sq.dir>0?'↑':'↓'}</span>`:''}</div>${!f.length&&!r.cs.some(x=>x.i>=r.cl.length-X.can.recent)&&sq.state==='off'?note('الان سیگنال خاصی از این سه ابزار فعال نیست.'):''}</div>`;
+    h+=`<div class="pxc"><h4>نمودار</h4><div class="pxsvgwrap">${chart(r.cl.slice(-60),{id:'s',h:220,over:[{v:r.sq.m.slice(-60),c:AMB,w:1.2,dash:1}]})}</div></div>`;
+  }else h+=note('نماد را بنویس و «تحلیل کن» را بزن.');
+  h+=`<details class="box"><summary>⚙️ وزن بخش‌ها در امتیاز ترکیبی</summary>${inpR('واگرایی','sum.wDiv',0,3,.5)}${inpR('الگوی کندلی','sum.wCan',0,3,.5)}${inpR('فشردگی','sum.wSq',0,3,.5)}${inpR('موتور اصلی اپ','sum.wApp',0,3,.5)}
+   <label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12.5px"><input type="checkbox" data-s="sum.useCal" ${X.sum.useCal?'checked':''}> هشدار رویدادهای مهم تقویم را هم نشان بده</label></details>`;
+  return h+`<p class="note">ابزارهای آماری و آموزشی هستند و توصیهٔ مالی نیستند.</p>`;}
+
+/* ======================================================================
+   واگرایی
+   ====================================================================== */
+async function runDiv(){
+  if(BZ.div)return;BZ.div=1;rer();const sym=X.sym,tf=X.tf;
+  try{const cl=await candles(sym,tf),r=divAnalyze(cl,X.div);R.div.one={sym,tf,cl,r,t:Date.now()};}catch(e){R.div.one={err:1,sym,tf};}
+  BZ.div=0;rer();}
+async function scanGeneric(key,fn,n){
+  if(BZ[key])return;BZ[key]=1;BZ.p=3;const syms=symsOf(n),rows=[];let done=0;rer();
+  await pool(syms,LITE?2:3,async s=>{try{const cl=await candles(s,X.tf);const r=fn(s,cl);if(r)rows.push(r);}catch(e){}done++;BZ.p=done/syms.length*100;const e=document.getElementById('pxPi');if(e)e.style.width=BZ.p+'%';const t=document.getElementById('pxPt');if(t)t.textContent=`تحلیل ${fa(done)} از ${fa(syms.length)} ارز…`;});
+  R[key].scan={rows,tf:X.tf,total:syms.length,t:Date.now()};BZ[key]=0;rer();}
+const runDivScan=()=>scanGeneric('div',(s,cl)=>{const r=divAnalyze(cl,X.div),f=r.list.filter(d=>d.age<=X.div.fresh);if(!f.length)return null;return {s,px:cl.at(-1).c,list:f,top:f[0],bias:divBias(r,X.div),str:Math.max(...f.map(d=>d.str))};},X.div.scanN);
+function divHTML(){
+  let h=`<div class="pxc"><h4>📉 اسکنر واگرایی</h4><p class="pxsub">وقتی قیمت یک کف/سقف جدید می‌سازد ولی اندیکاتور همراهی نمی‌کند، واگرایی رخ داده است. «معمولی» نشانهٔ برگشت و «پنهان» نشانهٔ ادامهٔ روند است.</p>
+   <div class="pxsb"><button class="btn ${X.view.div==='one'?'on':'off'}" data-x="set:view.div:one">تک‌ارز + نمودار</button><button class="btn ${X.view.div==='scan'?'on':'off'}" data-x="set:view.div:scan">اسکن بازار</button></div>`;
+  h+=X.view.div==='one'?symBar('rundiv','نمایش'):`<div class="pxtb"><div class="seg" style="min-width:150px">${TFS.map(t=>`<button data-x="tf:${t}" class="${X.tf===t?'on':''}">${t}</button>`).join('')}</div><button class="btn xs" data-x="scandiv">🔎 اسکن</button></div>`;
+  h+='</div>';
+  if(BZ.div)h+=busyBox();
+  else if(X.view.div==='one'){const o=R.div.one;
+    if(!o)h+=note('نماد را بنویس و «نمایش» را بزن.');else if(o.err)h+=note('دریافت داده انجام نشد.');
+    else{const r=o.r,n=o.cl.length,v0=Math.max(0,n-X.div.look),cl=o.cl.slice(v0),sh=i=>i-v0,list=r.list;
+      const lines=list.map(d=>({i1:sh(d.i1),i2:sh(d.i2),p1:d.p1,p2:d.p2,c:d.type==='bull'?GRN:RED,dash:d.kind==='hid'}));
+      const l2=list.map(d=>({i1:sh(d.i1),i2:sh(d.i2),v1:d.v1,v2:d.v2,c:d.type==='bull'?GRN:RED}));
+      const sub=X.div.ind==='macd'?{series:[{v:r.ind.slice(v0),c:BLU,area:0}],hist:{v:r.ind.slice(v0)},label:'MACD',lines:[{y:0}],h:96}
+        :X.div.ind==='rsi'||X.div.ind==='mfi'?{series:[{v:r.ind.slice(v0),c:VIO,area:1}],min:0,max:100,lines:[{y:30,c:GRN},{y:70,c:RED}],label:INDN[X.div.ind]+' '+X.div.rsiP,h:96}
+        :{series:[{v:r.ind.slice(v0),c:VIO,area:1}],label:'OBV',h:96};
+      sub.lines2=l2;
+      const bs=divBias(r,X.div),fresh=list.filter(d=>d.age<=X.div.fresh);
+      h+=`<div class="pxc"><div class="between"><b class="num">${o.sym}/USDT · ${o.tf}</b><span class="ixp ${ixCls(bs)}">${fresh.length?verdict(bs):'بدون واگرایی تازه'}</span></div>
+        <div class="pxsvgwrap" style="margin-top:6px">${chart(cl,{id:'d',h:250,lines,sub})}</div>
+        <div class="pxlg"><span style="--lc:${GRN}">صعودی</span><span style="--lc:${RED}">نزولی</span><span>خط‌چین = پنهان</span></div>
+        <div class="pxk">${kpi(fa(list.length),'کل واگرایی‌ها')}${kpi(fa(fresh.length),'تازه (≤ '+fa(X.div.fresh)+' کندل)')}${kpi(n2(r.ind.at(-1),X.div.ind==='obv'?0:1),INDN[X.div.ind]+' اکنون')}</div></div>`;
+      h+=`<div class="pxc"><h4>فهرست واگرایی‌ها</h4>${list.length?list.slice(0,12).map(d=>`<div class="pxrow"><span class="pxch ${d.type==='bull'?'b':'r'}">${divTxt(d)}</span><div class="m">${divMean(d)}<br><span class="note">${fa(d.age)} کندل قبل · قیمت ${fmt(d.p1)} ← ${fmt(d.p2)}</span></div><b class="num">${fa(d.str)}%</b></div>`).join(''):note('واگرایی‌ای در این بازه پیدا نشد؛ تنظیمات حساسیت را پایین‌تر بیاور.')}</div>`;}
+  }else{const o=R.div.scan;
+    if(!o)h+=note('«اسکن» را بزن تا ارزهای فهرست تو بررسی شوند.');
+    else{const rows=o.rows.sort((a,b)=>b.str-a.str);
+      h+=`<div class="pxc"><div class="between"><b>${fa(rows.length)} ارز با واگرایی تازه از ${fa(o.total)}</b><span class="note">${o.tf} · ${ago2(o.t)}</span></div>
+       ${rows.length?rows.map(r=>`<div class="pxrow"><span class="s">${r.s}</span><div class="m"><span class="pxch ${r.top.type==='bull'?'b':'r'}">${divTxt(r.top)}</span> ${r.list.length>1?`<span class="note">+${fa(r.list.length-1)} مورد دیگر</span>`:''}<br><span class="note">${fa(r.top.age)} کندل قبل · ${divMean(r.top)}</span></div>${goBtn('div',r.s)}</div>`).join(''):note('موردی پیدا نشد.')}</div>`;
+      if(rows.length)h+=`<div class="pxc"><h4>نقشهٔ قدرت واگرایی</h4>${rows.slice(0,14).map(r=>barRow(r.s,(r.bias>=0?1:-1)*r.str,100,null,fa(r.str)+'٪')).join('')}</div>`;}
+  }
+  h+=`<details class="box"><summary>⚙️ تنظیمات دلخواه واگرایی</summary><div class="note" style="margin:4px 0">اندیکاتور مرجع:</div>${seg('div.ind',[['rsi','RSI'],['macd','MACD'],['obv','OBV'],['mfi','MFI']])}
+   ${inpR('حساسیت قله/دره','div.piv',2,8)}${inpR('دورهٔ اندیکاتور','div.rsiP',5,30)}${inpR('کندل‌های بررسی','div.look',40,300,10)}${inpR('حداکثر فاصله دو قله','div.maxGap',15,120,5)}${inpR('«تازه» یعنی تا … کندل','div.fresh',3,40)}${inpR('تعداد ارز اسکن','div.scanN',5,60,5)}
+   <label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12.5px"><input type="checkbox" data-s="div.hidden" ${X.div.hidden?'checked':''}> واگرایی پنهان هم نمایش داده شود</label>${symsBox()}</details>`;
+  return h+note('واگرایی به‌تنهایی سیگنال ورود نیست؛ با ساختار قیمت و حد ضرر ترکیب کن.');}
+const symsBox=()=>`<div class="note" style="margin-top:8px">فهرست ارزهای اسکن (مشترک بین اسکنرها؛ خالی = از فهرست اصلی):</div><input class="pxi l" type="text" data-s="syms" value="${H(X.syms)}" placeholder="BTC,ETH,SOL" autocomplete="off" spellcheck="false">`;
+
+/* ======================================================================
+   الگوی کندلی
+   ====================================================================== */
+async function runCan(){
+  if(BZ.can)return;BZ.can=1;rer();const sym=X.sym,tf=X.tf;
+  try{const cl=await candles(sym,tf);R.can.one={sym,tf,cl,list:candleScan(cl),t:Date.now()};}catch(e){R.can.one={err:1};}
+  BZ.can=0;rer();}
+const runCanScan=()=>scanGeneric('can',(s,cl)=>{const l=candleScan(cl),n=cl.length,f=l.filter(x=>x.i>=n-X.can.recent);if(!f.length)return null;return {s,px:cl.at(-1).c,list:f,score:candleScore(l,n,X.can.recent)};},X.can.scanN);
+function canHTML(){
+  let h=`<div class="pxc"><h4>🕯️ شناساگر الگوی کندلی</h4><p class="pxsub">${fa(PAT.length)} الگوی کلاسیک با در نظر گرفتن روند قبلی. می‌توانی الگوها را روشن/خاموش و وزن هرکدام را تعیین کنی.</p>
+   <div class="pxsb"><button class="btn ${X.view.can==='one'?'on':'off'}" data-x="set:view.can:one">تک‌ارز + نمودار</button><button class="btn ${X.view.can==='scan'?'on':'off'}" data-x="set:view.can:scan">اسکن بازار</button></div>`;
+  h+=X.view.can==='one'?symBar('runcan','نمایش'):`<div class="pxtb">${tfSeg()}<button class="btn xs" data-x="scancan">🔎 اسکن</button></div>`;
+  h+='</div>';
+  if(BZ.can)h+=busyBox();
+  else if(X.view.can==='one'){const o=R.can.one;
+    if(!o)h+=note('نماد را بنویس و «نمایش» را بزن.');else if(o.err)h+=note('دریافت داده انجام نشد.');
+    else{const n=o.cl.length,v0=Math.max(0,n-X.can.look),cl=o.cl.slice(v0),L=o.list.filter(x=>x.i>=v0),sc=candleScore(o.list,n,X.can.recent),rec=o.list.filter(x=>x.i>=n-X.can.recent);
+      const marks=L.map(x=>({i:x.i-v0,dir:x.dir,t:x.dir?PATM[x.key][1].split(' ')[0]:''}));
+      h+=`<div class="pxc"><div class="between"><b class="num">${o.sym}/USDT · ${o.tf}</b><span class="ixp ${ixCls(sc)}">${rec.length?verdict(sc):'بدون الگوی تازه'}</span></div>
+       <div class="pxsvgwrap" style="margin-top:6px">${chart(cl,{id:'c',h:300,marks})}</div>
+       <div class="pxlg"><span style="--lc:${GRN}">الگوی صعودی</span><span style="--lc:${RED}">الگوی نزولی</span><span style="--lc:${AMB}">تردید</span></div>
+       <div class="pxk">${kpi(fa(L.length),'الگو در نمودار')}${kpi(fa(rec.length),'در '+fa(X.can.recent)+' کندل اخیر')}${kpi(n2(sc*100,0),'امتیاز الگوها',sc>=0?'psup':'pneg')}</div></div>`;
+      h+=`<div class="pxc"><h4>الگوهای اخیر</h4>${L.length?L.slice(-14).reverse().map(x=>`<div class="pxrow"><span class="pxch ${x.dir>0?'b':x.dir<0?'r':'n'}">${x.dir>0?'صعودی':x.dir<0?'نزولی':'تردید'}</span><div class="m"><b>${PATM[x.key][1]}</b><br><span class="note">${fa(n-1-x.i)} کندل قبل · ${new Date(x.t).toLocaleString('fa-IR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span></div><span class="note num">×${x.w}</span></div>`).join(''):note('الگویی پیدا نشد.')}</div>`;
+      const cnt={};L.forEach(x=>cnt[x.key]=(cnt[x.key]||0)+1);const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
+      if(top.length)h+=`<div class="pxc"><h4>فراوانی الگوها در نمودار</h4>${top.map(([k,c])=>barRow(PATM[k][1],PATM[k][2]*c,Math.max(...top.map(q=>q[1])),PATM[k][2]===0?AMB:null,fa(c))).join('')}</div>`;}
+  }else{const o=R.can.scan;
+    if(!o)h+=note('«اسکن» را بزن تا الگوهای تازهٔ ارزهای فهرست تو پیدا شوند.');
+    else{const rows=o.rows.sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
+      h+=`<div class="pxc"><div class="between"><b>${fa(rows.length)} ارز با الگوی تازه از ${fa(o.total)}</b><span class="note">${o.tf} · ${ago2(o.t)}</span></div>
+       ${rows.length?rows.map(r=>`<div class="pxrow"><span class="s">${r.s}</span><div class="m"><div class="pxchips" style="margin:0">${r.list.slice(0,3).map(x=>`<span class="pxch ${x.dir>0?'b':x.dir<0?'r':'n'}">${PATM[x.key][1]}</span>`).join('')}</div></div>${goBtn('can',r.s)}</div>`).join(''):note('موردی پیدا نشد.')}</div>`;
+      if(rows.length)h+=`<div class="pxc"><h4>نقشهٔ امتیاز الگوها</h4>${rows.slice(0,14).map(r=>barRow(r.s,r.score*100,100,null,n2(r.score*100,0))).join('')}</div>`;}
+  }
+  h+=`<details class="box"><summary>⚙️ تنظیمات دلخواه الگوها</summary>${inpR('کندل‌های نمودار','can.look',30,200,10)}${inpR('«اخیر» یعنی … کندل','can.recent',1,8)}${inpR('تعداد ارز اسکن','can.scanN',5,60,5)}
+   <label style="display:flex;gap:8px;align-items:center;margin:8px 0;font-size:12.5px"><input type="checkbox" data-s="can.ctx" ${X.can.ctx?'checked':''}> روند قبلی را در نظر بگیر (چکش فقط بعد از ریزش و ...)</label>
+   <div class="note">روشن/خاموش و وزن (۰ تا ۵) هر الگو:</div>${PAT.map(p=>`<div class="pir ${patOn(p[0])?'':'off'}"><input type="checkbox" data-s="can.on.${p[0]}" ${patOn(p[0])?'checked':''} aria-label="${p[1]}"><span class="nm">${p[1]} <span class="note">(${p[2]>0?'صعودی':p[2]<0?'نزولی':'تردید'})</span></span><input class="pin" type="number" step=".5" min="0" max="5" data-s="can.w.${p[0]}" value="${patW(p[0])}"></div>`).join('')}${symsBox()}</details>`;
+  return h+note('الگوهای کندلی در تایم‌فریم بالاتر و کنار حمایت/مقاومت معتبرترند.');}
+
+/* ======================================================================
+   اسکنر فشردگی نوسان
+   ====================================================================== */
+async function runSq(){
+  if(BZ.sq)return;BZ.sq=1;rer();const sym=X.sym,tf=X.tf;
+  try{const cl=await candles(sym,tf);R.sq.one={sym,tf,cl,r:sqAnalyze(cl,X.sq),t:Date.now()};}catch(e){R.sq.one={err:1};}
+  BZ.sq=0;rer();}
+const runSqScan=()=>scanGeneric('sq',(s,cl)=>{const r=sqAnalyze(cl,X.sq);return {s,px:cl.at(-1).c,state:r.state,run:r.run,pct:r.pct==null?50:r.pct,dir:r.dir,mn:r.mnorm,rise:r.rise,bw:r.bw.at(-1),firedAgo:r.firedAgo};},X.sq.scanN);
+const SQN={on:['در فشردگی','v'],fired:['شکست تازه','n'],off:['عادی','']};
+function sqMap(rows){
+  const W=640,Hh=300,pl=34,pr=14,pt=14,pb=30,mxA=Math.max(2,...rows.map(r=>Math.abs(r.mn)))*1.1;
+  const x=p=>pl+(p/100)*(W-pl-pr),y=m=>pt+(1-(m+mxA)/(2*mxA))*(Hh-pt-pb);
+  let s=`<svg class="pxsvg" viewBox="0 0 ${W} ${Hh}"><defs><linearGradient id="pxq" x1="0" x2="1"><stop offset="0" stop-color="${VIO}" stop-opacity=".18"/><stop offset="1" stop-color="${VIO}" stop-opacity="0"/></linearGradient></defs>
+   <rect x="${pl}" y="${pt}" width="${(W-pl-pr)*X.sq.pctMax/100}" height="${Hh-pt-pb}" fill="url(#pxq)" rx="10"/>
+   <line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="currentColor" opacity=".3"/>
+   <text x="${W-pr}" y="${Hh-8}" font-size="10" text-anchor="end" opacity=".7">پهنای باند: بالا ←</text><text x="${pl+4}" y="${Hh-8}" font-size="10" opacity=".7">→ فشرده‌تر</text>
+   <text x="6" y="${pt+8}" font-size="10" opacity=".7">↑</text><text x="6" y="${Hh-pb}" font-size="10" opacity=".7">↓</text>`;
+  const cl=r=>r.state==='on'?VIO:r.state==='fired'?AMB:'#7a8a90';
+  rows.forEach(r=>{const cx=x(r.pct),cy=y(r.mn);s+=`<circle cx="${cx}" cy="${cy}" r="${r.state==='off'?4:7}" fill="${cl(r)}" opacity="${r.state==='off'?.45:.9}"/>`;if(r.state!=='off')s+=`<text x="${cx}" y="${cy-10}" font-size="9.5" text-anchor="middle" font-weight="700">${r.s}</text>`;});
+  return s+'</svg>';}
+function sqHTML(){
+  let h=`<div class="pxc"><h4>🌀 اسکنر فشردگی نوسان (Squeeze)</h4><p class="pxsub">وقتی باندهای بولینگر داخل کانال کلتنر جمع می‌شوند، بازار انرژی ذخیره می‌کند و معمولاً با حرکت تند خارج می‌شود. جهت احتمالی را مومنتوم نشان می‌دهد.</p>
+   <div class="pxsb"><button class="btn ${X.view.sq==='one'?'on':'off'}" data-x="set:view.sq:one">تک‌ارز + نمودار</button><button class="btn ${X.view.sq==='scan'?'on':'off'}" data-x="set:view.sq:scan">اسکن بازار</button></div>`;
+  h+=X.view.sq==='one'?symBar('runsq','نمایش'):`<div class="pxtb">${tfSeg()}<button class="btn xs" data-x="scansq">🔎 اسکن</button></div>`;
+  h+='</div>';
+  if(BZ.sq)h+=busyBox();
+  else if(X.view.sq==='one'){const o=R.sq.one;
+    if(!o)h+=note('نماد را بنویس و «نمایش» را بزن.');else if(o.err)h+=note('دریافت داده انجام نشد.');
+    else{const r=o.r,n=o.cl.length,v0=Math.max(0,n-X.sq.look),cl=o.cl.slice(v0),sl=a=>a.slice(v0),[stx,sc]=SQN[r.state];
+      h+=`<div class="pxc"><div class="between"><b class="num">${o.sym}/USDT · ${o.tf}</b><span class="pxch ${sc||'n'}">${stx}${r.state==='on'?' · '+fa(r.run)+' کندل':''}</span></div>
+       <div class="pxsvgwrap" style="margin-top:6px">${chart(cl,{id:'q',h:250,over:[{v:sl(r.bbU),c:BLU,w:1.2},{v:sl(r.bbL),c:BLU,w:1.2},{v:sl(r.kcU),c:AMB,w:1.2,dash:1},{v:sl(r.kcL),c:AMB,w:1.2,dash:1}],sub:{series:[{v:sl(r.mom),c:'transparent'}],hist:{v:sl(r.mom)},dots:sl(r.on),label:'مومنتوم · نقطهٔ زرد = فشردگی',h:96}})}</div>
+       <div class="pxlg"><span style="--lc:${BLU}">بولینگر</span><span style="--lc:${AMB}">کلتنر</span></div>
+       <div class="pxk">${kpi(r.pct==null?'—':fa(Math.round(r.pct))+'٪','صدک پهنای باند')}${kpi(r.dir>0?'صعودی':'نزولی','جهت مومنتوم',r.dir>0?'psup':'pneg')}${kpi(r.rise==null?'—':r.rise?'در حال تقویت':'در حال ضعف','شتاب مومنتوم')}</div>
+       ${r.state==='on'&&r.pct!=null&&r.pct<=X.sq.pctMax?'<div class="pxwarn">🌀 نوسان به‌شدت فشرده است؛ شکست نزدیک می‌تواند باشد. منتظر بسته‌شدن کندل بیرون از باند بمان و حد ضرر را کنار بگذار.</div>':''}</div>`;}
+  }else{const o=R.sq.scan;
+    if(!o)h+=note('«اسکن» را بزن تا ارزهای در حال فشردگی پیدا شوند.');
+    else{const rows=o.rows,on=rows.filter(r=>r.state==='on').sort((a,b)=>a.pct-b.pct),fi=rows.filter(r=>r.state==='fired').sort((a,b)=>a.firedAgo-b.firedAgo);
+      h+=`<div class="pxc"><h4>نقشهٔ فشردگی</h4><p class="pxsub">افقی: فشردگی پهنای باند (چپ = فشرده‌تر) · عمودی: مومنتوم · ناحیهٔ بنفش = زیر آستانهٔ ${fa(X.sq.pctMax)}٪</p><div class="pxsvgwrap">${sqMap(rows)}</div><div class="pxlg"><span style="--lc:${VIO}">در فشردگی</span><span style="--lc:${AMB}">شکست تازه</span><span style="--lc:#7a8a90">عادی</span></div></div>`;
+      h+=`<div class="pxc"><div class="between"><b>🌀 در فشردگی (${fa(on.length)})</b><span class="note">${o.tf} · ${ago2(o.t)}</span></div>${on.length?on.map(r=>`<div class="pxrow"><span class="s">${r.s}</span><div class="m">${fa(r.run)} کندل در فشردگی · پهنای باند صدک ${fa(Math.round(r.pct))}<br><span class="note">مومنتوم ${r.dir>0?'صعودی':'نزولی'} ${r.rise?'و قوی‌تر':'و ضعیف‌تر'}</span></div>${goBtn('sq',r.s)}</div>`).join(''):note('ارزی در فشردگی نیست.')}</div>`;
+      h+=`<div class="pxc"><b>💥 شکست تازه (${fa(fi.length)})</b>${fi.length?fi.map(r=>`<div class="pxrow"><span class="s">${r.s}</span><div class="m"><span class="pxch ${r.dir>0?'b':'r'}">${r.dir>0?'خروج صعودی':'خروج نزولی'}</span> <span class="note">${fa(r.firedAgo)} کندل قبل</span></div>${goBtn('sq',r.s)}</div>`).join(''):note('شکست تازه‌ای نیست.')}</div>`;}
+  }
+  h+=`<details class="box"><summary>⚙️ تنظیمات دلخواه فشردگی</summary>${inpR('دورهٔ محاسبه','sq.len',10,50)}${inpR('ضریب بولینگر','sq.bbk',1,3,.1)}${inpR('ضریب کلتنر','sq.kcm',1,3,.1)}${inpR('کندل‌های نمودار','sq.look',40,300,10)}${inpR('آستانهٔ «فشرده» (صدک ٪)','sq.pctMax',5,60,5)}${inpR('تعداد ارز اسکن','sq.scanN',5,60,5)}${symsBox()}</details>`;
+  return h+note('فشردگی جهت را تضمین نمی‌کند؛ فقط می‌گوید انفجار نوسان محتمل است.');}
+
+/* ======================================================================
+   تقویم اقتصادی (دستی و کاملاً شخصی‌سازی‌شده)
+   ====================================================================== */
+const CALT=[['FOMC · نرخ بهرهٔ فدرال',3,'USD'],['CPI · تورم آمریکا',3,'USD'],['NFP · اشتغال غیرکشاورزی',3,'USD'],['PCE · تورم هستهٔ فدرال',2,'USD'],['سخنرانی رئیس فدرال',2,'USD'],['GDP',2,'USD'],['تصمیم ETF',3,'کریپتو'],['آنلاک توکن',2,'کریپتو'],['انقضای آپشن/فیوچرز',2,'کریپتو'],['ارتقای شبکه',2,'کریپتو']];
+const cdTxt=ms=>{const a=Math.abs(ms),d=Math.floor(a/864e5),h=Math.floor(a%864e5/36e5),m=Math.floor(a%36e5/6e4);const t=d?`${fa(d)} روز و ${fa(h)} ساعت`:h?`${fa(h)} ساعت و ${fa(m)} دقیقه`:`${fa(m)} دقیقه`;return ms<0?t+' پیش':'تا '+t;};
+const IMPC=['','#7a8a90',AMB,RED],IMPN=['','کم','متوسط','مهم'];
+const dtLoc=t=>{const d=new Date(t),p=x=>String(x).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;};
+const CD=X.calD||(X.calD={title:'',imp:2,cur:'USD',notes:'',dt:''});
+function calHTML(){
+  const now=Date.now(),ev=X.cal.ev.slice().sort((a,b)=>a.t-b.t),f=+X.cal.f||0,vis=ev.filter(e=>e.imp>=f);
+  const up=vis.filter(e=>e.t>=now-36e5&&!e.done),past=vis.filter(e=>e.t<now-36e5||e.done).reverse();
+  let h=`<div class="pxc"><h4>🗓️ تقویم اقتصادی من</h4><p class="pxsub">رویدادهای مهم (فدرال رزرو، تورم، اشتغال، آنلاک توکن، ETF و ...) را خودت با تاریخ دقیق ثبت کن؛ شمارش معکوس و هشدار در «خلاصه» به تحلیل اضافه می‌شود. اپ تاریخ‌ها را حدس نمی‌زند تا اشتباه نشود.</p>
+   <div class="note">الگوی سریع (فقط عنوان را پر می‌کند):</div><div class="pxchips">${CALT.map((t,i)=>`<button class="btn xs off" data-x="calt:${i}">${t[0]}</button>`).join('')}</div></div>`;
+  h+=`<div class="pxc"><h4>➕ رویداد جدید</h4><div class="pxf"><label class="w2">عنوان<input class="pxi" type="text" id="cdT" data-cd="title" value="${H(CD.title)}" placeholder="مثلاً: اعلام نرخ بهره FOMC"></label>
+   <label>تاریخ و ساعت (ساعت دستگاه)<input class="pxi l" type="datetime-local" data-cd="dt" value="${H(CD.dt)}"></label>
+   <label>منطقه / دارایی<select class="pxi" data-cd="cur">${['USD','EUR','CNY','JPY','کریپتو','همه'].map(c=>`<option ${CD.cur===c?'selected':''}>${c}</option>`).join('')}</select></label>
+   <div class="w2"><div class="note" style="margin-bottom:4px">اهمیت:</div><div class="seg">${[1,2,3].map(i=>`<button data-x="cdimp:${i}" class="${+CD.imp===i?'on':''}">${IMPN[i]}</button>`).join('')}</div></div>
+   <label class="w2">یادداشت و سناریوها (پیش‌بینی، برنامهٔ معامله، ...)<textarea class="pxi" data-cd="notes" placeholder="اگر عدد بالاتر از انتظار بود... اگر پایین‌تر بود...">${H(CD.notes)}</textarea></label></div>
+   <div class="acts"><button class="btn" data-x="caladd">ذخیرهٔ رویداد</button></div></div>`;
+  /* نقشهٔ ۱۴ روز آینده */
+  const d0=new Date();d0.setHours(0,0,0,0);const days=[...Array(14)].map((_,i)=>{const d=new Date(d0.getTime()+i*864e5);return {d,ev:ev.filter(e=>!e.done&&e.t>=d.getTime()&&e.t<d.getTime()+864e5)};});
+  h+=`<div class="pxc"><h4>نقشهٔ ۱۴ روز آینده</h4><div class="pxdays">${days.map((x,i)=>`<div class="pxday ${i===0?'t':''}"><span class="note">${x.d.toLocaleDateString('fa-IR',{weekday:'short'})}</span><b class="num">${fa(x.d.toLocaleDateString('fa-IR',{day:'numeric'}))}</b>${x.ev.map(e=>`<i class="d" style="background:${IMPC[e.imp]}" title="${H(e.title)}"></i>`).join('')}${x.ev.length?`<div class="note">${fa(x.ev.length)}</div>`:''}</div>`).join('')}</div>
+   <div class="pxlg"><span style="--lc:${RED}">مهم</span><span style="--lc:${AMB}">متوسط</span><span style="--lc:#7a8a90">کم</span></div></div>`;
+  h+=`<div class="pxc"><div class="between"><h4 style="margin:0">پیش رو (${fa(up.length)})</h4><div class="seg" style="min-width:170px">${[[0,'همه'],[2,'متوسط+'],[3,'فقط مهم']].map(([k,t])=>`<button data-x="calf:${k}" class="${f===k?'on':''}">${t}</button>`).join('')}</div></div>`;
+  h+=up.length?up.map(e=>evCard(e,now)).join(''):note('رویدادی ثبت نشده است.');
+  h+='</div>';
+  if(past.length)h+=`<details class="box"><summary>گذشته / انجام‌شده (${fa(past.length)})</summary>${past.slice(0,30).map(e=>evCard(e,now)).join('')}</details>`;
+  return h+note('داده‌های این بخش را خودت وارد می‌کنی و فقط روی همین دستگاه ذخیره می‌شود.');}
+function evCard(e,now){const dt=new Date(e.t);
+  return `<div class="pxev ${e.done?'done':''}"><u style="background:${IMPC[e.imp]}"></u><div><b>${H(e.title)}</b> <span class="pxch">${H(e.cur)}</span><br><span class="note">${dt.toLocaleString('fa-IR',{weekday:'long',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+   <details><summary class="note" style="cursor:pointer">یادداشت</summary><textarea class="pxi" data-ev="${e.id}:notes" placeholder="یادداشت و نتیجه…">${H(e.notes||'')}</textarea><div class="pxtb"><input class="pxi l" type="text" data-ev="${e.id}:actual" value="${H(e.actual||'')}" placeholder="عدد واقعی / نتیجه"></div></details>
+   <div class="cbtn"><button class="btn xs ${e.done?'off':''}" data-x="evdone:${e.id}">${e.done?'بازگردانی':'✓ انجام شد'}</button><button class="btn xs off" data-x="evdel:${e.id}">حذف</button></div></div>
+   <aside><div class="pxcd" data-cd-t="${e.t}">${e.done?'✓':cdTxt(e.t-now)}</div><span class="pxch" style="border-color:${IMPC[e.imp]}">${IMPN[e.imp]}</span></aside></div>`;}
+setInterval(()=>{if(P.hidden||X.tab!=='cal')return;P.querySelectorAll('[data-cd-t]').forEach(el=>{if(el.textContent!=='✓')el.textContent=cdTxt(+el.dataset.cdT-Date.now());});},30000);
+
+/* ======================================================================
+   ژورنال معاملات
+   ====================================================================== */
+const EMO=['آرام','مطمئن','هیجان‌زده','طمع','ترس','FOMO','انتقام','خسته'];
+const JD=()=>X.jr.draft;
+function tradeCalc(e){
+  if(e.exit==null||!(e.entry>0))return {open:true};
+  const sg=e.dir==='LONG'?1:-1,pp=(e.exit/e.entry-1)*sg*100,notional=(+e.size||0)*(+e.lev||1),pnl=notional*pp/100-(+e.fee||0);
+  const risk=e.sl>0?Math.abs(e.entry-e.sl)/e.entry*notional:null,r=e.sl>0&&e.entry!==e.sl?(e.exit-e.entry)*sg/Math.abs(e.entry-e.sl):null;
+  return {open:false,pp,pnl,r,risk,win:pnl>0};}
+function jrStats(list){
+  const cl=list.map(e=>({e,c:tradeCalc(e)})).filter(x=>!x.c.open).sort((a,b)=>(a.e.t)-(b.e.t));
+  if(!cl.length)return null;
+  const w=cl.filter(x=>x.c.pnl>0),l=cl.filter(x=>x.c.pnl<=0),gp=w.reduce((a,x)=>a+x.c.pnl,0),gl=Math.abs(l.reduce((a,x)=>a+x.c.pnl,0));
+  let eq=0,pk=0,dd=0,curve=[0],bs=0,ws=0,cs=0,sgn=0;
+  cl.forEach(x=>{eq+=x.c.pnl;curve.push(eq);pk=Math.max(pk,eq);dd=Math.max(dd,pk-eq);const s=x.c.pnl>0?1:-1;if(s===sgn)cs++;else{cs=1;sgn=s;}if(s>0)bs=Math.max(bs,cs);else ws=Math.max(ws,cs);});
+  const rs=cl.map(x=>x.c.r).filter(x=>x!=null);
+  return {n:cl.length,wr:w.length/cl.length*100,pnl:eq,pf:gl?gp/gl:null,exp:eq/cl.length,aw:w.length?gp/w.length:0,al:l.length?-gl/l.length:0,dd,curve,bs,ws,avgR:rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:null,cl,best:Math.max(...cl.map(x=>x.c.pnl)),worst:Math.min(...cl.map(x=>x.c.pnl))};}
+function eqSVG(c){
+  const W=640,Hh=190,pl=8,pr=8,pt=12,pb=14,mn=Math.min(0,...c),mx=Math.max(0,...c)||1,x=i=>pl+i/(Math.max(1,c.length-1))*(W-pl-pr),y=v=>pt+(1-(v-mn)/((mx-mn)||1))*(Hh-pt-pb);
+  const d=c.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(''),up=c.at(-1)>=0,col=up?GRN:RED;
+  return `<svg class="pxsvg" viewBox="0 0 ${W} ${Hh}"><defs><linearGradient id="pxe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".4"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+   <line x1="${pl}" x2="${W-pr}" y1="${y(0)}" y2="${y(0)}" stroke="currentColor" opacity=".3" stroke-dasharray="4 4"/>
+   <path d="${d} L${x(c.length-1)} ${y(0)} L${x(0)} ${y(0)}Z" fill="url(#pxe)"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+   <circle cx="${x(c.length-1)}" cy="${y(c.at(-1))}" r="4.5" fill="${col}"/><text x="${W-pr}" y="${Hh-2}" text-anchor="end" font-size="10" opacity=".7">${c.length>1?'معامله '+c.length:''}</text></svg>`;}
+function jrHeat(cl){
+  const by={};cl.forEach(x=>{const k=new Date(x.e.t).toDateString();by[k]=(by[k]||0)+x.c.pnl;});
+  const mx=Math.max(1,...Object.values(by).map(Math.abs)),d0=new Date();d0.setHours(0,0,0,0);const start=new Date(d0.getTime()-83*864e5);start.setDate(start.getDate()-((start.getDay()+1)%7));
+  const out=[];for(let t=start.getTime();t<=d0.getTime();t+=864e5){const d=new Date(t),v=by[d.toDateString()];
+    const bg=v==null?'':`background:rgba(${v>=0?'14,203,129':'246,70,93'},${(.25+Math.min(1,Math.abs(v)/mx)*.7).toFixed(2)})`;
+    out.push(`<i style="${bg}" title="${d.toLocaleDateString('fa-IR')} ${v==null?'':n2(v,1)+'$'}"></i>`);}
+  return `<div class="pxheat">${out.join('')}</div><div class="pxlg"><span style="--lc:${GRN}">روز سود</span><span style="--lc:${RED}">روز زیان</span><span style="--lc:var(--gtrack,#d7f3f8)">بدون معامله</span></div>`;}
+function groupBars(cl,keyf,mode){
+  const g={};cl.forEach(x=>{const k=keyf(x.e);if(!k)return;const o=g[k]||(g[k]={n:0,p:0,w:0});o.n++;o.p+=x.c.pnl;if(x.c.pnl>0)o.w++;});
+  const rows=Object.entries(g).sort((a,b)=>mode==='wr'?b[1].w/b[1].n-a[1].w/a[1].n:b[1].p-a[1].p);
+  if(!rows.length)return '';const mx=Math.max(...rows.map(r=>mode==='wr'?100:Math.abs(r[1].p)))||1;
+  return rows.map(([k,o])=>mode==='wr'?barRow(k+` (${fa(o.n)})`,o.w/o.n*100,mx,BLU,fa(Math.round(o.w/o.n*100))+'٪'):barRow(k+` (${fa(o.n)})`,o.p,mx,null,(o.p>=0?'+':'')+n2(o.p,0)+'$')).join('');}
+function jrHTML(){
+  const d=JD(),all=X.jr.e,f=X.jr.f;let h='';
+  const st=jrStats(all);
+  h+=`<div class="pxc"><h4>📒 ژورنال معاملات</h4><p class="pxsub">هر معامله را با دلیل ورود، احساس و درس‌هایش ثبت کن. آمار و نمودارها خودکار ساخته می‌شوند تا نقاط ضعفت را پیدا کنی.</p>
+   <div class="pxk">${st?kpi(fa(st.n),'معامله بسته'):kpi(fa(all.length),'معامله')}${st?kpi(fa(Math.round(st.wr))+'٪','نرخ برد',st.wr>=50?'psup':'pneg'):''}${st?kpi((st.pnl>=0?'+':'')+n2(st.pnl,1)+'$','سود/زیان کل',st.pnl>=0?'psup':'pneg'):''}${st&&st.pf!=null?kpi(n2(st.pf,2),'ضریب سود (PF)',st.pf>=1?'psup':'pneg'):''}</div></div>`;
+  /* فرم */
+  h+=`<div class="pxc"><h4>➕ ثبت معامله</h4><div class="pxf c4"><label>نماد<input class="pxi l" list="symlist" data-jd="sym" value="${H(d.sym||'')}" placeholder="BTC" autocomplete="off"></label>
+   <label>جهت<select class="pxi" data-jd="dir"><option value="LONG" ${d.dir==='LONG'?'selected':''}>لانگ</option><option value="SHORT" ${d.dir==='SHORT'?'selected':''}>شورت</option></select></label>
+   <label>تایم‌فریم<select class="pxi" data-jd="tf">${['5m','15m','1h','4h','1d'].map(t=>`<option ${d.tf===t?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label>ستاپ<select class="pxi" data-jd="setup"><option value="">—</option>${X.jr.setups.map(t=>`<option ${d.setup===t?'selected':''}>${H(t)}</option>`).join('')}</select></label>
+   <label>قیمت ورود<input class="pxi l" type="number" inputmode="decimal" step="any" data-jd="entry" value="${H(d.entry||'')}"></label>
+   <label>قیمت خروج (خالی = باز)<input class="pxi l" type="number" inputmode="decimal" step="any" data-jd="exit" value="${H(d.exit||'')}"></label>
+   <label>حد ضرر<input class="pxi l" type="number" inputmode="decimal" step="any" data-jd="sl" value="${H(d.sl||'')}"></label>
+   <label>سرمایهٔ درگیر ($)<input class="pxi l" type="number" inputmode="decimal" step="any" data-jd="size" value="${H(d.size||'')}"></label>
+   <label>اهرم<input class="pxi l" type="number" inputmode="decimal" step="any" data-jd="lev" value="${H(d.lev||'1')}"></label>
+   <label>کارمزد ($)<input class="pxi l" type="number" inputmode="decimal" step="any" data-jd="fee" value="${H(d.fee||'')}"></label>
+   <label class="w2">تاریخ معامله<input class="pxi l" type="datetime-local" data-jd="dt" value="${H(d.dt||dtLoc(Date.now()))}"></label>
+   <label class="w2">برچسب‌ها (با ویرگول)<input class="pxi" type="text" data-jd="tags" value="${H(d.tags||'')}" placeholder="اخبار، بریک‌اوت، ..."></label></div>
+   <div class="note" style="margin:10px 0 4px">احساس هنگام ورود:</div><div class="pxchips">${EMO.map(x=>`<button class="btn xs ${d.emo===x?'on':'off'}" data-x="jdemo:${x}">${x}</button>`).join('')}</div>
+   <div class="note" style="margin:8px 0 2px">انضباط (پایبندی به برنامه):</div><div class="pxst">${[1,2,3,4,5].map(i=>`<button class="${(d.disc||0)>=i?'on':''}" data-x="jddisc:${i}" aria-label="${i}">★</button>`).join('')}</div>
+   <label class="pxl" style="margin-top:10px">📝 دلیل ورود و برنامهٔ معامله<textarea class="pxi" data-jd="plan" placeholder="چه دیدی؟ چرا وارد شدی؟ هدف و ابطال چیست؟">${H(d.plan||'')}</textarea></label>
+   <label class="pxl" style="margin-top:8px">🔍 مرور بعد از معامله<textarea class="pxi" data-jd="review" placeholder="چه شد؟ طبق برنامه بود؟">${H(d.review||'')}</textarea></label>
+   <label class="pxl" style="margin-top:8px">💡 درسی که گرفتم<textarea class="pxi" style="min-height:70px" data-jd="lesson" placeholder="دفعهٔ بعد چه کار می‌کنم؟">${H(d.lesson||'')}</textarea></label>
+   <div class="acts"><button class="btn" data-x="jradd">ذخیرهٔ معامله</button><button class="btn off" data-x="jrclear">پاک‌کردن فرم</button></div></div>`;
+  if(st){
+    h+=`<div class="pxc"><h4>منحنی سرمایه</h4>${eqSVG(st.curve)}<div class="pxk">${kpi((st.exp>=0?'+':'')+n2(st.exp,2)+'$','امید ریاضی هر معامله',st.exp>=0?'psup':'pneg')}${kpi(n2(st.dd,1)+'$','بیشترین افت',st.dd?'pneg':'')}${kpi(n2(st.aw,1)+'$','میانگین سود','psup')}${kpi(n2(st.al,1)+'$','میانگین زیان','pneg')}${st.avgR!=null?kpi(n2(st.avgR,2)+'R','میانگین R',st.avgR>=0?'psup':'pneg'):''}${kpi(fa(st.bs)+' / '+fa(st.ws),'بیشترین برد / باخت پیاپی')}</div></div>`;
+    h+=`<div class="pxc"><h4>تقویم حرارتی سود و زیان روزانه (۱۲ هفته)</h4>${jrHeat(st.cl)}</div>`;
+    const dn=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+    const g1=groupBars(st.cl,e=>e.setup,'pnl'),g2=groupBars(st.cl,e=>e.emo,'wr'),g3=groupBars(st.cl,e=>dn[new Date(e.t).getDay()],'pnl'),g4=groupBars(st.cl,e=>e.dir==='LONG'?'لانگ':'شورت','pnl');
+    if(g1)h+=`<div class="pxc"><h4>سود/زیان به تفکیک ستاپ</h4>${g1}</div>`;
+    if(g2)h+=`<div class="pxc"><h4>نرخ برد به تفکیک احساس</h4>${g2}${note('اگر در حالت‌هایی مثل ترس یا FOMO نرخ بردت پایین است، آن شرایط را از معامله حذف کن.')}</div>`;
+    if(g3||g4)h+=`<div class="pxc"><h4>روز هفته و جهت</h4>${g3}${g4}</div>`;}
+  /* فهرست */
+  const lst=all.filter(e=>{const c=tradeCalc(e);return f==='all'||(f==='open'&&c.open)||(f==='win'&&!c.open&&c.win)||(f==='loss'&&!c.open&&!c.win);}).sort((a,b)=>b.t-a.t);
+  h+=`<div class="pxc"><div class="between"><h4 style="margin:0">معامله‌ها (${fa(lst.length)})</h4><div class="seg" style="min-width:210px">${[['all','همه'],['open','باز'],['win','سود'],['loss','زیان']].map(([k,t])=>`<button data-x="jrf:${k}" class="${f===k?'on':''}">${t}</button>`).join('')}</div></div>`;
+  h+=lst.length?lst.slice(0,60).map(tradeCard).join(''):note('هنوز معامله‌ای ثبت نشده.');
+  if(all.length)h+=`<div class="acts"><button class="btn xs off" data-x="jrcsv">⬇ خروجی CSV</button><button class="btn xs off" data-x="jrjson">⬇ پشتیبان JSON</button></div>`;
+  h+='</div>';
+  h+=`<details class="box"><summary>⚙️ ستاپ‌های من</summary><p class="note">ستاپ‌هایی که در فرم انتخاب می‌کنی (با ویرگول جدا کن):</p><input class="pxi" type="text" data-setups value="${H(X.jr.setups.join('، '))}"></details>`;
+  return h+note('ژورنال فقط روی همین دستگاه ذخیره می‌شود؛ پشتیبان بگیر.');}
+function tradeCard(e){const c=tradeCalc(e),L=e.dir==='LONG';
+  return `<div class="pxtr ${c.open?'open':c.win?'win':'loss'}"><div class="hd"><div><b class="num">${H(e.sym)}/USDT</b> <span class="pill ${L?'l':'s'}">${L?'لانگ':'شورت'}</span> <span class="pxch">${H(e.tf||'')}</span>${e.setup?` <span class="pxch v">${H(e.setup)}</span>`:''}</div>
+   <div style="text-align:end">${c.open?'<span class="pxch n">باز</span>':`<b class="num ${c.win?'psup':'pneg'}">${c.pnl>=0?'+':''}${n2(c.pnl,2)}$ · ${c.pp>=0?'+':''}${n2(c.pp,2)}٪</b>${c.r!=null?`<br><span class="note num">${n2(c.r,2)}R</span>`:''}`}</div></div>
+   <div class="note">${new Date(e.t).toLocaleString('fa-IR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})} · ورود ${fmt(e.entry)}${e.exit!=null?' ← خروج '+fmt(e.exit):''}${e.sl?' · SL '+fmt(e.sl):''} · ${e.emo?H(e.emo)+' · ':''}${'★'.repeat(e.disc||0)}</div>
+   ${e.tags?`<div class="pxchips">${e.tags.split(/[,،]/).map(t=>t.trim()).filter(Boolean).map(t=>`<span class="pxch">#${H(t)}</span>`).join('')}</div>`:''}
+   <details ${c.open?'open':''}><summary>یادداشت‌ها و ویرایش</summary>
+    ${c.open?`<div class="pxtb"><input class="pxi l" type="number" step="any" inputmode="decimal" id="ex_${e.id}" placeholder="قیمت خروج"><button class="btn xs" data-x="jrclose:${e.id}">بستن معامله</button></div>`:''}
+    <label class="pxl">دلیل ورود<textarea class="pxi" data-je="${e.id}:plan">${H(e.plan||'')}</textarea></label>
+    <label class="pxl" style="margin-top:6px">مرور<textarea class="pxi" data-je="${e.id}:review">${H(e.review||'')}</textarea></label>
+    <label class="pxl" style="margin-top:6px">درس<textarea class="pxi" style="min-height:64px" data-je="${e.id}:lesson">${H(e.lesson||'')}</textarea></label></details>
+   <div class="cbtn"><button class="btn xs off" data-x="jrdel:${e.id}">حذف</button></div></div>`;}
+const csvEsc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+function dl2(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+txt],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);}
+
+/* ======================================================================
+   رویدادها
+   ====================================================================== */
+function act(a){
+  const x=a.split(':');
+  switch(x[0]){
+    case 'tab':X.tab=x[1];sv();render();break;
+    case 'tf':X.tf=x[1];sv();render();break;
+    case 'set':{const v=x.slice(2).join(':');setP(X,x[1],v);sv();render();break;}
+    case 'go':{X.tab=x[1];X.view[x[1]]='one';X.sym=x[2];sv();({div:runDiv,can:runCan,sq:runSq})[x[1]]();break;}
+    case 'runsum':readSym();runSum();break;
+    case 'rundiv':readSym();runDiv();break;
+    case 'runcan':readSym();runCan();break;
+    case 'runsq':readSym();runSq();break;
+    case 'scandiv':runDivScan();break;
+    case 'scancan':runCanScan();break;
+    case 'scansq':runSqScan();break;
+    case 'calt':{const t=CALT[+x[1]];CD.title=t[0];CD.imp=t[1];CD.cur=t[2];sv();render();setTimeout(()=>{const e=document.getElementById('cdT');if(e)e.focus();},50);break;}
+    case 'cdimp':CD.imp=+x[1];render();break;
+    case 'caladd':{const t=new Date(CD.dt).getTime();if(!CD.title.trim()||!isFinite(t)){toast('عنوان و تاریخ را کامل وارد کن.');break;}
+      X.cal.ev.push({id:'e'+Date.now().toString(36),title:CD.title.trim().slice(0,80),t,imp:+CD.imp||2,cur:CD.cur||'USD',notes:CD.notes||'',done:0});
+      X.calD={title:'',imp:2,cur:CD.cur,notes:'',dt:''};Object.assign(CD,X.calD);sv();render();toast('رویداد ذخیره شد ✓');break;}
+    case 'calf':X.cal.f=+x[1];sv();render();break;
+    case 'evdone':{const e=X.cal.ev.find(q=>q.id===x[1]);if(e){e.done=e.done?0:1;sv();render();}break;}
+    case 'evdel':if(confirm('این رویداد حذف شود؟')){X.cal.ev=X.cal.ev.filter(q=>q.id!==x[1]);sv();render();}break;
+    case 'jdemo':JD().emo=x[1];render();break;
+    case 'jddisc':JD().disc=+x[1];render();break;
+    case 'jradd':{const d=JD(),sym=String(d.sym||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,''),en=+d.entry;
+      if(!sym||!(en>0)){toast('نماد و قیمت ورود را وارد کن.');break;}
+      const ex=d.exit!==''&&d.exit!=null&&+d.exit>0?+d.exit:null,t=d.dt?new Date(d.dt).getTime():Date.now();
+      X.jr.e.unshift({id:'j'+Date.now().toString(36),sym,dir:d.dir||'LONG',tf:d.tf||'1h',setup:d.setup||'',entry:en,exit:ex,sl:+d.sl||0,size:+d.size||0,lev:+d.lev||1,fee:+d.fee||0,t:isFinite(t)?t:Date.now(),emo:d.emo||'',disc:d.disc||0,tags:d.tags||'',plan:d.plan||'',review:d.review||'',lesson:d.lesson||''});
+      X.jr.draft={dir:d.dir,tf:d.tf,emo:'آرام',disc:4};sv();render();toast('معامله ثبت شد ✓');break;}
+    case 'jrclear':X.jr.draft={dir:'LONG',tf:'1h',emo:'آرام',disc:4};render();break;
+    case 'jrf':X.jr.f=x[1];sv();render();break;
+    case 'jrclose':{const e=X.jr.e.find(q=>q.id===x[1]),v=+(document.getElementById('ex_'+x[1])||{}).value;if(!e||!(v>0)){toast('قیمت خروج را وارد کن.');break;}e.exit=v;sv();render();break;}
+    case 'jrdel':if(confirm('این معامله حذف شود؟')){X.jr.e=X.jr.e.filter(q=>q.id!==x[1]);sv();render();}break;
+    case 'jrcsv':{const rows=[['تاریخ','نماد','جهت','تایم‌فریم','ستاپ','ورود','خروج','SL','سرمایه','اهرم','کارمزد','سود$','سود٪','R','احساس','انضباط','برچسب','دلیل','مرور','درس']];
+      X.jr.e.forEach(e=>{const c=tradeCalc(e);rows.push([new Date(e.t).toISOString(),e.sym,e.dir,e.tf,e.setup,e.entry,e.exit,e.sl,e.size,e.lev,e.fee,c.open?'':c.pnl.toFixed(2),c.open?'':c.pp.toFixed(2),c.r==null?'':c.r.toFixed(2),e.emo,e.disc,e.tags,e.plan,e.review,e.lesson]);});
+      dl2('journal.csv',rows.map(r=>r.map(csvEsc).join(',')).join('\n'),'text/csv');break;}
+    case 'jrjson':dl2('journal-backup.json',JSON.stringify({jr:X.jr,cal:X.cal},null,1),'application/json');break;
+  }}
+function readSym(){const e=document.getElementById('pxSym');if(e){const v=e.value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'');if(v){X.sym=v;sv();}}}
+document.addEventListener('click',e=>{
+  const t=e.target,q=s=>t.closest&&t.closest(s);
+  if(q('#pxOpen')){openX('sum');return;}
+  const o=q('[data-xopen]');if(o){openX(o.dataset.xopen);return;}
+  if(q('[data-xclose]')){closeX();return;}
+  const a=q('#px [data-x]');if(a&&!a.disabled)act(a.dataset.x);
+  if(q('#px [data-an]'))setTimeout(closeX,0);
+});
+document.addEventListener('input',e=>{
+  const t=e.target;if(!t.closest||!t.closest('#px'))return;
+  if(t.dataset.s){let v=t.type==='checkbox'?(t.checked?1:0):t.type==='range'||t.type==='number'?+t.value:t.value;
+    if(t.type==='number'&&t.dataset.s.startsWith('can.w.'))v=Math.max(0,Math.min(5,+t.value||0));
+    setP(X,t.dataset.s,v);const l=P.querySelector(`[data-sl="${t.dataset.s}"]`);if(l)l.textContent=t.value;sv();
+    if(t.type==='checkbox'){const r=t.closest('.pir');if(r)r.classList.toggle('off',!t.checked);}return;}
+  if(t.dataset.cd){CD[t.dataset.cd]=t.value;return;}
+  if(t.dataset.jd){JD()[t.dataset.jd]=t.value;return;}
+  if(t.dataset.je){const[i,f]=t.dataset.je.split(':'),e=X.jr.e.find(q=>q.id===i);if(e){e[f]=t.value;sv();}return;}
+  if(t.dataset.ev){const[i,f]=t.dataset.ev.split(':'),e=X.cal.ev.find(q=>q.id===i);if(e){e[f]=t.value;sv();}return;}
+  if(t.hasAttribute('data-setups')){const a=t.value.split(/[,،]/).map(s=>s.trim()).filter(Boolean).slice(0,20);X.jr.setups=a.length?a:['شکست'];sv();}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;if(!t.closest||!t.closest('#px'))return;
+  if(t.dataset.jd&&(t.tagName==='SELECT'))JD()[t.dataset.jd]=t.value;
+  if(t.dataset.s&&t.type==='checkbox'&&t.dataset.s==='sum.useCal')sv();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!P.hidden)closeX();
+  if(e.key==='Enter'&&e.target.id==='pxSym'){const m={sum:'runsum',div:'rundiv',can:'runcan',sq:'runsq'}[X.tab];if(m)act(m);}
+});
+})();
+</script>
 </body>
 </html>
