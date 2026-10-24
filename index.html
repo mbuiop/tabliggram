@@ -3402,5 +3402,475 @@ E.reg({id:'news',title:'اخبار خودکار',tabs:[
 })();
 
 </script>
+<script>
+/* ======================================================================
+   🎛️ تحلیل شخصی + 💼 پرتفوی
+   - انتخاب دلخواه اندیکاتورها و وزن‌دهی (اندیکاتور، گروه، تایم‌فریم)
+   - چند پروفایل ذخیره‌شده، تحلیل تک‌ارز با جزئیات کامل
+   - تولید سیگنال شخصی بر اساس تنظیمات کاربر + پیگیری نتیجه
+   - تحلیل پرتفوی: ارزش، سود/زیان، ریسک، همبستگی، VaR، توصیه‌ها
+   ====================================================================== */
+(()=>{
+const S=store,PK='radar.pa2',QK='radar.pf2',SK='radar.pasig',CK='radar.pacat';
+const TFL=['15m','1h','4h','1d'];
+const GN=IXG;                                   /* نام گروه‌ها: روند، مومنتوم، ... */
+const mkProf=name=>({id:'p'+Date.now().toString(36)+Math.floor(Math.random()*1e3),name,sel:null,gw:{},tfW:{'15m':0,'1h':1,'4h':1,'1d':.5},useK:1,
+  thr:20,minAgree:40,minTfAgree:2,slAtr:1.8,tpR:[1,2,3],risk:1,cap:1000,lev:5,dir:'both',tf:'1h',syms:'',n:20,max:8,auto:0,autoMin:15});
+let PR=S.get(PK,null);
+if(!PR||!PR.list||!PR.list.length)PR={cur:null,list:[mkProf('پروفایل من')]};
+if(!PR.list.some(p=>p.id===PR.cur))PR.cur=PR.list[0].id;
+const saveP=()=>S.set(PK,PR);
+const P=()=>PR.list.find(p=>p.id===PR.cur)||PR.list[0];
+let CAT=S.get(CK,[]);
+let SG=S.get(SK,[]);const saveS=()=>S.set(SK,SG.slice(0,150));
+let PF=S.get(QK,{h:[],prof:null});const saveF=()=>S.set(QK,PF);
+const UI={tab:'set',q:'',sym:'BTC',res:null,scanning:false,lastScan:0};
+let PFR=null;
+
+/* ---------- استایل ---------- */
+const st=document.createElement('style');
+st.textContent=`
+.pabar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.pabar .btn{min-height:46px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px}
+.pnl{position:fixed;inset:0;z-index:85;display:flex;flex-direction:column;background:var(--bg);padding-top:env(safe-area-inset-top,0px)}
+.pnl[hidden]{display:none}
+.pbody{flex:1;overflow-y:auto;padding:12px 12px calc(30px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+@media(min-width:900px){.pnl .thead,.pnl .pbody{width:min(1000px,100%);margin-inline:auto}}
+.pnl .thead b{flex:1;text-align:center;font-size:16px}
+.pir{display:grid;grid-template-columns:auto 1fr 70px;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)}
+.pir.off{opacity:.55}
+.pir .nm{font-size:12.5px;min-width:0;overflow-wrap:anywhere}
+.slr{display:grid;grid-template-columns:96px 1fr 38px;gap:8px;align-items:center;font-size:12px;padding:3px 0}
+.slr b{text-align:end}
+.pin{width:100%;direction:ltr;text-align:left}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pgrid label{display:flex;flex-direction:column;gap:2px;font-size:11.5px;font-weight:700}
+.pbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.pbar select{flex:1 1 140px;min-height:38px}
+.ptabs{margin:8px 0}
+.pprog{height:10px;border:2px solid #000;border-radius:99px;overflow:hidden;background:#fff;margin:8px 0}
+.pprog i{display:block;height:100%;width:0;background:var(--c1);transition:width .2s}
+.psig .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.psup{color:#0a7a4a}.pneg{color:#b02a37}
+html[data-theme=dark] .psup{color:#4fe3a6}html[data-theme=dark] .pneg{color:#ff8a96}
+html[data-theme=dark] .pprog{background:var(--surf)}
+.pwarn{border:2px dashed #000;border-radius:12px;padding:8px 10px;background:var(--yp);color:#000;font-size:12px;margin:6px 0}
+@media(min-width:760px){.pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+`;
+document.head.appendChild(st);
+
+/* ---------- دکمه‌های بالای صفحه ---------- */
+document.querySelector('.hero').insertAdjacentHTML('afterend',
+ '<div class="pabar"><button class="btn" id="paOpen">🎛️ تحلیل شخصی</button><button class="btn" id="pfOpen">💼 پرتفوی من</button></div>');
+
+/* ---------- پنل‌ها ---------- */
+const mkPanel=(id,title)=>{const d=document.createElement('div');d.id=id;d.className='pnl';d.hidden=true;
+  d.innerHTML=`<div class="thead"><button class="btn xs" style="visibility:hidden">.</button><b>${title}</b><button class="btn xs" data-pclose aria-label="بستن">✕</button></div><div class="pbody" id="${id}B"></div>`;
+  document.body.appendChild(d);return d;};
+const PA=mkPanel('pa','🎛️ تحلیل شخصی'),PFP=mkPanel('pf','💼 تحلیل پرتفوی');
+function openP(id){PA.hidden=id!=='pa';PFP.hidden=id!=='pf';document.body.classList.add('lock');
+  if(id==='pa'){paRender();loadCat();}else pfRender();}
+function closeP(){PA.hidden=true;PFP.hidden=true;if($('#tools').hidden)document.body.classList.remove('lock');}
+
+/* ---------- فهرست اندیکاتورها (از موتور اصلی) ---------- */
+async function loadCat(){
+  if(CAT.length>60)return;
+  try{const d=await ixGet('ETH','1h',false);CAT=d.list.map(x=>({g:x.g,n:x.n}));S.set(CK,CAT);if(!PA.hidden&&UI.tab==='set')paRender();}catch(e){}
+}
+const selOf=p=>p.sel||Object.fromEntries(CAT.map(x=>[x.n,1]));
+const matSel=p=>{if(!p.sel)p.sel=selOf(p);return p.sel;};
+
+/* ---------- موتور امتیازدهی شخصی ---------- */
+const isNA=x=>x.s===0&&x.k<=.1&&/اسکنر|داده|—|تعریف|اسپات/.test(String(x.v));
+function scoreList(p,list){
+  const sel=selOf(p),G={},con=[];let w=0,sw=0,b=0,r=0,n=0;
+  for(const x of list){
+    const wi=+sel[x.n];if(!(wi>0)||isNA(x))continue;
+    const gw=p.gw[x.g]!=null?+p.gw[x.g]:1,ww=wi*gw*(p.useK?(.5+.5*x.k):1);if(!(ww>0))continue;
+    const c=x.s*ww;sw+=ww;w+=c;
+    if(x.s>0)b++;else if(x.s<0)r++;else n++;
+    const g=G[x.g]||(G[x.g]={w:0,sw:0,b:0,r:0,n:0});g.w+=c;g.sw+=ww;if(x.s>0)g.b++;else if(x.s<0)g.r++;else g.n++;
+    con.push({n:x.n,g:x.g,v:x.v,s:x.s,c});
+  }
+  for(const k in G)G[k].sc=G[k].sw?G[k].w/G[k].sw:0;
+  return {sc:sw?w/sw:0,sw,b,r,n,used:b+r+n,G,con};
+}
+async function analyzeSym(p,sym,force){
+  const tfs=TFL.filter(t=>+p.tfW[t]>0);
+  if(!tfs.length)throw new Error('حداقل یک تایم‌فریم را وزن‌دار کن.');
+  const res={};
+  await Promise.all(tfs.map(async t=>{try{res[t]=await ixGet(sym,t,force);}catch(e){}}));
+  const ok=tfs.filter(t=>res[t]);if(!ok.length)throw new Error('داده‌ای برای '+sym+' دریافت نشد.');
+  let comp=0,ws=0;const T={};
+  ok.forEach(t=>{T[t]=scoreList(p,res[t].list);comp+=T[t].sc*p.tfW[t];ws+=+p.tfW[t];});
+  comp=comp/ws;
+  const mt=res[p.tf]?p.tf:ok[0],main=res[mt],ms=T[mt];
+  const dir=comp>=p.thr/100?1:comp<=-p.thr/100?-1:0;
+  const agree=ms.used?(dir>0?ms.b:dir<0?ms.r:Math.max(ms.b,ms.r))/ms.used*100:0;
+  const tfAg=ok.filter(t=>dir&&Math.sign(T[t].sc)===dir&&Math.abs(T[t].sc)>=.05).length;
+  const px=LP[sym]!=null?LP[sym]:main.px;
+  return {sym,comp,dir,agree,tfAg,tfN:ok.length,T,main:mt,px,atr:main.meta.atr,atrPct:main.meta.atrPct,res};
+}
+function whyNot(p,a){
+  const r=[];
+  if(!a.dir)r.push(`امتیاز ${nf(Math.abs(a.comp)*100,0)} پایین‌تر از آستانهٔ ${fa(p.thr)} است`);
+  else{
+    if(p.dir==='long'&&a.dir<0)r.push('جهت نزولی است ولی فقط لانگ فعال است');
+    if(p.dir==='short'&&a.dir>0)r.push('جهت صعودی است ولی فقط شورت فعال است');
+    if(a.agree<p.minAgree)r.push(`هم‌جهتی اندیکاتورها ${nf(a.agree,0)}٪ است (حداقل ${fa(p.minAgree)}٪)`);
+    if(a.tfAg<Math.min(p.minTfAgree,a.tfN))r.push(`فقط ${fa(a.tfAg)} تایم‌فریم هم‌جهت است (حداقل ${fa(Math.min(p.minTfAgree,a.tfN))})`);
+  }
+  return r;
+}
+const passes=(p,a)=>whyNot(p,a).length===0;
+function plan(p,a){
+  const sg=a.dir>0?1:-1,R=p.slAtr*a.atr,e=a.px,slp=R/e*100,risk=p.cap*p.risk/100,notional=risk/(R/e),liqD=95/p.lev;
+  return {entry:e,sl:e-sg*R,tp:p.tpR.map(m=>e+sg*R*m),R,slp,risk,notional,qty:notional/e,margin:notional/p.lev,lev:p.lev,liqOk:liqD>slp*1.1,liqD};
+}
+function mkSig(p,a){
+  const pl=plan(p,a),now=Date.now();
+  return {id:'u'+now.toString(36)+a.sym+Math.floor(Math.random()*99),uid:p.id,pname:p.name,sym:a.sym,dir:a.dir>0?'LONG':'SHORT',
+    entry:pl.entry,sl:pl.sl,curSl:pl.sl,tp:pl.tp,R:pl.R,type:'market',pending:false,filled:true,stage:0,closed:false,result:null,
+    t:now,chk:now,mfe:0,mae:0,score:Math.min(100,Math.round(Math.abs(a.comp)*125)),comp:a.comp,tf:a.main,agree:Math.round(a.agree),
+    tfAg:a.tfAg,tfN:a.tfN,notional:pl.notional,margin:pl.margin,lev:pl.lev,risk:pl.risk,riskPct:p.risk,liqOk:pl.liqOk};
+}
+const symList=p=>{const t=(p.syms||'').toUpperCase().split(/[,\s،]+/).map(x=>x.replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'')).filter(Boolean);
+  return t.length?[...new Set(t)].slice(0,80):UNIVERSE.slice(0,Math.max(5,Math.min(80,+p.n||20)));};
+
+async function refreshSigs(){
+  const open=SG.filter(s=>!s.closed);if(!open.length)return;
+  for(const s of new Set(open.map(x=>x.sym)))delete DATA[s+'15m'];
+  try{await simulateSigs(open);}catch(e){}
+  saveS();
+}
+async function scanSignals(auto){
+  const p=P();if(UI.scanning)return;UI.scanning=true;UI.lastScan=Date.now();
+  const syms=symList(p),found=[];let done=0;
+  const prog=()=>{const e=$('#paProgI');if(e)e.style.width=(done/syms.length*100)+'%';const m=$('#paProgT');if(m)m.textContent=`در حال تحلیل ${fa(done)} از ${fa(syms.length)} ارز…`;};
+  if(!auto&&!PA.hidden)paRender();
+  await pool(syms,LITE?2:3,async s=>{
+    try{const a=await analyzeSym(p,s,false);
+      if(passes(p,a)){const d=a.dir>0?'LONG':'SHORT';
+        if(!SG.some(g=>g.uid===p.id&&g.sym===s&&!g.closed&&g.dir===d))found.push(a);}
+    }catch(e){}
+    done++;prog();});
+  found.sort((x,y)=>Math.abs(y.comp)-Math.abs(x.comp));
+  const top=found.slice(0,Math.max(1,+p.max||8));
+  top.forEach(a=>SG.unshift(mkSig(p,a)));saveS();
+  UI.scanning=false;UI.lastFound=top.length;UI.lastTotal=syms.length;
+  if(top.length){const m=`🎯 ${fa(top.length)} سیگنال شخصی جدید: ${top.slice(0,4).map(a=>a.sym+(a.dir>0?'↑':'↓')).join(' ')}`;toast(m);
+    try{if('Notification' in window&&Notification.permission==='granted')new Notification('رادار کریپتو',{body:m});}catch(e){}}
+  else if(!auto)toast('سیگنالی با شرایط تو پیدا نشد.');
+  await refreshSigs();
+  if(!PA.hidden)paRender();
+}
+setInterval(()=>{const p=P();if(p.auto&&!document.hidden&&navigator.onLine&&!UI.scanning&&Date.now()-UI.lastScan>(+p.autoMin||15)*6e4)scanSignals(true);},60000);
+setInterval(()=>{if(!document.hidden&&SG.some(s=>!s.closed))refreshSigs().then(()=>{if(!PA.hidden&&UI.tab==='sig')paRender();});},180000);
+
+/* ---------- ارسال به فیوچرز دمو ---------- */
+function toDemo(s){
+  const c=cfgOf(s.sym);
+  if(!demoBlocked(s.sym)){c.lev=Math.min(s.lev,maxLev(s.sym));c.mode='isolated';fSave();}
+  const mx=Math.max(0,fAvail()*c.lev/(1+c.lev*F_FEE_T));
+  FORM={...FORM,sym:s.sym,type:'market',price:'',tpsl:true,tp:String(+s.tp[1].toPrecision(8)),sl:String(+s.sl.toPrecision(8)),hint:s.dir,tab:'pos',
+    usd:String(Math.max(5,Math.floor(Math.min(s.notional,mx))))};
+  closeP();setTab('demo');syncFormInputs();updateDemo();pollLive();
+  toast('فرم دمو از سیگنال شخصی پر شد؛ بررسی و تأیید کن.');
+}
+const sigTxt=s=>`🎯 ${s.sym}/USDT — ${s.dir==='LONG'?'لانگ':'شورت'} (پروفایل ${s.pname})\nقدرت ${s.score} | هم‌جهتی ${s.agree}٪ | ${s.tfAg} از ${s.tfN} تایم‌فریم\nورود: ${fmt(s.entry)}\nTP1: ${fmt(s.tp[0])}\nTP2: ${fmt(s.tp[1])}\nTP3: ${fmt(s.tp[2])}\nSL: ${fmt(s.sl)}\nحجم پیشنهادی: ${nf(s.notional,0)}$ (ریسک ${s.riskPct}٪) | اهرم ${s.lev}×\n⚠️ توصیهٔ مالی نیست.`;
+
+/* =====================================================================
+   رندر پنل تحلیل شخصی
+   ===================================================================== */
+const optTxt=p=>esc(p.name);
+function headHTML(){
+  const p=P();
+  return `<div class="pbar"><select id="pSel" aria-label="پروفایل">${PR.list.map(x=>`<option value="${x.id}" ${x.id===p.id?'selected':''}>${optTxt(x)}</option>`).join('')}</select>
+   <button class="btn xs" data-pa="new">+ جدید</button><button class="btn xs" data-pa="dup">کپی</button><button class="btn xs" data-pa="ren">نام</button><button class="btn xs" data-pa="del">حذف</button></div>
+  <div class="seg ptabs">${[['set','⚙️ تنظیمات'],['ana','🔍 تحلیل ارز'],['sig','🎯 سیگنال‌ها']].map(([k,t])=>`<button data-pa="tab:${k}" class="${UI.tab===k?'on':''}">${t}</button>`).join('')}</div>`;
+}
+function paRender(){
+  const b=$('#paB');if(!b)return;const top=b.scrollTop;
+  b.innerHTML=headHTML()+(UI.tab==='set'?setHTML():UI.tab==='ana'?anaHTML():sigHTML());
+  b.scrollTop=top;
+}
+const PRE=[
+ ['eq','همه برابر',{gw:{},tfW:{'15m':0,'1h':1,'4h':1,'1d':.5},thr:20}],
+ ['trend','دنبال‌کنندهٔ روند',{gw:{'روند':2,'مومنتوم':1,'حجم':1,'نوسان':.3,'قیمت':.5,'آماری':.5,'بازار':.3},tfW:{'15m':0,'1h':1,'4h':1.5,'1d':1.5},thr:18}],
+ ['mom','مومنتوم',{gw:{'مومنتوم':2.5,'روند':1,'حجم':1,'نوسان':.5,'قیمت':.5,'آماری':.3,'بازار':.3},tfW:{'15m':1,'1h':1.5,'4h':1,'1d':0},thr:20}],
+ ['rev','برگشت به میانگین',{gw:{'مومنتوم':2,'نوسان':2,'آماری':1.2,'قیمت':1,'حجم':.7,'روند':.3,'بازار':.5},tfW:{'15m':1,'1h':1,'4h':.5,'1d':0},thr:25}],
+ ['vol','حجم‌محور',{gw:{'حجم':3,'مومنتوم':1,'روند':1,'نوسان':.5,'قیمت':.3,'آماری':.3,'بازار':.5},tfW:{'15m':.5,'1h':1.5,'4h':1,'1d':0},thr:20}],
+ ['scalp','اسکالپ کوتاه',{gw:{'مومنتوم':2,'حجم':1.5,'نوسان':1,'روند':.8,'قیمت':.5,'آماری':.3,'بازار':.2},tfW:{'15m':2,'1h':1,'4h':0,'1d':0},thr:22}]
+];
+function fld(label,f,v,extra){return `<label>${label}<input class="pin" type="number" inputmode="decimal" step="any" data-pf="${f}" value="${v}" ${extra||''}></label>`;}
+function setHTML(){
+  const p=P(),sel=selOf(p);
+  const cnt=Object.values(sel).filter(x=>x>0).length;
+  let h=`<div class="box" style="margin-top:0"><b>نام پروفایل</b><input class="pin" style="margin-top:6px" type="text" data-pf="name" value="${esc(p.name)}"></div>`;
+  h+=`<div class="box"><b>الگوهای آماده</b><p class="note" style="margin:4px 0 8px">با یک لمس گروه‌ها و تایم‌فریم‌ها وزن می‌گیرند؛ بعد می‌توانی دستی تغییر بدهی.</p><div class="acts">${PRE.map(x=>`<button class="btn xs" data-pa="pre:${x[0]}">${x[1]}</button>`).join('')}<button class="btn xs off" data-pa="pre:none">پاک‌کردن انتخاب‌ها</button></div></div>`;
+  h+=`<div class="box"><b>وزن تایم‌فریم‌ها</b><p class="note" style="margin:4px 0">۰ یعنی آن تایم‌فریم در تحلیل نیست.</p>${TFL.map(t=>`<div class="slr"><span>${t}</span><input type="range" min="0" max="3" step=".5" value="${p.tfW[t]??0}" data-tw="${t}"><b class="num" id="tw_${t}">${p.tfW[t]??0}</b></div>`).join('')}
+   <div style="margin-top:8px" class="note">تایم‌فریم اصلی سیگنال (برای ATR و حد ضرر):</div><div class="seg" style="margin-top:4px">${TFL.map(t=>`<button data-pa="seg:tf:${t}" class="${p.tf===t?'on':''}">${t}</button>`).join('')}</div></div>`;
+  h+=`<div class="box"><b>وزن گروه‌ها</b>${GN.map(g=>`<div class="slr"><span>${g}</span><input type="range" min="0" max="3" step=".1" value="${p.gw[g]!=null?p.gw[g]:1}" data-gw="${g}"><b class="num" id="gw_${g}">${p.gw[g]!=null?p.gw[g]:1}</b></div>`).join('')}
+   <label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12.5px"><input type="checkbox" data-pf="useK" ${p.useK?'checked':''}> قدرت خود سیگنال هر اندیکاتور هم در وزن دخیل باشد</label></div>`;
+  h+=`<div class="box"><div class="between"><b>اندیکاتورها</b><span class="pill" id="pCnt">${fa(cnt)} از ${fa(CAT.length)} انتخاب</span></div>
+   <div class="tbar" style="margin:8px 0 4px"><input type="text" data-pq placeholder="جستجوی اندیکاتور…" value="${esc(UI.q)}" autocomplete="off" style="flex:1 1 120px;direction:ltr;text-align:left"><button class="btn xs" data-pa="allon">همه</button><button class="btn xs off" data-pa="alloff">هیچ‌کدام</button></div>`;
+  if(!CAT.length)h+='<p class="note">در حال دریافت فهرست اندیکاتورها از بازار… (نیاز به اینترنت/VPN)</p>';
+  else h+=GN.map(g=>{const L=CAT.filter(x=>x.g===g);if(!L.length)return '';const on=L.filter(x=>sel[x.n]>0).length;
+    return `<details class="box" style="margin-top:8px" ${UI.q?'open':''}><summary>${g} <span class="note">(${fa(on)} از ${fa(L.length)})</span></summary>
+     <div class="acts" style="margin:6px 0"><button class="btn xs" data-pa="selg:${g}:1">انتخاب گروه</button><button class="btn xs off" data-pa="selg:${g}:0">حذف گروه</button></div>
+     ${L.map(x=>{const w=+sel[x.n]||0;return `<div class="pir ${w>0?'':'off'}" data-nm="${esc(x.n.toLowerCase())}"><input type="checkbox" data-pi="${esc(x.n)}" ${w>0?'checked':''} aria-label="${esc(x.n)}"><span class="nm">${esc(x.n)}</span><input class="pin" type="number" inputmode="decimal" step=".5" min="0" data-pw="${esc(x.n)}" value="${w}"></div>`;}).join('')}</details>`;}).join('');
+  h+='<p class="note">وزن هر اندیکاتور ۰ تا ۵؛ وزن ۰ یعنی خارج از تحلیل. وزن نهایی = وزن اندیکاتور × وزن گروه × (قدرت سیگنال).</p></div>';
+  h+=`<div class="box"><b>شرایط سیگنال</b><div class="pgrid" style="margin-top:8px">
+   ${fld('آستانهٔ امتیاز (۰–۱۰۰)','thr',p.thr)}${fld('حداقل هم‌جهتی اندیکاتورها ٪','minAgree',p.minAgree)}${fld('حداقل تایم‌فریم هم‌جهت','minTfAgree',p.minTfAgree)}${fld('حداکثر سیگنال هر اسکن','max',p.max)}</div>
+   <div class="note" style="margin-top:8px">جهت مجاز:</div><div class="seg" style="margin-top:4px">${[['both','لانگ و شورت'],['long','فقط لانگ'],['short','فقط شورت']].map(([k,t])=>`<button data-pa="seg:dir:${k}" class="${p.dir===k?'on':''}">${t}</button>`).join('')}</div></div>`;
+  h+=`<div class="box"><b>مدیریت ریسک و حد سود/ضرر</b><div class="pgrid" style="margin-top:8px">
+   ${fld('حد ضرر (× ATR)','slAtr',p.slAtr)}${fld('TP1 (× ریسک)','tp0',p.tpR[0])}${fld('TP2 (× ریسک)','tp1',p.tpR[1])}${fld('TP3 (× ریسک)','tp2',p.tpR[2])}
+   ${fld('سرمایه ($)','cap',p.cap)}${fld('ریسک هر معامله ٪','risk',p.risk)}${fld('اهرم','lev',p.lev)}</div></div>`;
+  h+=`<div class="box"><b>ارزهای اسکن</b><p class="note" style="margin:4px 0 8px">نمادها را با ویرگول بنویس (مثلاً BTC,ETH,SOL). خالی بگذاری، به تعداد دلخواه از فهرست اصلی اسکن می‌شود.</p>
+   <input class="pin" type="text" data-pf="syms" value="${esc(p.syms)}" placeholder="BTC,ETH,SOL" autocomplete="off" spellcheck="false">
+   <div class="pgrid" style="margin-top:8px">${fld('تعداد ارز (اگر خالی)','n',p.n)}${fld('اسکن خودکار هر … دقیقه','autoMin',p.autoMin)}</div>
+   <label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12.5px"><input type="checkbox" data-pf="auto" ${p.auto?'checked':''}> اسکن خودکار وقتی اپ باز است (اعلان سیگنال جدید)</label></div>`;
+  h+=`<div class="acts"><button class="btn" data-pa="tab:sig">🎯 رفتن به سیگنال‌ها</button><button class="btn off" data-pa="tab:ana">🔍 آزمایش روی یک ارز</button></div>
+   <p class="note">تنظیمات خودکار ذخیره می‌شوند. هیچ تضمینی روی سیگنال‌ها نیست و توصیهٔ مالی نیست.</p>`;
+  return h;
+}
+
+/* ---------- تحلیل تک‌ارز ---------- */
+function anaHTML(){
+  const p=P();
+  let h=`<div class="tbar"><input id="aSymP" list="symlist" value="${esc(UI.sym)}" aria-label="نماد" autocomplete="off" spellcheck="false"><button class="btn xs" data-pa="run">تحلیل با پروفایل «${esc(p.name)}»</button></div>`;
+  h+=UI.busy?'<p class="note">در حال دریافت و محاسبه…</p>':UI.err?`<p class="note">${esc(UI.err)}</p>`:UI.res?resHTML(p,UI.res):'<p class="note">نماد را بنویس و تحلیل را اجرا کن. همهٔ اندیکاتورها نمایش داده می‌شوند و سهم هر کدام در نتیجهٔ نهایی با وزن‌های تو مشخص است.</p>';
+  return h;
+}
+function resHTML(p,a){
+  const verdict=a.comp>=.5?'صعودی قوی':a.comp>=.15?'صعودی':a.comp>-.15?'خنثی':a.comp>-.5?'نزولی':'نزولی قوی',ms=a.T[a.main],sg=a.dir||(a.comp>=0?1:-1),why=whyNot(p,a);
+  let h=`<div class="box" style="text-align:center"><b>${a.sym}/USDT</b> · ${fmt(a.px)}<div class="gauges" style="grid-template-columns:minmax(120px,170px);justify-content:center">${gauge(Math.round((a.comp+1)*50),'امتیاز شخصی')}</div><span class="ixp ${ixCls(a.comp)} big">${verdict}</span>
+   <div class="ixcnt" style="margin-top:8px"><span>هم‌جهتی <b class="num">${nf(a.agree,0)}٪</b></span><span>تایم‌فریم هم‌جهت <b class="num">${fa(a.tfAg)}/${fa(a.tfN)}</b></span><span>ATR <b class="num">${nf(a.atrPct,2)}٪</b></span></div></div>`;
+  h+=`<h3 class="sub">تایم‌فریم‌ها</h3><div class="scroll"><table class="tb"><thead><tr><th>بازه</th><th>وزن</th><th>جهت</th><th>قدرت</th><th>صعودی/خنثی/نزولی</th></tr></thead><tbody>${Object.keys(a.T).map(t=>{const s=a.T[t];return `<tr><td>${t}</td><td class="num">${p.tfW[t]}</td><td><span class="ixp ${ixCls(s.sc)}">${s.sc>.15?'صعودی':s.sc<-.15?'نزولی':'خنثی'}</span></td><td>${mini(s.sc)}</td><td class="num">${fa(s.b)} / ${fa(s.n)} / ${fa(s.r)}</td></tr>`;}).join('')}</tbody></table></div>`;
+  const rowsG=GN.map(g=>{let w=0,ws=0,b=0,r=0,n=0;Object.keys(a.T).forEach(t=>{const x=a.T[t].G[g];if(!x)return;w+=x.sc*p.tfW[t];ws+=+p.tfW[t];b+=x.b;r+=x.r;n+=x.n;});return ws?{g,sc:w/ws,b,r,n}:null;}).filter(Boolean);
+  h+=`<h3 class="sub">گروه‌ها (با وزن تو)</h3><div class="scroll"><table class="tb"><thead><tr><th>گروه</th><th>وزن</th><th>جهت</th><th>قدرت</th><th>ص/خ/ن</th></tr></thead><tbody>${rowsG.map(x=>`<tr><td>${x.g}</td><td class="num">${p.gw[x.g]!=null?p.gw[x.g]:1}</td><td><span class="ixp ${ixCls(x.sc)}">${x.sc>.15?'صعودی':x.sc<-.15?'نزولی':'خنثی'}</span></td><td>${mini(x.sc)}</td><td class="num">${fa(x.b)}/${fa(x.n)}/${fa(x.r)}</td></tr>`).join('')}</tbody></table></div>`;
+  const con=ms.con.map(x=>({...x,sh:x.c/ms.sw*100*sg})).sort((x,y)=>y.sh-x.sh),sup=con.filter(x=>x.sh>0).slice(0,6),opp=con.filter(x=>x.sh<0).slice(-5).reverse();
+  const crow=(x,c)=>`<div class="kv"><span>${esc(x.n)} <span class="note num">${esc(x.v)}</span></span><b class="num ${c}">${x.sh>=0?'+':''}${nf(x.sh,1)}</b></div>`;
+  h+=`<h3 class="sub">بیشترین اثر در جهت ${sg>0?'صعودی':'نزولی'} (${a.main})</h3><div class="box">${sup.map(x=>crow(x,'up')).join('')||'<p class="note">موردی نیست.</p>'}</div>`;
+  h+=`<h3 class="sub">بیشترین مخالفت</h3><div class="box">${opp.map(x=>crow(x,'dn')).join('')||'<p class="note">مخالفی نیست.</p>'}</div>`;
+  if(a.dir){
+    const pl=plan(p,a);
+    h+=`<h3 class="sub">نقشهٔ معامله (${a.dir>0?'لانگ':'شورت'})</h3><div class="box">${kv('ورود',fmt(pl.entry))+kv('حد ضرر',fmt(pl.sl)+' ('+nf(pl.slp,2)+'٪)')+kv('TP1 / TP2 / TP3',pl.tp.map(fmt).join(' / '))+kv('ریسک',nf(pl.risk,2)+' $ ('+p.risk+'٪ از '+fmt(p.cap)+')')+kv('ارزش پوزیشن',nf(pl.notional,0)+' $')+kv('مارجین با اهرم '+p.lev+'×',nf(pl.margin,1)+' $')}
+     ${pl.liqOk?'':'<div class="pwarn">⚠️ با این اهرم، لیکوئید نزدیک‌تر از حد ضرر است؛ اهرم را کم کن.</div>'}
+     ${why.length?`<div class="pwarn">این ارز طبق شرایط پروفایل سیگنال نمی‌شود: ${why.join('؛ ')}.</div>`:'<p class="note psup">✅ همهٔ شرایط پروفایل برقرار است.</p>'}
+     <div class="acts"><button class="btn" data-pa="mkone">ثبت به‌عنوان سیگنال</button><button class="btn off" data-an="${a.sym}">📈 چارت</button></div></div>`;
+  }else h+=`<div class="pwarn">${why.join('؛ ')||'جهت مشخص نیست.'}</div>`;
+  const sel=selOf(p);
+  h+=`<details class="box"><summary>همهٔ اندیکاتورها (${fa(a.res[a.main].list.length)}) — ${a.main}</summary><div class="scroll"><table class="tb"><thead><tr><th>اندیکاتور</th><th>مقدار</th><th>رأی</th><th>وزن</th></tr></thead><tbody>${a.res[a.main].list.map(x=>{const w=+sel[x.n]||0;return `<tr style="${w>0?'':'opacity:.5'}"><td>${esc(x.n)}</td><td class="num">${esc(x.v)}</td><td><span class="ixp ${ixCls(x.s)}">${ixLab(x.s)}</span></td><td class="num">${w}</td></tr>`;}).join('')}</tbody></table></div></details>`;
+  return h+'<p class="note">این تحلیل آماری و آموزشی است و توصیهٔ مالی نیست.</p>';
+}
+
+/* ---------- سیگنال‌ها ---------- */
+function sigCard(s){
+  const L=s.dir==='LONG',stt=statusOf(s),[stx,cls]=ST[stt]||['',''],lv=LP[s.sym];
+  let live='';if(lv&&!s.closed){const q=(L?lv/s.entry-1:1-lv/s.entry)*100;live=`اکنون ${fmt(lv)} (<span class="${q>=0?'psup':'pneg'}">${q>=0?'+':''}${q.toFixed(2)}٪</span>)`;}
+  return `<div class="item psig"><div class="between"><div><b class="num">${s.sym}/USDT</b> <span class="pill ${L?'l':'s'}">${L?'لانگ':'شورت'}</span> <span class="pill">قدرت ${fa(s.score)}</span></div><span class="note">${ago(s.t,Date.now())}</span></div>
+   <div class="g3"><div><span>ورود</span><b class="num">${fmt(s.entry)}</b></div><div><span>SL</span><b class="num">${fmt(s.sl)}</b></div><div><span>TP1</span><b class="num">${fmt(s.tp[0])}</b></div><div><span>TP2</span><b class="num">${fmt(s.tp[1])}</b></div><div><span>TP3</span><b class="num">${fmt(s.tp[2])}</b></div><div><span>اهرم / حجم</span><b class="num">${s.lev}× · ${nf(s.notional,0)}$</b></div></div>
+   <div class="note" style="margin:4px 0">پروفایل «${esc(s.pname)}» · هم‌جهتی ${fa(s.agree)}٪ · ${fa(s.tfAg)} از ${fa(s.tfN)} تایم‌فریم${s.liqOk===false?' · ⚠️ لیکوئید نزدیک SL':''}</div>
+   <div class="cst ${cls}">${stx}</div>${live?`<div class="live num">${live}</div>`:''}
+   <div class="cbtn">${!s.closed?`<button class="btn xs y" data-pa="demo:${s.id}">دمو</button>`:''}<button class="btn xs" data-pa="copy:${s.id}">کپی</button><button class="btn xs c" data-an="${s.sym}">چارت</button><button class="btn xs off" data-pa="rm:${s.id}">حذف</button></div></div>`;
+}
+function sigHTML(){
+  const p=P(),mine=SG.filter(s=>s.uid===p.id),done=mine.filter(s=>s.closed&&(s.stage>=1||s.result==='SL')),w=done.filter(s=>s.stage>=1).length,open=mine.filter(s=>!s.closed).length;
+  let h=`<div class="box" style="margin-top:0"><div class="between"><b>پروفایل «${esc(p.name)}»</b><span class="note">${UI.lastScan?'آخرین اسکن '+ago(UI.lastScan,Date.now()):'هنوز اسکن نشده'}</span></div>
+   <p class="note" style="margin:4px 0 8px">ارزها: ${esc(symList(p).slice(0,8).join('، '))}${symList(p).length>8?'… ('+fa(symList(p).length)+' ارز)':''} · آستانه ${fa(p.thr)} · جهت ${p.dir==='both'?'هر دو':p.dir==='long'?'لانگ':'شورت'}</p>
+   ${UI.scanning?`<div class="pprog"><i id="paProgI"></i></div><p class="note" id="paProgT">در حال شروع…</p>`:`<button class="btn" style="width:100%" data-pa="scan">🔎 اسکن و تولید سیگنال</button>`}
+   ${UI.lastFound!=null&&!UI.scanning?`<p class="note">آخرین اسکن: ${fa(UI.lastFound)} سیگنال جدید از ${fa(UI.lastTotal)} ارز.</p>`:''}</div>`;
+  h+=`<div class="stats"><div class="stat"><b class="num">${fa(mine.length)}</b><span>کل سیگنال‌ها</span></div><div class="stat"><b class="num">${fa(open)}</b><span>باز</span></div><div class="stat"><b class="num">${fa(done.length)}</b><span>به نتیجه رسیده</span></div><div class="stat"><b class="num">${done.length?fa(Math.round(w/done.length*100))+'٪':'—'}</b><span>نرخ برد</span></div></div>`;
+  h+=mine.length?mine.slice(0,40).map(sigCard).join(''):'<p class="note">هنوز سیگنالی ساخته نشده. «اسکن و تولید سیگنال» را بزن.</p>';
+  if(mine.length)h+=`<div class="acts"><button class="btn xs off" data-pa="refresh">↻ به‌روزرسانی وضعیت</button><button class="btn xs off" data-pa="clr">پاک‌کردن سیگنال‌های این پروفایل</button></div>`;
+  return h+'<p class="note">وضعیت هر سیگنال با کندل‌های ۱۵ دقیقه پیگیری می‌شود (اول استاپ، بعد اهداف). توصیهٔ مالی نیست.</p>';
+}
+
+/* =====================================================================
+   پرتفوی
+   ===================================================================== */
+function pfRender(){
+  const b=$('#pfB');if(!b)return;const top=b.scrollTop,p=PR.list.find(x=>x.id===PF.prof)||P();
+  const usd=x=>'$'+usd2(x);
+  let h=`<div class="box" style="margin-top:0"><b>افزودن دارایی</b><div class="pgrid" style="margin-top:8px">
+    <label>نماد<input class="pin" type="text" id="pfSym" list="symlist" placeholder="BTC" autocomplete="off" spellcheck="false"></label>
+    <label>مقدار<input class="pin" type="number" inputmode="decimal" step="any" id="pfQty"></label>
+    <label>میانگین قیمت خرید ($)<input class="pin" type="number" inputmode="decimal" step="any" id="pfCost"></label>
+    <label>سهم هدف ٪ (اختیاری)<input class="pin" type="number" inputmode="decimal" step="any" id="pfTgt"></label></div>
+    <div class="acts" style="margin-top:8px"><button class="btn" data-pa="pfadd">+ افزودن / به‌روزرسانی</button></div>
+    <p class="note">برای نقدینگی، نماد USDT و مقدار را بنویس. داده‌ها فقط روی همین دستگاه ذخیره می‌شوند.</p></div>`;
+  h+=`<div class="box"><b>دارایی‌های من (${fa(PF.h.length)})</b>${PF.h.map((x,i)=>`<div class="kv"><span><b>${x.sym}</b> · ${fmt(x.qty)}${x.cost?' @ '+fmt(x.cost):''}${x.tgt?' · هدف '+fa(x.tgt)+'٪':''}</span><b><button class="btn xs" data-pa="pfdel:${i}">حذف</button></b></div>`).join('')||'<p class="note">هنوز دارایی‌ای اضافه نکرده‌ای.</p>'}</div>`;
+  h+=`<div class="box"><b>پروفایل تحلیل</b><p class="note" style="margin:4px 0 8px">هر دارایی با اندیکاتورها و وزن‌های این پروفایل تحلیل می‌شود.</p><div class="pbar"><select id="pfSel">${PR.list.map(x=>`<option value="${x.id}" ${x.id===p.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select><button class="btn" data-pa="pfrun">📊 تحلیل پرتفوی</button></div></div>`;
+  h+='<div id="pfOut">'+(UI.pfBusy?`<p class="note" id="pfProg">در حال تحلیل…</p>`:PFR||'')+'</div>';
+  b.innerHTML=h;b.scrollTop=top;
+}
+const stableSym=s=>['USDT','USDC','FDUSD','DAI','TUSD'].includes(s);
+async function pfAnalyze(){
+  const p=PR.list.find(x=>x.id===PF.prof)||P(),H=PF.h.filter(h=>h.qty>0);
+  if(!H.length){toast('اول دارایی اضافه کن.');return;}
+  UI.pfBusy=true;pfRender();
+  const prog=t=>{const e=$('#pfProg');if(e)e.textContent=t;};let done=0;
+  const rows=H.map(h=>({...h}));
+  try{
+    await pool(rows,3,async r=>{
+      if(stableSym(r.sym)){r.price=1;r.stable=true;r.c=null;}
+      else{
+        r.price=await priceOf(r.sym);
+        try{r.ana=await analyzeSym(p,r.sym,false);}catch(e){}
+        try{const K=await klines(r.sym,'1h',300);r.c=K.slice(0,-1).map(k=>k.c);if(r.price==null)r.price=K.at(-1).c;}catch(e){}
+      }
+      done++;prog(`تحلیل ${fa(done)} از ${fa(rows.length)} دارایی…`);
+    });
+    let btc=null;if(!rows.some(r=>r.sym==='BTC'&&r.c)){try{btc=(await klines('BTC','1h',300)).slice(0,-1).map(k=>k.c);}catch(e){}}else btc=rows.find(r=>r.sym==='BTC').c;
+    PFR=pfReport(p,rows,btc);
+  }catch(e){console.error(e);PFR='<p class="note">تحلیل انجام نشد. اینترنت یا VPN را بررسی کن.</p>';}
+  UI.pfBusy=false;pfRender();
+}
+function pfReport(p,rows,btc){
+  const usd=x=>'$'+usd2(x),R=rows.filter(r=>r.price!=null);
+  if(!R.length)return '<p class="note">قیمت هیچ دارایی‌ای دریافت نشد.</p>';
+  R.forEach(r=>{r.val=r.qty*r.price;r.cv=r.cost?r.qty*r.cost:null;});
+  const tot=R.reduce((a,r)=>a+r.val,0),cost=R.reduce((a,r)=>a+(r.cv||0),0),hasC=R.some(r=>r.cv),pnl=hasC?R.reduce((a,r)=>a+(r.cv?r.val-r.cv:0),0):null,costBase=R.reduce((a,r)=>a+(r.cv||0),0);
+  R.forEach(r=>{r.w=tot?r.val/tot:0;});
+  R.sort((a,b)=>b.val-a.val);
+  const hhi=R.reduce((a,r)=>a+r.w*r.w,0),effN=hhi?1/hhi:0,riskAssets=R.filter(r=>!r.stable),stW=R.filter(r=>r.stable).reduce((a,r)=>a+r.w,0);
+  /* امتیاز پرتفوی با پروفایل */
+  let ps=0,pw=0;riskAssets.forEach(r=>{if(r.ana){ps+=r.w*r.ana.comp;pw+=r.w;}});const pcomp=pw?ps/pw:0;
+  /* سری بازده هم‌تراز و ریسک */
+  const withC=R.filter(r=>r.c&&r.c.length>60),m=withC.length?Math.min(...withC.map(r=>r.c.length)):0;
+  let risk=null;
+  if(m>60){
+    const ret=r=>{const c=r.c.slice(-m),o=[];for(let i=1;i<c.length;i++)o.push(c[i]/c[i-1]-1);return o;},rs=R.map(r=>r.c&&r.c.length>=m?ret(r):null);
+    const n=m-1,rp=Array(n).fill(0);R.forEach((r,k)=>{if(rs[k])for(let i=0;i<n;i++)rp[i]+=r.w*rs[k][i];});
+    const mean=a=>a.reduce((x,y)=>x+y,0)/a.length,mu=mean(rp),va=mean(rp.map(x=>(x-mu)**2)),sd=Math.sqrt(va);
+    let eq=1,pk=1,dd=0;const curve=[100];rp.forEach(x=>{eq*=1+x;curve.push(eq*100);pk=Math.max(pk,eq);dd=Math.max(dd,1-eq/pk);});
+    const dsd=sd*Math.sqrt(24),var95=1.645*dsd*tot;
+    const rc=R.map((r,k)=>{if(!rs[k]||!va)return null;const mk=mean(rs[k]);let cov=0;for(let i=0;i<n;i++)cov+=(rs[k][i]-mk)*(rp[i]-mu);cov/=n;return r.w*cov/va;});
+    risk={sd,dsd,var95,dd,curve,tot:eq*100-100,rc,n};
+  }
+  const corrBtc=r=>(r.c&&btc&&r.sym!=='BTC')?corr(r.c,btc):(r.sym==='BTC'?1:null);
+  /* توصیه‌ها */
+  const recs=[];
+  R.forEach(r=>{
+    const a=r.ana,o=[];
+    if(r.stable)return;
+    if(a){const ok=passes(p,a);
+      if(a.dir>0)o.push(ok?'✅ جهت صعودی طبق پروفایل؛ نگه‌داری یا افزودن تدریجی':'جهت صعودی ولی شرایط کامل پروفایل برقرار نیست؛ نگه‌داری');
+      else if(a.dir<0)o.push(ok?'⚠️ جهت نزولی طبق پروفایل؛ کاهش پوزیشن یا حد ضرر':'جهت نزولی ضعیف؛ حد ضرر را چک کن');
+      else o.push('بدون جهت مشخص؛ نگه‌داری');}
+    if(r.w>.4)o.push('تمرکز بالا ('+fa(Math.round(r.w*100))+'٪ از پرتفوی)');
+    if(r.cv&&r.val/r.cv-1<-.15)o.push('زیان بیش از ۱۵٪ نسبت به قیمت خرید');
+    if(r.tgt){const d=r.tgt-r.w*100;if(Math.abs(d)>=3)o.push(`${d>0?'خرید':'فروش'} حدود ${usd(Math.abs(d)/100*tot)} برای رسیدن به سهم هدف ${fa(r.tgt)}٪`);}
+    r.rec=o;
+  });
+  const hi=R.filter(r=>!r.stable&&corrBtc(r)!=null&&corrBtc(r)>.85&&r.sym!=='BTC');
+  if(hi.length>=3)recs.push(`${fa(hi.length)} دارایی همبستگی بالای ۰٫۸۵ با بیت‌کوین دارند؛ تنوع واقعی کم است.`);
+  if(effN<2.5&&R.length>1)recs.push('تعداد مؤثر دارایی‌ها کم است؛ پرتفوی بیش از حد روی چند دارایی متمرکز است.');
+  if(stW<.05&&riskAssets.length)recs.push('نقدینگی (استیبل) کمتر از ۵٪ است؛ برای خرید در اصلاح یا مدیریت ریسک بخشی را نقد نگه دار.');
+  if(pcomp<=-.15)recs.push('جمع‌بندی پروفایل برای کل پرتفوی نزولی است؛ کاهش ریسک منطقی است.');
+  else if(pcomp>=.15)recs.push('جمع‌بندی پروفایل برای کل پرتفوی صعودی است.');
+  let h=`<h3 class="sec">نتیجهٔ تحلیل · پروفایل «${esc(p.name)}»</h3><div class="stats">
+   <div class="stat"><b class="num">${usd(tot)}</b><span>ارزش کل</span></div>
+   <div class="stat"><b class="num ${pnl==null?'':pnl>=0?'psup':'pneg'}">${pnl==null?'—':(pnl>=0?'+':'')+usd2(pnl)}</b><span>سود/زیان کل${hasC&&costBase?' ('+sgn(pnl/costBase*100,1)+'٪)':''}</span></div>
+   <div class="stat"><b class="num">${nf(effN,1)}</b><span>تعداد مؤثر دارایی</span></div>
+   <div class="stat"><b class="num">${fa(Math.round(stW*100))}٪</b><span>نقدینگی (استیبل)</span></div></div>`;
+  h+=`<div class="box" style="text-align:center"><b>امتیاز شخصی کل پرتفوی</b><div class="gauges" style="grid-template-columns:minmax(120px,170px);justify-content:center">${gauge(Math.round((pcomp+1)*50),'پرتفوی')}</div><span class="ixp ${ixCls(pcomp)} big">${pcomp>=.5?'صعودی قوی':pcomp>=.15?'صعودی':pcomp>-.15?'خنثی':pcomp>-.5?'نزولی':'نزولی قوی'}</span></div>`;
+  h+=`<h3 class="sub">توزیع پرتفوی</h3><div class="box">${E.bars(R.map(r=>[r.sym,r.w*100,'#249dc5']),{f:x=>x.toFixed(1)+'٪'})}</div>`;
+  h+=`<h3 class="sub">جزئیات دارایی‌ها</h3><div class="scroll"><table class="tb"><thead><tr><th>ارز</th><th>قیمت</th><th>ارزش</th><th>سهم</th><th>سود/زیان</th><th>همبستگی BTC</th><th>جهت</th></tr></thead><tbody>${R.map(r=>{const pl=r.cv?(r.val/r.cv-1)*100:null,cb=corrBtc(r),a=r.ana;return `<tr><td><button class="btn xs" data-an="${r.sym}" ${r.stable?'disabled':''}>${r.sym}</button></td><td class="num">${fmt(r.price)}</td><td class="num">${usd(r.val)}</td><td class="num">${nf(r.w*100,1)}٪</td><td class="num ${pl==null?'':pl>=0?'psup':'pneg'}">${pl==null?'—':sgn(pl,1)+'٪'}</td><td class="num">${cb==null?'—':nf(cb,2)}</td><td>${a?`<span class="ixp ${ixCls(a.dir||0)}">${a.dir>0?'صعودی':a.dir<0?'نزولی':'خنثی'} ${fa(Math.round(Math.abs(a.comp)*100))}</span>`:'—'}</td></tr>`;}).join('')}</tbody></table></div>`;
+  if(risk){
+    h+=`<h3 class="sub">ریسک پرتفوی (۳۰۰ ساعت اخیر)</h3><div class="box">${kv('بازدهٔ دورهٔ اخیر (با وزن فعلی)',sgn(risk.tot,2)+'٪',risk.tot>=0?'up':'dn')+kv('نوسان روزانه',nf(risk.dsd*100,2)+'٪')+kv('حداکثر افت',nf(risk.dd*100,1)+'٪')+kv('VaR ۹۵٪ روزانه (تقریبی)',usd(risk.var95))}
+     ${E.line([risk.curve],{lines:[{y:100,t:'۱۰۰'}],cap:'منحنی ارزش پرتفوی (شروع = ۱۰۰)'})}</div>`;
+    const rcRows=R.map((r,k)=>risk.rc[k]==null?null:[r.sym,risk.rc[k]*100,'#c9a800']).filter(Boolean);
+    if(rcRows.length)h+=`<h3 class="sub">سهم هر دارایی از ریسک کل</h3><div class="box">${E.bars(rcRows,{f:x=>x.toFixed(0)+'٪'})}<p class="note">اگر سهم ریسک یک دارایی خیلی بیشتر از سهم ارزشی‌اش باشد، پرتفوی بیش از حد به آن وابسته است.</p></div>`;
+  }else h+='<p class="note">برای محاسبهٔ ریسک (نوسان، VaR، افت) داده کافی دریافت نشد.</p>';
+  h+=`<h3 class="sub">توصیه‌ها بر اساس تنظیمات تو</h3><div class="box">${[...recs.map(x=>`<p class="ex">• ${x}</p>`),...R.filter(r=>r.rec&&r.rec.length).map(r=>`<p class="ex"><b>${r.sym}:</b> ${r.rec.join('؛ ')}.</p>`)].join('')||'<p class="note">موردی نیست.</p>'}</div>`;
+  h+=`<div class="acts"><button class="btn" data-pa="pfsig">🎯 ساخت سیگنال برای دارایی‌ها</button><button class="btn off" data-pa="pfrun">↻ تحلیل دوباره</button></div><p class="note">سیگنال‌ها با همین پروفایل برای دارایی‌هایی ساخته می‌شوند که شرایط را داشته باشند و در تب «سیگنال‌ها» دیده می‌شوند. توصیهٔ مالی نیست.</p>`;
+  PF._rows=R;
+  return h;
+}
+async function pfSignals(){
+  const p=PR.list.find(x=>x.id===PF.prof)||P(),R=(PF._rows||[]).filter(r=>r.ana&&!r.stable);let n=0;
+  for(const r of R){const a=r.ana;a.px=LP[r.sym]!=null?LP[r.sym]:a.px;
+    if(passes(p,a)){const d=a.dir>0?'LONG':'SHORT';if(!SG.some(g=>g.uid===p.id&&g.sym===r.sym&&!g.closed&&g.dir===d)){SG.unshift(mkSig(p,a));n++;}}}
+  saveS();PR.cur=p.id;saveP();
+  toast(n?`${fa(n)} سیگنال ساخته شد؛ در «تحلیل شخصی ← سیگنال‌ها» ببین.`:'هیچ دارایی‌ای شرایط پروفایل را نداشت.');
+  if(n){UI.tab='sig';closeP();openP('pa');}
+}
+
+/* =====================================================================
+   رویدادها
+   ===================================================================== */
+function act(a){
+  const p=P(),x=a.split(':');
+  const rerender=()=>{saveP();paRender();};
+  switch(x[0]){
+    case 'tab':UI.tab=x[1];paRender();if(x[1]==='sig')refreshSigs().then(()=>{if(!PA.hidden&&UI.tab==='sig')paRender();});break;
+    case 'new':{const n=prompt('نام پروفایل جدید؟','پروفایل '+fa(PR.list.length+1));if(n){const q=mkProf(n.slice(0,30));PR.list.push(q);PR.cur=q.id;rerender();}break;}
+    case 'dup':{const q=JSON.parse(JSON.stringify(p));q.id='p'+Date.now().toString(36);q.name=p.name+' (کپی)';PR.list.push(q);PR.cur=q.id;rerender();break;}
+    case 'ren':{const n=prompt('نام جدید؟',p.name);if(n){p.name=n.slice(0,30);rerender();}break;}
+    case 'del':{if(PR.list.length<2){toast('حداقل یک پروفایل باید بماند.');break;}if(confirm('پروفایل «'+p.name+'» حذف شود؟')){PR.list=PR.list.filter(q=>q.id!==p.id);PR.cur=PR.list[0].id;rerender();}break;}
+    case 'pre':{if(x[1]==='none'){p.sel={};}else{const t=PRE.find(q=>q[0]===x[1]);if(t){p.sel=null;p.gw={...t[2].gw};p.tfW={...t[2].tfW};p.thr=t[2].thr;}}rerender();toast('اعمال شد ✓');break;}
+    case 'allon':{p.sel=Object.fromEntries(CAT.map(q=>[q.n,1]));rerender();break;}
+    case 'alloff':{p.sel={};rerender();break;}
+    case 'selg':{const s=matSel(p);CAT.filter(q=>q.g===x[1]).forEach(q=>{s[q.n]=x[2]==='1'?(s[q.n]>0?s[q.n]:1):0;});rerender();break;}
+    case 'seg':{p[x[1]]=x[2];rerender();break;}
+    case 'run':{const v=($('#aSymP').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'');if(!v)return;UI.sym=v;UI.busy=true;UI.err='';paRender();
+      analyzeSym(p,v,true).then(r=>{UI.res=r;}).catch(e=>{UI.err=e.message||'دریافت داده انجام نشد.';UI.res=null;}).finally(()=>{UI.busy=false;if(!PA.hidden)paRender();});break;}
+    case 'mkone':{if(!UI.res)break;const a2=UI.res;if(!a2.dir){toast('جهت مشخص نیست.');break;}SG.unshift(mkSig(p,a2));saveS();toast('سیگنال ثبت شد ✓');UI.tab='sig';paRender();break;}
+    case 'scan':scanSignals(false);break;
+    case 'refresh':toast('در حال به‌روزرسانی…');refreshSigs().then(()=>{if(!PA.hidden)paRender();});break;
+    case 'clr':if(confirm('همهٔ سیگنال‌های این پروفایل پاک شود؟')){SG=SG.filter(s=>s.uid!==p.id);saveS();paRender();}break;
+    case 'rm':SG=SG.filter(s=>s.id!==x[1]);saveS();paRender();break;
+    case 'copy':{const s=SG.find(q=>q.id===x[1]);if(s)copyText(sigTxt(s),document.querySelector('[data-pa="'+a+'"]')||{textContent:''});break;}
+    case 'demo':{const s=SG.find(q=>q.id===x[1]);if(s)toDemo(s);break;}
+    case 'pfadd':{const sym=($('#pfSym').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'')||(($('#pfSym').value||'').toUpperCase().startsWith('USDT')?'USDT':''),qty=+$('#pfQty').value,cost=+$('#pfCost').value||0,tgt=+$('#pfTgt').value||0;
+      if(!sym||!(qty>0)){toast('نماد و مقدار را درست وارد کن.');break;}
+      const i=PF.h.findIndex(h=>h.sym===sym);const it={sym,qty,cost,tgt};if(i>=0)PF.h[i]=it;else PF.h.push(it);PFR=null;saveF();pfRender();toast('ذخیره شد ✓');break;}
+    case 'pfdel':PF.h.splice(+x[1],1);PFR=null;saveF();pfRender();break;
+    case 'pfrun':pfAnalyze();break;
+    case 'pfsig':pfSignals();break;
+  }
+}
+document.addEventListener('click',e=>{
+  const t=e.target,q=s=>t.closest&&t.closest(s);
+  if(q('#paOpen')){openP('pa');return;}
+  if(q('#pfOpen')){openP('pf');return;}
+  if(q('[data-pclose]')){closeP();return;}
+  if(q('#pa [data-an],#pf [data-an]'))setTimeout(closeP,0);
+  const a=q('#pa [data-pa],#pf [data-pa]');if(a&&!a.disabled){act(a.dataset.pa);}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;if(!t.closest||!t.closest('#pa'))return;const p=P();
+  if(t.dataset.pq!=null){UI.q=t.value;const v=t.value.trim().toLowerCase();
+    PA.querySelectorAll('.pir').forEach(r=>{r.style.display=(!v||r.dataset.nm.includes(v))?'':'none';});
+    PA.querySelectorAll('details.box').forEach(d=>{if(v)d.open=true;});return;}
+  if(t.dataset.gw){p.gw[t.dataset.gw]=+t.value;const l=document.getElementById('gw_'+t.dataset.gw);if(l)l.textContent=t.value;saveP();return;}
+  if(t.dataset.tw){p.tfW[t.dataset.tw]=+t.value;const l=document.getElementById('tw_'+t.dataset.tw);if(l)l.textContent=t.value;saveP();return;}
+  if(t.dataset.pw!=null){const s=matSel(p),v=Math.max(0,+t.value||0);s[t.dataset.pw]=v;const r=t.closest('.pir');if(r){r.classList.toggle('off',!(v>0));const c=r.querySelector('[data-pi]');if(c)c.checked=v>0;}cntUpd(p);saveP();return;}
+  const f=t.dataset.pf;
+  if(f&&t.type!=='checkbox'&&f!=='name'){
+    if(/^tp\d$/.test(f))p.tpR[+f[2]]=+t.value>0?+t.value:1;
+    else if(f==='syms')p.syms=t.value;
+    else p[f]=+t.value;
+    saveP();
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;if(!t.closest)return;
+  if(t.id==='pSel'){PR.cur=t.value;saveP();paRender();return;}
+  if(t.id==='pfSel'){PF.prof=t.value;PFR=null;saveF();pfRender();return;}
+  if(t.id==='aSymP'){UI.sym=t.value.toUpperCase();return;}
+  if(!t.closest('#pa'))return;const p=P();
+  if(t.dataset.pi!=null){const s=matSel(p);s[t.dataset.pi]=t.checked?(s[t.dataset.pi]>0?s[t.dataset.pi]:1):0;const r=t.closest('.pir');if(r){r.classList.toggle('off',!t.checked);const w=r.querySelector('[data-pw]');if(w)w.value=s[t.dataset.pi];}cntUpd(p);saveP();return;}
+  const f=t.dataset.pf;
+  if(f==='name'){p.name=(t.value||'پروفایل').slice(0,30);saveP();paRender();return;}
+  if(f==='useK'||f==='auto'){p[f]=t.checked?1:0;saveP();if(f==='auto'&&t.checked){try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();}catch(er){}}}
+});
+function cntUpd(p){const el=document.getElementById('pCnt');if(el){const s=selOf(p);el.textContent=fa(Object.values(s).filter(v=>v>0).length)+' از '+fa(CAT.length)+' انتخاب';}}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='aSymP')act('run');if(e.key==='Escape'&&(!PA.hidden||!PFP.hidden))closeP();});
+loadCat();
+})();
+</script>
 </body>
 </html>
