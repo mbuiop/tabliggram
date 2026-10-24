@@ -3888,6 +3888,8 @@ const DEF=()=>({tab:'sum',sym:'BTC',tf:'1h',syms:'',
  can:{look:70,recent:3,ctx:1,scanN:20,on:{},w:{}},
  sq:{len:20,bbk:2,kcm:1.5,look:120,scanN:30,pctMax:30},
  cal:{ev:[],f:0},
+ ai:{minN:5,minG:3,useOnSig:1},
+ gd:{on:1,pre:6,post:2,minImp:3,blockScan:1,warnSig:1},
  jr:{e:[],setups:['شکست','پولبک','برگشت با واگرایی','الگوی کندلی','اسکوییز'],draft:{dir:'LONG',tf:'1h',emo:'آرام',disc:4},f:'all'}});
 let X=(()=>{const d=DEF(),s=store.get(XK,null);if(!s)return d;
   const m=(a,b)=>{for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))a[k]=m(a[k]&&typeof a[k]==='object'?a[k]:{},b[k]);else a[k]=b[k];}return a;};return m(d,s);})();
@@ -3972,6 +3974,7 @@ html[data-theme=dark] .pxch.b{color:#4fe3a6}html[data-theme=dark] .pxch.r{color:
 .pxev>u{display:block}.pxev>div{padding:8px 0}.pxev>aside{padding:8px 12px;text-align:center;align-self:center}
 .pxev.done{opacity:.5}
 .pxsvgwrap{overflow-x:auto}
+.pxch.w{white-space:normal;line-height:1.7;border-radius:12px;font-weight:700}
 `;
 document.head.appendChild(st);
 
@@ -4132,7 +4135,7 @@ const goBtn=(tool,s)=>`<button class="btn xs" data-x="go:${tool}:${s}">نمود�
 const ago2=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'همین الان':m<60?fa(m)+' دقیقه پیش':fa(Math.floor(m/60))+' ساعت پیش';};
 
 /* ---------- پنل ---------- */
-const TABS=[['sum','🧭 خلاصه'],['div','📉 واگرایی'],['can','🕯️ الگوی کندلی'],['sq','🌀 فشردگی نوسان'],['cal','🗓️ تقویم اقتصادی'],['jr','📒 ژورنال']];
+const TABS=[['sum','🧭 خلاصه'],['div','📉 واگرایی'],['can','🕯️ الگوی کندلی'],['sq','🌀 فشردگی نوسان'],['cal','🗓️ تقویم اقتصادی'],['jr','📒 ژورنال'],['ai','🧠 یادگیری از ژورنال'],['gd','🛡️ فیلتر رویداد']];
 const P=document.createElement('div');P.id='px';P.className='pnl';P.hidden=true;
 P.innerHTML='<div class="thead"><button class="btn xs" style="visibility:hidden">.</button><b>🧰 ابزارهای پیشرفتهٔ تحلیل</b><button class="btn xs" data-xclose aria-label="بستن">✕</button></div><div class="pbody" id="pxB"></div>';
 document.body.appendChild(P);
@@ -4143,12 +4146,12 @@ if(bar)bar.insertAdjacentHTML('beforeend','<div class="pxbtn"><button class="btn
 /* میان‌بر داخل خود پنل «تحلیل شخصی» */
 const paB=document.getElementById('paB');
 if(paB){const inj=()=>{if(!paB.querySelector('.pxstrip'))paB.insertAdjacentHTML('afterbegin','<div class="pxstrip"><button class="btn off" data-xopen="sum">🧰 ابزارهای پیشرفته: واگرایی، کندل، فشردگی، تقویم، ژورنال ←</button></div>');};
-  new MutationObserver(inj).observe(paB,{childList:true});inj();}
+  new MutationObserver(()=>{inj();try{annotSigs();guardBanner();}catch(e){}}).observe(paB,{childList:true});inj();}
 
 function render(){
   const b=document.getElementById('pxB');if(!b)return;const top=b.scrollTop;
   let h=`<div class="pxt">${TABS.map(([k,t])=>`<button class="btn ${X.tab===k?'on':'off'}" data-x="tab:${k}">${t}</button>`).join('')}</div>`;
-  h+=({sum:sumHTML,div:divHTML,can:canHTML,sq:sqHTML,cal:calHTML,jr:jrHTML})[X.tab]();
+  h+=({sum:sumHTML,div:divHTML,can:canHTML,sq:sqHTML,cal:calHTML,jr:jrHTML,ai:aiHTML,gd:gdHTML})[X.tab]();
   b.innerHTML=h;b.scrollTop=top;}
 const rer=()=>{if(!P.hidden)render();};
 
@@ -4440,6 +4443,121 @@ const csvEsc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
 function dl2(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+txt],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);}
 
 /* ======================================================================
+   🧠 یادگیری از ژورنال  +  🛡️ فیلتر رویداد (اثر مستقیم روی «تحلیل شخصی»)
+   ====================================================================== */
+const HRN=['۰ تا ۶ بامداد','۶ تا ۱۲ صبح','۱۲ تا ۱۸ عصر','۱۸ تا ۲۴ شب'];
+const WDN=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+const DIMN={dir:'جهت',tf:'تایم‌فریم',sym:'ارز',hr:'ساعت',setup:'ستاپ',emo:'احساس',wd:'روز هفته',disc:'انضباط'};
+const dimV=(k,v)=>k==='dir'?(v==='LONG'?'لانگ':'شورت'):k==='hr'?HRN[+v]:k==='wd'?WDN[+v]:k==='disc'?({hi:'بالا (۴ تا ۵)',lo:'پایین (۱ تا ۲)',mid:'متوسط'})[v]:v;
+function guard(){
+  const g=X.gd,now=Date.now(),evs=X.cal.ev.filter(e=>!e.done);
+  if(!g.on)return {state:'off'};
+  const inWin=e=>now>=e.t-g.pre*36e5&&now<=e.t+g.post*36e5;
+  const hard=evs.filter(e=>e.imp>=g.minImp&&inWin(e)).sort((a,b)=>a.t-b.t);
+  if(hard.length)return {state:'red',ev:hard[0],all:hard};
+  const soft=evs.filter(e=>e.imp>=2&&e.imp<g.minImp&&inWin(e)).sort((a,b)=>a.t-b.t);
+  if(soft.length)return {state:'amber',ev:soft[0],all:soft};
+  return {state:'green',next:evs.filter(e=>e.imp>=g.minImp&&e.t>now).sort((a,b)=>a.t-b.t)[0]};
+}
+function jrDB(){
+  const st=jrStats(X.jr.e);if(!st||st.n<X.ai.minN)return null;
+  const dims={dir:{},tf:{},sym:{},hr:{},setup:{},emo:{},wd:{},disc:{}};
+  st.cl.forEach(({e,c})=>{const d=new Date(e.t),put=(k,v)=>{if(v==null||v==='')return;const o=dims[k][v]||(dims[k][v]={n:0,w:0,p:0});o.n++;o.p+=c.pnl;if(c.pnl>0)o.w++;};
+    put('dir',e.dir);put('tf',e.tf);put('sym',e.sym);put('hr',Math.floor(d.getHours()/6));put('setup',e.setup);put('emo',e.emo);put('wd',d.getDay());
+    put('disc',e.disc?(e.disc>=4?'hi':e.disc<=2?'lo':'mid'):null);});
+  return {st,dims};}
+function jrMatch(s){
+  const db=jrDB();if(!db)return null;const mg=X.ai.minG,d=new Date(s.t),hb=Math.floor(d.getHours()/6);
+  const q=[['dir',s.dir,s.dir==='LONG'?'لانگ‌هایت':'شورت‌هایت'],['tf',s.tf,'تایم‌فریم '+s.tf],['sym',s.sym,s.sym],['hr',hb,'ساعت '+HRN[hb]]],parts=[],sc=[];
+  q.forEach(([k,v,l])=>{const o=db.dims[k][v];if(o&&o.n>=mg){const wr=o.w/o.n*100;sc.push(wr-50);parts.push(`${l}: ${fa(Math.round(wr))}٪ برد از ${fa(o.n)}`);}});
+  if(!sc.length)return null;const a=sc.reduce((x,y)=>x+y,0)/sc.length;
+  return {cls:a>=8?'b':a<=-8?'r':'n',txt:`🧠 ژورنال: ${a>=8?'مناسب':a<=-8?'ضعیف':'خنثی'} — ${parts.join(' · ')}`};}
+function sigNotes(s){
+  const g=X.gd,out=[];
+  if(g.on&&g.warnSig){
+    const evs=X.cal.ev.filter(e=>e.imp>=g.minImp),hit=evs.find(e=>s.t>=e.t-g.pre*36e5&&s.t<=e.t+g.post*36e5);
+    if(hit)out.push(['r',`⚠️ این سیگنال در پنجرهٔ رویداد «${hit.title}» ساخته شده؛ ریسک بالاتر`]);
+    else if(!s.closed){const nx=evs.filter(e=>!e.done&&e.t>Date.now()&&e.t<Date.now()+g.pre*36e5).sort((a,b)=>a.t-b.t)[0];if(nx)out.push(['n',`⏳ ${cdTxt(nx.t-Date.now())} تا «${nx.title}»`]);}
+  }
+  if(X.ai.useOnSig){const m=jrMatch(s);if(m)out.push([m.cls,m.txt]);}
+  return out;}
+function annotSigs(){
+  const paB=document.getElementById('paB');if(!paB)return;
+  const cards=paB.querySelectorAll('.psig:not([data-px])');if(!cards.length)return;
+  const SGs=store.get('radar.pasig',[]);
+  cards.forEach(c=>{c.dataset.px='1';const b=c.querySelector('[data-pa^="copy:"]');if(!b)return;
+    const s=SGs.find(q=>q.id===b.dataset.pa.split(':')[1]);if(!s)return;const n=sigNotes(s);
+    if(n.length&&b.parentElement)b.parentElement.insertAdjacentHTML('beforebegin',`<div class="pxchips">${n.map(([k,t])=>`<span class="pxch w ${k}">${H(t)}</span>`).join('')}</div>`);});}
+function guardBanner(){
+  const paB=document.getElementById('paB');if(!paB||paB.querySelector('.pxguard'))return;
+  const g=guard();if(g.state!=='red'&&g.state!=='amber')return;const strip=paB.querySelector('.pxstrip');if(!strip)return;
+  strip.insertAdjacentHTML('afterend',`<div class="pxwarn pxguard ${g.state==='red'?'r':''}">${g.state==='red'?'🔴 پنجرهٔ رویداد مهم':'🟡 احتیاط'}: <b>${H(g.ev.title)}</b> (${cdTxt(g.ev.t-Date.now())}). ${g.state==='red'?'سیگنال تازه نساز یا حجم را کم کن.':'نوسان بالاتر از معمول محتمل است.'}</div>`);}
+function winStats(){
+  const SGs=store.get('radar.pasig',[]),g=X.gd,evs=X.cal.ev.filter(e=>e.imp>=g.minImp);
+  const done=SGs.filter(s=>s.closed&&(s.stage>=1||s.result==='SL')),isIn=s=>evs.some(e=>s.t>=e.t-g.pre*36e5&&s.t<=e.t+g.post*36e5);
+  const inn=done.filter(isIn),out=done.filter(s=>!isIn(s)),wr=a=>a.length?a.filter(s=>s.stage>=1).length/a.length*100:null;
+  return {ni:inn.length,no:out.length,wi:wr(inn),wo:wr(out)};}
+function gdSVG(){
+  const now=Date.now(),HR=72,W=640,Hh=150,pl=10,pr=10,x=t=>clampN(pl+(t-now)/(HR*36e5)*(W-pl-pr),pl,W-pr),g=X.gd;
+  const evs=X.cal.ev.filter(e=>!e.done&&e.t>now-g.post*36e5&&e.t<now+(HR+g.pre)*36e5).sort((a,b)=>a.t-b.t);
+  let s=`<svg class="pxsvg" viewBox="0 0 ${W} ${Hh}"><rect x="${pl}" y="22" width="${W-pl-pr}" height="${Hh-52}" rx="12" fill="currentColor" opacity=".05"/>`;
+  for(let h=0;h<=HR;h+=12){const xx=x(now+h*36e5);s+=`<line x1="${xx}" x2="${xx}" y1="22" y2="${Hh-30}" stroke="currentColor" opacity=".12"/><text x="${xx}" y="${Hh-14}" font-size="9" text-anchor="${h===0?'start':h===HR?'end':'middle'}" opacity=".7">${h===0?'اکنون':h%24===0?fa(h/24)+' روز بعد':fa(h)+'س'}</text>`;}
+  evs.forEach((e,i)=>{const hard=e.imp>=g.minImp,c=IMPC[e.imp],x1=x(e.t-g.pre*36e5),x2=x(e.t+g.post*36e5),xe=x(e.t);
+    if(e.imp>=2)s+=`<rect x="${x1}" y="22" width="${Math.max(2,x2-x1)}" height="${Hh-52}" fill="${hard?RED:AMB}" opacity="${hard?.2:.14}" rx="6"/>`;
+    s+=`<line x1="${xe}" x2="${xe}" y1="22" y2="${Hh-30}" stroke="${c}" stroke-width="2.4"/><circle cx="${xe}" cy="${Hh-30}" r="4" fill="${c}"/><text x="${clampN(xe,60,W-60)}" y="${14-0+(i%2)*0}" font-size="9.5" font-weight="700" text-anchor="middle">${H(e.title.length>16?e.title.slice(0,15)+'…':e.title)}</text>`;});
+  s+=`<line x1="${pl}" x2="${pl}" y1="22" y2="${Hh-30}" stroke="${BLU}" stroke-width="3"/>`;
+  return s+'</svg>';}
+function gdHTML(){
+  const g=X.gd,G=guard(),now=Date.now();
+  let h=`<div class="pxc"><h4>🛡️ فیلتر رویداد</h4><p class="pxsub">رویدادهای مهم تقویمت (در تب «تقویم اقتصادی») را به «تحلیل شخصی» وصل می‌کند: هنگام اسکن در پنجرهٔ خطر هشدار می‌دهد و روی سیگنال‌ها برچسب ریسک می‌گذارد.</p>`;
+  if(G.state==='off')h+=note('فیلتر خاموش است (در تنظیمات پایین روشنش کن).');
+  else if(G.state==='red')h+=`<div class="pxwarn r">🔴 <b>پنجرهٔ خطر فعال است</b><br>${G.all.map(e=>`«${H(e.title)}» ${cdTxt(e.t-now)}`).join('<br>')}<br>پیشنهاد: ورود تازه نکن، حجم را کم کن و حد ضرر را چک کن.</div>`;
+  else if(G.state==='amber')h+=`<div class="pxwarn">🟡 رویداد کم‌اهمیت‌تر نزدیک است: <b>${H(G.ev.title)}</b> (${cdTxt(G.ev.t-now)}).</div>`;
+  else h+=`<div class="pxwarn" style="border-color:${GRN};background:rgba(14,203,129,.1)">🟢 الان رویداد مهمی نزدیک نیست.${G.next?`<br>رویداد مهم بعدی: <b>${H(G.next.title)}</b> (${cdTxt(G.next.t-now)}).`:'<br>رویداد مهمی ثبت نشده؛ در تب تقویم اضافه کن.'}</div>`;
+  h+=`</div><div class="pxc"><h4>نقشهٔ ۷۲ ساعت آینده</h4><div class="pxsvgwrap">${gdSVG()}</div><div class="pxlg"><span style="--lc:${RED}">پنجرهٔ خطر (مهم)</span><span style="--lc:${AMB}">احتیاط</span><span style="--lc:${BLU}">اکنون</span></div></div>`;
+  const w=winStats();
+  h+=`<div class="pxc"><h4>اثر واقعی رویدادها روی سیگنال‌های تو</h4>`;
+  if(w.ni+w.no<4)h+=note('هنوز سیگنال شخصی بسته‌شدهٔ کافی نیست. وقتی چند سیگنال به نتیجه برسد، نرخ برد داخل و بیرون پنجرهٔ رویداد مقایسه می‌شود.');
+  else h+=`<div class="pxk">${kpi(w.wi==null?'—':fa(Math.round(w.wi))+'٪','برد داخل پنجره ('+fa(w.ni)+')',w.wi!=null&&w.wo!=null&&w.wi<w.wo?'pneg':'')}${kpi(w.wo==null?'—':fa(Math.round(w.wo))+'٪','برد بیرون پنجره ('+fa(w.no)+')')}</div>${w.wi!=null&&w.wo!=null?note(w.wi<w.wo-5?'سیگنال‌هایی که نزدیک رویداد ساخته شده‌اند ضعیف‌ترند؛ فیلتر برایت مفید است.':w.wi>w.wo+5?'در داده‌های تو سیگنال‌های نزدیک رویداد بهتر بوده‌اند؛ شاید پنجره را کوتاه‌تر کنی.':'تفاوت معناداری دیده نمی‌شود.'):''}`;
+  h+='</div>';
+  h+=`<details class="box"><summary>⚙️ تنظیمات فیلتر</summary>
+   <label style="display:flex;gap:8px;align-items:center;margin:6px 0;font-size:12.5px"><input type="checkbox" data-s="gd.on" ${g.on?'checked':''}> فیلتر رویداد فعال باشد</label>
+   <label style="display:flex;gap:8px;align-items:center;margin:6px 0;font-size:12.5px"><input type="checkbox" data-s="gd.blockScan" ${g.blockScan?'checked':''}> قبل از اسکن/دموی تحلیل شخصی در پنجرهٔ خطر تأیید بگیر</label>
+   <label style="display:flex;gap:8px;align-items:center;margin:6px 0;font-size:12.5px"><input type="checkbox" data-s="gd.warnSig" ${g.warnSig?'checked':''}> روی سیگنال‌ها برچسب نزدیکی به رویداد بگذار</label>
+   ${inpR('پنجره قبل از رویداد (ساعت)','gd.pre',1,48)}${inpR('پنجره بعد از رویداد (ساعت)','gd.post',0,24)}${inpR('حداقل اهمیت برای ممنوعیت','gd.minImp',1,3)}
+   <p class="note">اهمیت ۱ کم، ۲ متوسط، ۳ مهم است.</p></details>`;
+  return h+note('اسکن خودکار در پس‌زمینه را اپ نمی‌تواند متوقف کند؛ ولی سیگنال‌هایش با برچسب هشدار نشان داده می‌شوند.');}
+function aiHTML(){
+  const A=X.ai,st=jrStats(X.jr.e),n=st?st.n:0,db=jrDB();
+  let h=`<div class="pxc"><h4>🧠 یادگیری از ژورنال</h4><p class="pxsub">ژورنال را می‌خواند و نشان می‌دهد در چه شرایطی خوب یا بد معامله می‌کنی. همین نتیجه روی سیگنال‌های «تحلیل شخصی» به‌صورت برچسب «تطبیق با ژورنال» می‌نشیند.</p>
+   <div class="pprog"><i style="width:${Math.min(100,n/A.minN*100)}%"></i></div><p class="note">${fa(n)} معامله بسته از حداقل ${fa(A.minN)} لازم</p></div>`;
+  const setBox=`<details class="box"><summary>⚙️ تنظیمات یادگیری</summary>${inpR('حداقل معامله برای شروع','ai.minN',3,40)}${inpR('حداقل معامله در هر گروه','ai.minG',2,10)}
+   <label style="display:flex;gap:8px;align-items:center;margin:8px 0;font-size:12.5px"><input type="checkbox" data-s="ai.useOnSig" ${A.useOnSig?'checked':''}> روی سیگنال‌های تحلیل شخصی برچسب بگذار</label></details>`;
+  if(!db)return h+note('معامله‌های بسته را در تب «ژورنال» ثبت کن (با ستاپ، احساس و انضباط). با رسیدن به حداقل، تحلیل شروع می‌شود.')+setBox;
+  const mg=A.minG,all=[];
+  Object.entries(db.dims).forEach(([k,m])=>Object.entries(m).forEach(([v,o])=>{if(o.n>=mg)all.push({k,v,n:o.n,wr:o.w/o.n*100,p:o.p,l:DIMN[k]+': '+dimV(k,v)});}));
+  const good=all.filter(x=>x.p>0&&x.wr>=55).sort((a,b)=>b.p-a.p).slice(0,6),bad=all.filter(x=>x.p<0&&x.wr<=45).sort((a,b)=>a.p-b.p).slice(0,6);
+  const mx=Math.max(1,...all.map(x=>Math.abs(x.p)));
+  h+=`<div class="pxc"><h4>✅ نقاط قوت تو</h4>${good.length?good.map(x=>barRow(x.l+` (${fa(x.n)})`,x.p,mx,null,(x.p>=0?'+':'')+n2(x.p,0)+'$')).join(''):note('هنوز گروه قوی با داده کافی پیدا نشده.')}</div>`;
+  h+=`<div class="pxc"><h4>⚠️ نقاط ضعف تو</h4>${bad.length?bad.map(x=>barRow(x.l+` (${fa(x.n)})`,x.p,mx,null,(x.p>=0?'+':'')+n2(x.p,0)+'$')).join(''):note('گروه ضعیفِ مشخصی پیدا نشد.')}</div>`;
+  const D=db.dims,get=(k,v)=>D[k][v],wr=o=>o?o.w/o.n*100:null,rec=[],prof=[];
+  const best=(k)=>Object.entries(D[k]).filter(([,o])=>o.n>=mg).sort((a,b)=>b[1].p/b[1].n-a[1].p/a[1].n);
+  const bs=best('setup');if(bs.length&&bs[0][1].p>0)rec.push(`ستاپ «${H(bs[0][0])}» بهترین امید ریاضی را دارد (${fa(Math.round(wr(bs[0][1])))}٪ برد از ${fa(bs[0][1].n)})؛ سهمش را در معاملاتت بیشتر کن.`);
+  if(bs.length>1&&bs.at(-1)[1].p<0)rec.push(`ستاپ «${H(bs.at(-1)[0])}» زیان‌ده بوده؛ تا اصلاح، کنار بگذارش.`);
+  const be=best('emo');if(be.length>1&&be.at(-1)[1].p<0)rec.push(`در حالت «${H(be.at(-1)[0])}» ضعیف‌ترین نتیجه را داری (${fa(Math.round(wr(be.at(-1)[1])))}٪ برد)؛ در این حالت معامله نکن.`);
+  const bh=best('hr');if(bh.length>1){rec.push(`بهترین بازهٔ ساعتی تو: ${HRN[+bh[0][0]]}.`);if(bh.at(-1)[1].p<0)rec.push(`ضعیف‌ترین بازه: ${HRN[+bh.at(-1)[0]]}؛ در آن ساعت‌ها احتیاط کن.`);}
+  const bw=best('wd');if(bw.length>1&&bw.at(-1)[1].p<0)rec.push(`روز ${WDN[+bw.at(-1)[0]]} برایت زیان‌ده بوده است.`);
+  const lo=get('dir','LONG'),sh=get('dir','SHORT');
+  if(lo&&sh&&lo.n>=mg&&sh.n>=mg){const a=wr(lo),b=wr(sh);if(a-b>=20)prof.push(`جهت مجاز پروفایل را «فقط لانگ» بگذار (لانگ ${fa(Math.round(a))}٪ در برابر شورت ${fa(Math.round(b))}٪).`);else if(b-a>=20)prof.push(`جهت مجاز پروفایل را «فقط شورت» بگذار (شورت ${fa(Math.round(b))}٪ در برابر لانگ ${fa(Math.round(a))}٪).`);}
+  const bt=best('tf');if(bt.length&&bt[0][1].p>0&&['15m','1h','4h','1d'].includes(bt[0][0]))prof.push(`تایم‌فریم اصلی پروفایل را روی «${bt[0][0]}» بگذار؛ در ژورنال بهترین بازده را داشته.`);
+  const dh=get('disc','hi'),dl=get('disc','lo');if(dh&&dl&&dh.n>=mg&&dl.n>=mg)rec.push(`وقتی انضباط ۴ تا ۵ بوده میانگین هر معامله ${n2(dh.p/dh.n,1)}$ و وقتی ۱ تا ۲ بوده ${n2(dl.p/dl.n,1)}$ است.`);
+  if(db.st.pf!=null&&db.st.pf<1)prof.push('ضریب سود زیر ۱ است؛ تا اصلاح، «ریسک هر معامله» پروفایل را کمتر کن.');
+  h+=`<div class="pxc"><h4>💡 پیشنهادهای رفتاری</h4>${rec.length?rec.map(t=>`<p class="ex" style="margin:5px 0">• ${t}</p>`).join(''):note('پیشنهاد خاصی از داده‌ها بیرون نیامد.')}</div>`;
+  h+=`<div class="pxc"><h4>🎛️ پیشنهاد تنظیم پروفایل تحلیل شخصی</h4>${prof.length?prof.map(t=>`<p class="ex" style="margin:5px 0">• ${t}</p>`).join('')+note('این‌ها را در «تحلیل شخصی ← تنظیمات» اعمال کن.'):note('داده‌ها پیشنهاد تغییری برای تنظیمات پروفایل نمی‌دهند.')}</div>`;
+  h+=`<details class="box"><summary>جدول کامل گروه‌ها</summary>${Object.keys(DIMN).map(k=>{const rows=Object.entries(D[k]).filter(([,o])=>o.n>=1).sort((a,b)=>b[1].n-a[1].n);return rows.length?`<h4 style="margin:10px 0 2px;font-size:13px">${DIMN[k]}</h4>${rows.map(([v,o])=>barRow(dimV(k,v)+` (${fa(o.n)})`,o.w/o.n*100,100,BLU,fa(Math.round(o.w/o.n*100))+'٪')).join('')}`:'';}).join('')}</details>`;
+  return h+setBox+note('با تعداد معامله کم، نتایج تصادفی‌اند؛ هرچه ژورنال کامل‌تر، دقت بیشتر.');}
+
+/* ======================================================================
    رویدادها
    ====================================================================== */
 function act(a){
@@ -4506,6 +4624,12 @@ document.addEventListener('change',e=>{
   if(t.dataset.jd&&(t.tagName==='SELECT'))JD()[t.dataset.jd]=t.value;
   if(t.dataset.s&&t.type==='checkbox'&&t.dataset.s==='sum.useCal')sv();
 });
+/* قبل از اسکن/دمو در پنجرهٔ خطر رویداد: تأیید بگیر */
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('#pa [data-pa="scan"],#pa [data-pa^="demo:"]');if(!b||!X.gd.blockScan)return;
+  const g=guard();if(g.state!=='red')return;
+  if(!confirm('🔴 «'+g.ev.title+'» '+cdTxt(g.ev.t-Date.now())+'.\nدر پنجرهٔ رویداد مهم، سیگنال ساختن یا ورود پرریسک است. ادامه می‌دهی؟')){e.stopPropagation();e.preventDefault();}
+},true);
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!P.hidden)closeX();
   if(e.key==='Enter'&&e.target.id==='pxSym'){const m={sum:'runsum',div:'rundiv',can:'runcan',sq:'runsq'}[X.tab];if(m)act(m);}
