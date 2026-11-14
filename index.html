@@ -755,6 +755,8 @@ html body #rcAdmToast,html body #rcToast{color:#fff!important}
   <details class="box" id="statsBox" hidden><summary>📈 آمار عملکرد و گزارش روزانه</summary><div class="stats" id="prevStats"></div><div id="perfBox"></div><div id="dailyBox"></div></details>
 </section>
 
+<section id="tab-sig" class="pane"></section>
+
 <section id="tab-demo" class="pane">
   <h3 class="sec">فیوچرز دمو</h3>
   <div id="demoBody"></div>
@@ -777,6 +779,7 @@ html body #rcAdmToast,html body #rcToast{color:#fff!important}
     <div class="chips" id="chips"></div>
   </div>
   <div class="cinfo"><span class="num" id="chInfo"></span><span class="stamp" id="srStamp"></span><span class="stamp" style="opacity:.6">⚠️ توصیهٔ مالی نیست</span></div>
+  <div id="mtfInfo" class="mtfi"></div>
   <div class="chartbox" id="chBox">
     <div class="fl"><button class="btn xs" id="btnImmX">✕</button><button class="btn xs" data-z="1">+</button><button class="btn xs" data-z="-1">−</button><button class="btn xs" id="btnSheet2">📋</button></div>
     <canvas id="chCv"></canvas>
@@ -790,6 +793,7 @@ html body #rcAdmToast,html body #rcToast{color:#fff!important}
 
 <nav class="nav" id="nav" aria-label="بخش‌ها">
   <button class="btn on" data-tab="free"><i>🗺️</i>نقشه بازار</button>
+  <button class="btn off" data-tab="sig"><i>🆓</i>سیگنال رایگان</button>
   <button class="btn off" data-tab="demo"><i>💹</i>فیوچرز دمو</button>
   <button class="btn off" data-tab="chart"><i>📈</i>چارت تحلیلی</button>
   <button class="btn off" data-tab="ind"><i>🧪</i>اندیکاتورها</button>
@@ -1823,7 +1827,7 @@ function card(s,now){
     ${whyPros(s.why).length?`<div class="why" style="color:#0a6b3c">✅ ${whyPros(s.why).slice(0,4).join('، ')}</div>`:''}${whyCons(s.why).length?`<div class="why" style="color:#a02020">⚠️ مخالف: ${whyCons(s.why).join('، ')}</div>`:''}
     ${breakdownHTML(s)}
     <div class="cst ${cls}">${st}</div>${live?`<div class="live num">${live}</div>`:''}${stt==='PEND'&&s.expAt?`<div class="live num" style="font-size:10px">انقضا: ${fa(Math.max(0,Math.round((s.expAt-now)/36e5)))} ساعت دیگر</div>`:''}
-    <div class="cbtn"><button class="btn xs" data-copy="${s.id}">کپی</button><button class="btn xs c" data-an="${s.sym}" data-sig="${s.id}">تحلیل</button><button class="btn xs y" data-copilot="${s.id}">چه کنم؟</button>${canDemo?`<button class="btn xs y" data-demo="${s.id}">دمو</button>`:''}</div>
+    <div class="cbtn"><button class="btn xs" data-copy="${s.id}">کپی</button><button class="btn xs c" data-an="${s.sym}" data-sig="${s.id}">تحلیل</button><button class="btn xs y" data-copilot="${s.id}">چه کنم؟</button>${canDemo?`<button class="btn xs y" data-demo="${s.id}">دمو</button>`:''}<button class="btn xs" data-sigrisk="${s.id}">🧮 ریسک</button><button class="btn xs" data-sigjr="${s.id}">📓 ژورنال</button></div>
     <div class="note" style="font-size:9.5px;opacity:.6;text-align:center;margin-top:4px">توصیهٔ مالی نیست · SL اجباری</div>
   </article>`;
 }
@@ -2233,8 +2237,8 @@ function srTableHTML(){
 }
 
 /* ---------- چارت حرفه‌ای ---------- */
-const LAY=Object.assign({sr:1,ema:1,smc:0,vol:1},store.get('radar.layers',{}));
-function renderLayers(){const el=$('#layers');if(!el)return;el.innerHTML=[['sr','حمایت/مقاومت'],['ema','EMA'],['smc','SMC'],['vol','حجم']].map(([k,t])=>`<button class="btn xs ${LAY[k]?'on':'off'}" data-layer="${k}">${t}</button>`).join('')+'';}
+const LAY=Object.assign({sr:1,mtf:1,ema:1,smc:0,vol:1},store.get('radar.layers',{}));
+function renderLayers(){const el=$('#layers');if(!el)return;el.innerHTML=[['sr','حمایت/مقاومت'],['mtf','چندتایم‌فریم'],['ema','EMA'],['smc','SMC'],['vol','حجم']].map(([k,t])=>`<button class="btn xs ${LAY[k]?'on':'off'}" data-layer="${k}">${t}</button>`).join('')+'';}
 function drawChart(){
   const M=CT,cv=$('#chCv'),box=$('#chBox');if(!M.K||!cv||!box||TAB!=='chart')return;
   const W=box.clientWidth,H=box.clientHeight;if(W<40||H<40)return;
@@ -2819,7 +2823,7 @@ function drawChart(){
   const s=M.sig&&!M.sig.closed&&M.sig.sym===M.sym?M.sig:null,lines=[];
   if(s)[['ورود',s.entry,'#e0b000'],['TP1',s.tp[0],UP],['TP2',s.tp[1],UP],['TP3',s.tp[2],UP],['SL',s.sl,DN]].forEach(([t,p,c])=>{if(p>lo-span0*.6&&p<hi+span0*.6){lines.push({t,p,c});lo=Math.min(lo,p);hi=Math.max(hi,p);}});
   for(const p of F.pos.filter(q=>q.sym===M.sym)){lines.push({t:'پوزیشن',p:p.entry,c:dk?'#e8f1f4':'#444'});lo=Math.min(lo,p.entry);hi=Math.max(hi,p.entry);}
-  const srL=[];if(LAY.sr&&M.sr){M.sr.res.forEach((q,i)=>srL.push({t:'R'+(i+1),p:q.p,n:q.touches,c:DN}));M.sr.sup.forEach((q,i)=>srL.push({t:'S'+(i+1),p:q.p,n:q.touches,c:UP}));}
+  const srL=[],mtfOn=LAY.sr&&LAY.mtf&&M.mtf&&M.mtfSym===M.sym&&M.mtf.length;if(mtfOn){M.mtf.forEach(q=>srL.push({t:(q.p>lp?'R':'S')+'★'.repeat(q.s),p:q.p,n:q.w,c:q.p>lp?DN:UP,z:q.z,mt:1}));}else if(LAY.sr&&M.sr){M.sr.res.forEach((q,i)=>srL.push({t:'R'+(i+1),p:q.p,n:q.touches,c:DN}));M.sr.sup.forEach((q,i)=>srL.push({t:'S'+(i+1),p:q.p,n:q.touches,c:UP}));}
   srL.forEach(l=>{if(l.p>lo-span0*.35&&l.p<hi+span0*.35){lo=Math.min(lo,l.p);hi=Math.max(hi,l.p);l.show=true;}});
   const pad=(hi-lo)*.06;lo-=pad;hi+=pad;const Y=p=>padT+(hi-p)/(hi-lo)*ph;
   /* برچسب‌ها: همه در ستون قیمت، با فاصلهٔ حداقلی تا روی هم نیفتند */
@@ -2837,7 +2841,7 @@ function drawChart(){
   const sm=LAY.smc&&M.an&&M.an.smc;
   const zoneDraw=(z,col,label)=>{if(!z||z.hi<lo||z.lo>hi)return;const y1=Y(Math.min(hi,z.hi)),y2=Y(Math.max(lo,z.lo));x.fillStyle=col;x.fillRect(0,y1,pw,Math.max(2,y2-y1));x.fillStyle=INK;x.textAlign='left';x.fillText(label,4,y1+8);};
   if(sm){zoneDraw(sm.ob.bull,'rgba(14,203,129,.14)','OB↑');zoneDraw(sm.ob.bear,'rgba(246,70,93,.14)','OB↓');zoneDraw(sm.fvg.bull,'rgba(36,157,197,.13)','FVG');zoneDraw(sm.fvg.bear,'rgba(36,157,197,.13)','FVG');}
-  srL.filter(l=>l.show).forEach(l=>{const y=Y(l.p);x.strokeStyle=l.c;x.globalAlpha=.9;x.lineWidth=Math.min(2.5,1+l.n*.3);x.setLineDash([6,5]);x.beginPath();x.moveTo(0,y);x.lineTo(pw,y);x.stroke();x.setLineDash([]);x.globalAlpha=1;x.lineWidth=1;});
+  srL.filter(l=>l.show).forEach(l=>{const y=Y(l.p);if(l.mt&&l.z){const bh=Math.max(3,Math.abs(Y(l.p*(1+l.z))-Y(l.p*(1-l.z))));x.globalAlpha=.13;x.fillStyle=l.c;x.fillRect(0,y-bh/2,pw,bh);x.globalAlpha=1;}x.strokeStyle=l.c;x.globalAlpha=.9;x.lineWidth=Math.min(2.5,1+l.n*.3);x.setLineDash([6,5]);x.beginPath();x.moveTo(0,y);x.lineTo(pw,y);x.stroke();x.setLineDash([]);x.globalAlpha=1;x.lineWidth=1;});
   const vmax=Math.max(...D.map(k=>k.v))||1,bw=Math.max(3,Math.min(20,step*.76));
   D.forEach((k,i)=>{const cx=i*step+step/2,up=k.c>=k.o,col=up?UP:DN;
     if(LAY.vol){const vh=k.v/vmax*volH;x.globalAlpha=.38;x.fillStyle=col;x.fillRect(cx-bw/2,H-padB-vh,bw,vh);x.globalAlpha=1;}
@@ -3174,7 +3178,7 @@ async function main(){
   busy=true;ALL=[];SUMM=null;
   busy=false;$('#prog').textContent='';renderActive();pollLive().then(()=>futCatchup()).then(()=>renderActive());
 }
-{let t='free';try{t=localStorage.getItem('radar.tab')||'free';}catch(e){}if(t==='prev')t='free';if(!['free','demo','chart','ind'].includes(t))t='free';TAB=t;}
+{let t='free';try{t=localStorage.getItem('radar.tab')||'free';}catch(e){}if(t==='prev')t='free';if(!['free','sig','demo','chart','ind'].includes(t))t='free';TAB=t;}
 setNavH();
 setTab(TAB);
 main();
@@ -3668,8 +3672,67 @@ html[data-theme=dark] .psup{color:#4fe3a6}html[data-theme=dark] .pneg{color:#ff8
 html[data-theme=dark] .pprog{background:var(--surf)}
 .pwarn{border:2px dashed #000;border-radius:12px;padding:8px 10px;background:var(--yp);color:#000;font-size:12px;margin:6px 0}
 @media(min-width:760px){.pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* ===== اصلاح باگ: کشیده‌شدن با دو انگشت + چیدمان منظم دکمه‌ها ===== */
+.pnl{width:100%;max-width:100vw;overflow:hidden;touch-action:pan-y;overscroll-behavior:contain;-webkit-text-size-adjust:100%}
+.pnl .pbody{width:100%;overflow-x:hidden;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain}
+.pnl .pbody *,.pnl .pbody *::before,.pnl .pbody *::after{box-sizing:border-box}
+.pnl .pbody>*{max-width:100%;min-width:0}
+.pnl .box{min-width:0;overflow-wrap:anywhere}
+.pnl .scroll,.pnl .tbl,.pnl table{max-width:100%}
+.pnl .scroll{overflow-x:auto;touch-action:pan-x pan-y}
+.pnl input[type=range]{touch-action:pan-y;min-width:0}
+.pnl .thead{flex:0 0 auto}
+.pnl .thead .btn.xs{flex:0 0 42px}
+/* نوار پروفایل: انتخاب‌گر یک ردیف کامل، چهار دکمه هم‌اندازه */
+.pnl .pbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:stretch}
+.pnl .pbar select{grid-column:1/-1;width:100%;flex:none;min-height:42px}
+.pnl .pbar .btn{width:100%;min-height:38px;padding:4px 6px;font-size:12.5px;white-space:nowrap;display:flex;align-items:center;justify-content:center}
+.pnl .pbar .btn:only-of-type{grid-column:1/-1}
+.pnl .pbar select + .btn:last-child{grid-column:auto}
+#pf .pbar{grid-template-columns:1fr}
+#pf .pbar .btn{grid-column:1/-1;min-height:44px}
+/* تب‌ها و گزینه‌ها: ستون‌های مساوی */
+.pnl .seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;width:100%;overflow:visible}
+.pnl .seg button{min-width:0;min-height:40px;padding:4px 6px;font-size:12.5px;white-space:normal;line-height:1.25;display:flex;align-items:center;justify-content:center;text-align:center}
+/* گروه دکمه‌ها: شبکهٔ هم‌اندازه به‌جای ردیف‌های ناهمتراز */
+.pnl .acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;align-items:stretch;margin-top:8px}
+.pnl .acts .btn{width:100%;min-width:0;min-height:40px;padding:6px 8px;font-size:13px;white-space:normal;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center}
+.pnl .acts .btn:only-child{grid-column:1/-1}
+.pnl .acts .btn[data-pa="tab:sig"],.pnl .acts .btn[data-pa="pfsig"],.pnl .acts .btn[data-pa="scan"]{grid-column:1/-1}
+/* جستجوی اندیکاتور + همه/هیچ‌کدام */
+.pnl .tbar{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:stretch}
+.pnl .tbar input{min-width:0;width:100%;flex:none}
+.pnl .tbar .btn.xs{min-width:62px;padding-inline:10px;white-space:nowrap;display:flex;align-items:center;justify-content:center}
+.pnl #aSymP{grid-column:1}
+/* ردیف اندیکاتور */
+.pnl .pir{grid-template-columns:22px minmax(0,1fr) 72px}
+.pnl .pir .pin{min-width:0;text-align:center}
+.pnl .pir .nm{line-height:1.4}
+.pnl .slr{grid-template-columns:minmax(64px,92px) minmax(0,1fr) 38px}
+.pnl .slr span{min-width:0;overflow-wrap:anywhere}
+/* دکمه‌های کارت سیگنال */
+.pnl .cbtn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px;width:100%}
+.pnl .cbtn .btn{width:100%;min-width:0;min-height:36px;padding:3px 4px;font-size:12px;white-space:nowrap;display:flex;align-items:center;justify-content:center}
+.pnl .kv{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap}
+.pnl .kv>span{min-width:0;overflow-wrap:anywhere}
+.pnl .kv .btn{min-width:52px}
+.pnl .pgrid label{min-width:0}
+.pnl .pgrid .pin{min-width:0}
+.pnl .between{flex-wrap:wrap}
+.pnl details>summary{min-height:34px;display:flex;align-items:center;gap:6px}
+@media(max-width:380px){.pnl .pbar .btn,.pnl .seg button{font-size:11.5px}.pnl .acts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 `;
 document.head.appendChild(st);
+/* جلوگیری از زوم/کشیدن با دو انگشت و حرکت افقی داخل پنل‌ها */
+(()=>{const blk=e=>{if(e.touches&&e.touches.length>1&&!e.target.closest('.scroll'))e.preventDefault()};
+ const nogs=e=>e.preventDefault();
+ document.addEventListener('DOMContentLoaded',()=>{});
+ const arm=()=>{['pa','pf'].forEach(id=>{const el=document.getElementById(id);if(!el||el._lk)return;el._lk=1;
+   el.addEventListener('touchmove',blk,{passive:false});
+   ['gesturestart','gesturechange','gestureend'].forEach(t=>el.addEventListener(t,nogs));
+   const fixX=()=>{if(el.scrollLeft)el.scrollLeft=0;const b=el.querySelector('.pbody');if(b&&b.scrollLeft)b.scrollLeft=0};
+   el.addEventListener('scroll',fixX,true)})};
+ arm();setTimeout(arm,0);setTimeout(arm,800);window.__paArm=arm})();
 
 /* ---------- دکمه‌های بالای صفحه ---------- */
 document.querySelector('.hero').insertAdjacentHTML('afterend',
@@ -3680,6 +3743,7 @@ const mkPanel=(id,title)=>{const d=document.createElement('div');d.id=id;d.class
   d.innerHTML=`<div class="thead"><button class="btn xs" style="visibility:hidden">.</button><b>${title}</b><button class="btn xs" data-pclose aria-label="بستن">✕</button></div><div class="pbody" id="${id}B"></div>`;
   document.body.appendChild(d);return d;};
 const PA=mkPanel('pa','🎛️ تحلیل شخصی'),PFP=mkPanel('pf','💼 تحلیل پرتفوی');
+window.__paArm&&window.__paArm();
 function openP(id){PA.hidden=id!=='pa';PFP.hidden=id!=='pf';document.body.classList.add('lock');
   if(id==='pa'){paRender();loadCat();}else pfRender();}
 function closeP(){PA.hidden=true;PFP.hidden=true;if($('#tools').hidden)document.body.classList.remove('lock');}
@@ -5441,6 +5505,795 @@ let n=0,tt=0;document.addEventListener('click',e=>{if(!e.target.closest||!e.targ
 const chk=()=>{if(location.hash==='#admin')open()};addEventListener('hashchange',chk);setTimeout(chk,1200);
 window.rcAdminOpen=open;
 })();
+</script>
+<script id="fundTool">
+/* ===== 🏦 تحلیل فاندامنتال (ابزار جدید در منوی ☰) ===== */
+(()=>{
+if(typeof TOOLS==='undefined'||typeof TFN==='undefined'||typeof TS==='undefined')return;
+const KEY='radar.fnd2',IDK='radar.fndid';
+let ST={chk:{},note:{}},IDS={};
+try{ST=Object.assign({chk:{},note:{}},JSON.parse(localStorage.getItem(KEY))||{})}catch(e){}
+try{IDS=JSON.parse(localStorage.getItem(IDK))||{}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(ST))}catch(e){}};
+const H=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=x=>x!=null&&isFinite(x);
+const cp=n=>{if(!num(n))return '—';const a=Math.abs(n);return '$'+(a>=1e12?(n/1e12).toFixed(2)+'T':a>=1e9?(n/1e9).toFixed(2)+'B':a>=1e6?(n/1e6).toFixed(2)+'M':a>=1e3?(n/1e3).toFixed(1)+'K':n.toFixed(2))};
+const cs=n=>{if(!num(n))return '—';const a=Math.abs(n);return a>=1e12?(n/1e12).toFixed(2)+'T':a>=1e9?(n/1e9).toFixed(2)+'B':a>=1e6?(n/1e6).toFixed(2)+'M':a>=1e3?(n/1e3).toFixed(1)+'K':n.toFixed(0)};
+const pc=n=>num(n)?(n>=0?'+':'')+n.toFixed(1)+'٪':'—';
+const CKL=[['team','👥','تیم و بنیان‌گذاران شناخته‌شده و قابل‌اعتماد هستند'],['use','🛠️','محصول یا کاربرد واقعی دارد'],['tok','🪙','توکنومیکس شفاف است (آنلاک و تورم قابل‌فهم)'],['vc','💼','سرمایه‌گذاران و شرکای معتبر دارد'],['comp','🥊','نسبت به رقبا مزیت مشخص دارد'],['road','🗺️','نقشهٔ راه و به‌روزرسانی منظم دارد'],['liq','🏦','در صرافی‌های معتبر لیست است'],['reg','⚖️','ریسک قانونی یا امنیتی بزرگی ندارد']];
+const col=s=>s>=75?'#0ecb81':s>=55?'#8bd450':s>=40?'#f0b90b':'#f6465d';
+const lab=s=>s>=75?'فاندامنتال قوی':s>=60?'خوب':s>=45?'متوسط':'ضعیف / پرریسک';
+
+const st=document.createElement('style');
+st.textContent=`
+.fd{display:flex;flex-direction:column;gap:10px;max-width:100%;min-width:0}
+.fd *{box-sizing:border-box}
+.fd .box{margin:0;min-width:0;overflow-wrap:anywhere}
+.fd-hd{display:grid;grid-template-columns:48px minmax(0,1fr);gap:10px;align-items:center}
+.fd-hd img{width:48px;height:48px;border-radius:14px;border:2px solid #000;background:#fff;object-fit:cover}
+.fd-hd .lg{width:48px;height:48px;border-radius:14px;border:2px solid #000;background:var(--y);display:flex;align-items:center;justify-content:center;font-size:22px}
+.fd-hd b{font-size:16px;display:block}.fd-hd small{opacity:.75;font-size:11.5px}
+.fd-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.fd-ring{display:grid;grid-template-columns:104px minmax(0,1fr);gap:12px;align-items:center}
+.fd-ring .c{width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.fd-ring .c::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--surf,#fff);z-index:0}
+.fd-ring .c *{position:relative;z-index:1}
+.fd-ring .c b{font-size:26px;line-height:1}.fd-ring .c small{font-size:10px;opacity:.7;margin-top:2px}
+.fd-ring .v{font-weight:800;font-size:15px}
+.fd-ring p{margin:4px 0 0;font-size:12px;line-height:1.7;opacity:.85}
+.fd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fd-k{border:1.5px solid var(--line,#000);border-radius:12px;padding:8px 10px;min-width:0}
+.fd-k small{display:block;font-size:10.5px;opacity:.7}.fd-k b{display:block;direction:ltr;text-align:right;font-size:14px;margin-top:2px}
+.fd-m{padding:9px 0;border-bottom:1px dashed var(--line,#999)}.fd-m:last-child{border-bottom:0}
+.fd-m .t{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px;font-weight:800}
+.fd-m .t span.vv{direction:ltr;font-weight:700;font-size:12.5px}
+.fd-bar{height:8px;border-radius:99px;background:rgba(127,127,127,.25);overflow:hidden;margin:6px 0 4px}
+.fd-bar i{display:block;height:100%;border-radius:99px;transition:width .4s}
+.fd-m p{margin:0;font-size:11.5px;line-height:1.7;opacity:.85}
+.fd-ck{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line,#999);font-size:12.5px;line-height:1.6;cursor:pointer}
+.fd-ck:last-of-type{border-bottom:0}
+.fd-ck input{width:22px;height:22px;margin:0}
+.fd-ls{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.7}
+.fd-ls li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px}
+.fd-ta{width:100%;min-height:84px;border:2px solid #000;border-radius:12px;padding:8px 10px;font:inherit;font-size:13px;line-height:1.8;resize:vertical;background:#fff;color:#000}
+.fd-act{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fd-act .btn{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;white-space:normal;text-align:center}
+.fd h4{margin:0 0 8px;font-size:14px}
+.fd-fin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.fd-fin b{font-size:22px}
+`;
+document.head.appendChild(st);
+
+/* منوی ☰: یک کاشی جدید بعد از «تحلیل جامع» */
+if(!TOOLS.some(t=>t[0]==='fund')){const i=TOOLS.findIndex(t=>t[0]==='go-full');TOOLS.splice(i>=0?i+1:0,0,['fund','🏦','تحلیل فاندامنتال','ارزش بازار، عرضه، توسعه، جامعه + چک‌لیست خودت','تحلیل'])}
+/* نوار نماد برای این ابزار */
+const _tb=typeof toolBar==='function'?toolBar:null;
+toolBar=function(id){return id==='fund'?symBar(0):(_tb?_tb(id):'')};
+
+async function gid(sym){
+  if(IDS[sym])return IDS[sym];
+  const d=await jget('https://api.coingecko.com/api/v3/search?query='+encodeURIComponent(sym));
+  const L=(d.coins||[]).filter(c=>String(c.symbol).toUpperCase()===sym);
+  if(!L.length)throw new Error('nf');
+  L.sort((a,b)=>(a.market_cap_rank||9e9)-(b.market_cap_rank||9e9));
+  IDS[sym]=L[0].id;try{localStorage.setItem(IDK,JSON.stringify(IDS))}catch(e){}return IDS[sym];
+}
+let FD=null;
+function build(sym,c){
+  const md=c.market_data||{},mc=md.market_cap&&md.market_cap.usd,fdv=md.fully_diluted_valuation&&md.fully_diluted_valuation.usd,vol=md.total_volume&&md.total_volume.usd;
+  const circ=md.circulating_supply,tot=md.total_supply,mx=md.max_supply,rank=c.market_cap_rank||md.market_cap_rank;
+  const ath=md.ath_change_percentage&&md.ath_change_percentage.usd,c30=md.price_change_percentage_30d,c1y=md.price_change_percentage_1y;
+  const dv=c.developer_data||{},cm=c.community_data||{},up=c.sentiment_votes_up_percentage;
+  const M=[];
+  /* ۱) رتبه و اندازه */
+  if(rank)M.push({i:'🏆',t:'رتبه و اندازهٔ بازار',v:'#'+rank+(mc?' · '+cp(mc):''),s:rank<=10?95:rank<=30?85:rank<=100?70:rank<=250?55:rank<=600?40:25,w:18,
+    x:rank<=30?'از ارزهای بزرگ بازار است؛ نقدشوندگی و اعتبار بالاتر و نوسان معمولاً کمتر.':rank<=100?'ارز میان‌رده؛ فرصت رشد دارد ولی ریسک بیشتر از ارزهای بزرگ.':'ارز کوچک؛ پتانسیل بالا اما ریسک نوسان و نقدشوندگی زیاد است.'});
+  /* ۲) نقدشوندگی */
+  if(num(mc)&&num(vol)&&mc>0){const r=vol/mc*100;M.push({i:'💧',t:'نقدشوندگی (حجم ÷ ارزش بازار)',v:r.toFixed(1)+'٪ · '+cp(vol),s:r<.3?20:r<1?40:r<2?60:r<=20?90:r<=40?65:40,w:12,
+    x:r<1?'حجم معاملات نسبت به ارزش بازار خیلی کم است؛ خروج از معامله ممکن است سخت شود.':r<=20?'گردش معاملات سالم است.':'گردش خیلی بالاست؛ احتمال هیجان و سفته‌بازی زیاد است.'})}
+  /* ۳) عرضه */
+  const base=mx||tot;
+  if(num(circ)&&num(base)&&base>0){const p=circ/base*100;M.push({i:'🪙',t:'سهم عرضهٔ در گردش',v:p.toFixed(0)+'٪ از '+cs(base),s:p>=90?95:p>=75?80:p>=55?62:p>=35?45:28,w:14,
+    x:p>=75?'بیشتر توکن‌ها آزاد شده‌اند؛ فشار آنلاک آیندهٔ کمتری دارد.':p>=40?'بخشی از توکن‌ها هنوز قفل است؛ آنلاک‌های آینده می‌تواند فشار فروش بسازد.':'بخش بزرگی از توکن‌ها هنوز آزاد نشده؛ ریسک تورم و فشار فروش بالاست.'})}
+  else if(num(circ))M.push({i:'🪙',t:'سقف عرضه',v:'بدون سقف · '+cs(circ),s:55,w:14,x:'سقف مشخصی برای عرضه تعریف نشده؛ تورم توکن را باید جداگانه بررسی کنی.'});
+  /* ۴) FDV */
+  if(num(fdv)&&num(mc)&&mc>0){const r=fdv/mc;M.push({i:'⚖️',t:'ارزش کامل ÷ ارزش فعلی (FDV)',v:r.toFixed(2)+'×',s:r<=1.15?95:r<=1.5?80:r<=2.5?60:r<=4?40:25,w:12,
+    x:r<=1.5?'ارزش فعلی نزدیک ارزش کامل است؛ رقیق‌شدن کم.':'اگر همهٔ توکن‌ها آزاد شوند، ارزش بازار تا '+r.toFixed(1)+' برابر می‌شود؛ یعنی فشار رقیق‌سازی.'})}
+  /* ۵) سن */
+  if(c.genesis_date){const y=(Date.now()-new Date(c.genesis_date).getTime())/31557600000;if(isFinite(y)&&y>=0)M.push({i:'⏳',t:'سابقهٔ پروژه',v:y.toFixed(1)+' سال',s:y>=8?100:y>=4?80:y>=2?60:y>=1?45:30,w:10,
+    x:y>=4?'سابقهٔ طولانی؛ چند چرخهٔ بازار را تجربه کرده.':y>=1?'پروژهٔ نسبتاً جوان؛ هنوز اثبات کامل نشده.':'پروژهٔ خیلی جدید؛ ریسک بالا.'})}
+  /* ۶) توسعه */
+  if(num(dv.commits_4_weeks)&&(dv.stars||dv.forks||dv.commits_4_weeks)){const k=dv.commits_4_weeks;M.push({i:'👨‍💻',t:'فعالیت توسعه (گیت‌هاب)',v:k+' کامیت در ۴ هفته'+(dv.stars?' · ⭐'+cs(dv.stars):''),s:k>=100?100:k>=30?82:k>=8?62:k>0?40:18,w:14,
+    x:k>=30?'تیم فنی فعال است و کد مرتب به‌روز می‌شود.':k>0?'فعالیت توسعه کم است.':'در ماه گذشته تقریباً هیچ فعالیت کدی ثبت نشده؛ نشانهٔ هشدار.'})}
+  /* ۷) جامعه */
+  {let s=null,v='';const tw=cm.twitter_followers;
+   if(num(up)){s=up>=75?88:up>=60?70:up>=45?50:30;v=up.toFixed(0)+'٪ نظر مثبت'}
+   if(num(tw)&&tw>0){const t=tw>=1e6?85:tw>=2e5?70:tw>=5e4?55:30;s=s==null?t:(s+t)/2;v+=(v?' · ':'')+'X: '+cs(tw)}
+   if(s!=null)M.push({i:'👥',t:'جامعه و احساسات',v,s:Math.round(s),w:8,x:s>=70?'جامعهٔ بزرگ و نظر کاربران مثبت.':s>=50?'جامعه متوسط.':'جامعه کوچک یا نظر کاربران ضعیف.'})}
+  /* ۸) فاصله تا سقف تاریخی */
+  if(num(ath))M.push({i:'🏔️',t:'فاصله تا سقف تاریخی',v:pc(ath),s:ath>=-25?75:ath>=-60?60:ath>=-85?42:28,w:6,
+    x:ath>=-25?'نزدیک سقف تاریخی است؛ فضای کمتر برای رشد ساده.':ath>=-60?'قابل‌توجه زیر سقف؛ ممکن است فرصت باشد یا نشانهٔ ضعف.':'بسیار پایین‌تر از سقف تاریخی؛ بررسی کن دلیلش چه بوده.'});
+  /* ۹) روند یک‌ساله */
+  if(num(c1y))M.push({i:'📈',t:'عملکرد ۳۰ روز / ۱ سال',v:pc(c30)+' / '+pc(c1y),s:c1y>=50?75:c1y>=0?65:c1y>=-40?45:30,w:6,
+    x:c1y>=0?'در یک سال گذشته مثبت بوده.':'در یک سال گذشته افت کرده؛ علتش را بررسی کن.'});
+  let sw=0,ss=0;M.forEach(m=>{sw+=m.w;ss+=m.s*m.w});
+  return {sym,c,M,auto:sw?Math.round(ss/sw):null,mc,fdv,vol,circ,rank,mx,tot,ath};
+}
+const chkPct=sym=>{const o=ST.chk[sym]||{};return Math.round(CKL.filter(k=>o[k[0]]).length/CKL.length*100)};
+const chkAny=sym=>{const o=ST.chk[sym]||{};return CKL.some(k=>o[k[0]])};
+const final=(a,sym)=>a==null?null:chkAny(sym)?Math.round(a*.7+chkPct(sym)*.3):a;
+
+function ring(s){const c=col(s);return `<div class="c" style="background:conic-gradient(${c} ${s*3.6}deg,rgba(127,127,127,.25) 0)"><b style="color:${c}">${s}</b><small>از ۱۰۰</small></div>`}
+function html(D){
+  const c=D.c,sym=D.sym,a=D.auto,fin=final(a,sym);
+  const cats=(c.categories||[]).filter(Boolean).slice(0,3);
+  const hp=c.links&&c.links.homepage&&c.links.homepage.find(x=>x);
+  let h='<div class="fd">';
+  h+=`<div class="box"><div class="fd-hd">${c.image&&c.image.small?`<img src="${H(c.image.small)}" alt="" onerror="this.outerHTML='<div class=lg>🏦</div>'">`:'<div class="lg">🏦</div>'}<div><b>${H(c.name)} <span dir="ltr">(${H(sym)})</span></b><small>${D.rank?'رتبهٔ #'+D.rank+' · ':''}${num(D.mc)?'ارزش بازار '+cp(D.mc):''}</small></div></div>${cats.length?`<div class="fd-pills">${cats.map(x=>`<span class="pill">${H(x)}</span>`).join('')}</div>`:''}${hp?`<div style="margin-top:8px;font-size:12px;direction:ltr;text-align:left"><a href="${H(hp)}" target="_blank" rel="noopener noreferrer">${H(hp.replace(/^https?:\/\//,'').replace(/\/$/,''))}</a></div>`:''}</div>`;
+  if(a==null)return h+'<div class="box"><p class="note">داده‌ٔ کافی برای امتیازدهی این ارز پیدا نشد.</p></div></div>';
+  h+=`<div class="box"><div class="fd-ring">${ring(a)}<div><div class="v" style="color:${col(a)}">${lab(a)}</div><p>امتیاز خودکار از ${D.M.length} شاخص بنیادی. هرچه عدد بالاتر، ساختار پروژه سالم‌تر است؛ امتیاز بالا یعنی «ارزش بررسی دارد»، نه «حتماً بخر».</p></div></div></div>`;
+  h+=`<div class="fd-grid"><div class="fd-k"><small>ارزش بازار</small><b>${cp(D.mc)}</b></div><div class="fd-k"><small>ارزش کامل (FDV)</small><b>${cp(D.fdv)}</b></div><div class="fd-k"><small>حجم ۲۴ ساعت</small><b>${cp(D.vol)}</b></div><div class="fd-k"><small>عرضهٔ در گردش</small><b>${cs(D.circ)}</b></div></div>`;
+  h+=`<div class="box"><h4>🔬 شاخص‌ها یک‌به‌یک</h4>${D.M.map(m=>`<div class="fd-m"><div class="t"><span>${m.i} ${m.t}</span><span class="vv">${H(m.v)}</span></div><div class="fd-bar"><i style="width:${m.s}%;background:${col(m.s)}"></i></div><p>${m.x}</p></div>`).join('')}</div>`;
+  const good=D.M.filter(m=>m.s>=75),bad=D.M.filter(m=>m.s<=42);
+  h+=`<div class="box"><h4>✅ نقاط قوت</h4><ul class="fd-ls">${good.length?good.map(m=>`<li><span>🟢</span><span><b>${m.t}:</b> ${m.x}</span></li>`).join(''):'<li><span>•</span><span>نقطهٔ قوت برجسته‌ای در داده‌ها دیده نشد.</span></li>'}</ul></div>`;
+  h+=`<div class="box"><h4>⚠️ نقاط ضعف و ریسک</h4><ul class="fd-ls">${bad.length?bad.map(m=>`<li><span>🔴</span><span><b>${m.t}:</b> ${m.x}</span></li>`).join(''):'<li><span>•</span><span>ریسک بنیادی پررنگی در داده‌ها دیده نشد.</span></li>'}</ul></div>`;
+  const o=ST.chk[sym]||{};
+  h+=`<div class="box"><h4>🧠 تحلیل خودت</h4><p class="note" style="margin:0 0 6px">داده‌ها همهٔ ماجرا نیستند. هر مورد را که خودت بررسی و تأیید کردی تیک بزن تا به امتیاز نهایی اضافه شود.</p>${CKL.map(k=>`<label class="fd-ck"><input type="checkbox" data-fk="${k[0]}" ${o[k[0]]?'checked':''}><span>${k[1]} ${k[2]}</span></label>`).join('')}
+   <div style="margin-top:10px"><b style="font-size:12.5px">یادداشت من دربارهٔ ${H(sym)}</b><textarea class="fd-ta" data-fnote placeholder="مثلاً: تیم قوی، ولی آنلاک بزرگ در ماه بعد…">${H(ST.note[sym]||'')}</textarea></div></div>`;
+  h+=`<div class="box"><h4>🏁 جمع‌بندی</h4><div class="fd-fin"><div><div style="font-size:12px;opacity:.75">امتیاز خودکار <b id="fdAuto" style="font-size:14px">${a}</b> · چک‌لیست تو <b id="fdChk" style="font-size:14px">${chkPct(sym)}٪</b></div><div class="fd-bar" style="margin:8px 0 4px"><i id="fdFinBar" style="width:${fin}%;background:${col(fin)}"></i></div><div id="fdFinTx" style="font-weight:800;color:${col(fin)}">${lab(fin)}</div></div><b id="fdFin" style="color:${col(fin)}">${fin}</b></div><p class="note" style="margin:8px 0 0">امتیاز نهایی = ۷۰٪ داده‌ها + ۳۰٪ چک‌لیست تو (فقط وقتی چیزی تیک زده باشی).</p></div>`;
+  h+=`<div class="fd-act"><button class="btn" data-an="${H(sym)}">📈 تحلیل تکنیکال</button><button class="btn off" id="tRun">🔄 به‌روزرسانی</button></div>`;
+  h+='<p class="note">منبع داده: CoinGecko. این ابزار آموزشی است و توصیهٔ مالی نیست؛ همیشه خودت هم تحقیق کن.</p></div>';
+  return h;
+}
+const cache={};
+async function load(sym){
+  let D=cache[sym]&&Date.now()-cache[sym].t<10*60000?cache[sym].d:null;
+  if(D)return D;
+  let id,c;
+  try{id=await gid(sym)}catch(e){const m=e&&e.message==='nf'?'نماد «'+sym+'» در CoinGecko پیدا نشد.':e&&e.code==='RATE'?'سرویس داده موقتاً محدود شده؛ چند لحظه بعد دوباره «اجرا» بزن.':'دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن.';const er=new Error(m);er.fd=1;throw er}
+  try{c=await jget('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(id)+'?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false')}catch(e){const er=new Error(e&&e.code==='RATE'?'سرویس داده موقتاً محدود شده؛ چند لحظه بعد دوباره «اجرا» بزن.':'دریافت داده انجام نشد. اینترنت یا VPN را بررسی کن.');er.fd=1;throw er}
+  D=build(sym,c);cache[sym]={t:Date.now(),d:D};return D;
+}
+window.__fundLoad=load;window.__fundFinal=final;window.__fundCol=col;window.__fundLab=lab;
+TFN.fund=async out=>{
+  try{const D=await load(TS.sym);FD=D;return html(D)}catch(e){if(e&&e.fd)return `<div class="box"><p class="note">${H(e.message)}</p></div>`;throw e}
+};
+/* دکمهٔ عمومی «تحلیل بیشتر» برای این ابزار لازم نیست */
+if(typeof window.openTool==='function'){const _o=window.openTool;window.openTool=async function(id){const r=await _o.apply(this,arguments);if(id==='fund'){const b=document.querySelector('#tBody [data-emore="fund"]');if(b)b.remove()}return r}}
+/* تیک‌ها و یادداشت (بدون بارگذاری دوباره) */
+document.addEventListener('change',e=>{
+  const i=e.target&&e.target.closest&&e.target.closest('[data-fk]');if(!i||!FD)return;
+  const s=FD.sym;(ST.chk[s]||(ST.chk[s]={}))[i.dataset.fk]=i.checked?1:0;save();
+  const f=final(FD.auto,s),$e=id=>document.getElementById(id);
+  if($e('fdFin')){$e('fdFin').textContent=f;$e('fdFin').style.color=col(f);$e('fdFinBar').style.width=f+'%';$e('fdFinBar').style.background=col(f);$e('fdFinTx').textContent=lab(f);$e('fdFinTx').style.color=col(f);$e('fdChk').textContent=chkPct(s)+'٪'}
+});
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.matches&&t.matches('[data-fnote]')&&FD){ST.note[FD.sym]=t.value;save()}});
+})();
+
+</script>
+<script id="extraTools">
+/* ===== 📓 ژورنال معاملات + ⚖️ مقایسهٔ فاندامنتال + 🗜️ ظاهر فشردهٔ دکمه‌ها ===== */
+(()=>{
+if(typeof TOOLS==='undefined'||typeof TFN==='undefined'||typeof TS==='undefined')return;
+const H=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=x=>x!=null&&isFinite(x);
+const $e=id=>document.getElementById(id);
+const G='#0ecb81',R='#f6465d';
+
+/* ---------- ظاهر فشرده ---------- */
+const st=document.createElement('style');
+st.textContent=`
+/* منوی ابزارها: ۴ ستون، کاشی‌های کوچک، بدون توضیح */
+#tBody .tgrid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important;margin-bottom:4px!important}
+#tBody .tgrid>.tile,#tBody .tgrid>.tile:last-child:nth-child(3n+1),#tBody .tgrid>.tile:last-child:nth-child(3n+2),#tBody .tgrid>.tile:nth-last-child(2):nth-child(3n+1){grid-column:span 1!important;min-height:68px!important;padding:6px 3px!important;gap:2px!important;border-radius:12px!important}
+#tBody .tgrid>.tile i{font-size:20px!important}
+#tBody .tgrid>.tile b{font-size:11px!important;line-height:1.3!important}
+#tBody .tgrid>.tile span{display:none!important}
+#tBody h3.sub{margin:10px 0 6px!important;font-size:12.5px!important}
+/* دکمه‌ها و گزینه‌ها داخل ابزارها و پنل‌ها */
+.tools .btn:not(.tile),.pnl .btn,.sheet .btn{min-height:34px;padding:5px 10px;font-size:12.5px;border-radius:10px}
+.tools .btn.xs,.pnl .btn.xs{min-height:32px;padding:4px 8px;font-size:12px}
+.tools .seg button,.pnl .seg button,.sheet .seg button{min-height:32px!important;padding:3px 6px!important;font-size:12px!important}
+.tools .seg,.pnl .seg{gap:3px}
+.tools .tbar input,.pnl .tbar input{min-height:34px;padding:4px 8px}
+.pnl .acts{grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:6px;margin-top:6px}
+.pnl .acts .btn{min-height:34px;padding:4px 6px;font-size:12px}
+.pnl .pbar{gap:5px}.pnl .pbar select{min-height:36px}
+.pnl .pbar .btn{min-height:32px;font-size:12px}
+.pnl .cbtn .btn{min-height:30px;font-size:11.5px}
+.pnl .seg button{min-height:32px}
+.tools .thead .btn.xs{min-height:30px}
+.tools .box,.pnl .box{padding:10px}
+/* ژورنال */
+.jr{display:flex;flex-direction:column;gap:8px;min-width:0}
+.jr *{box-sizing:border-box}
+.jr .box{margin:0;min-width:0}
+.jr h4{margin:0 0 6px;font-size:13.5px}
+.jr-f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.jr-f label{display:flex;flex-direction:column;gap:2px;font-size:10.5px;opacity:.9;min-width:0}
+.jr-f input{width:100%;min-width:0;min-height:34px;padding:3px 6px;font-size:16px;border:2px solid #000;border-radius:9px;background:#fff;color:#000;direction:ltr;text-align:left}
+.jr-f .w2{grid-column:span 2}.jr-f .w3{grid-column:1/-1}
+.jr-f .dir{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.jr-st{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.jr-st div{border:1.5px solid var(--line,#000);border-radius:10px;padding:5px 3px;text-align:center;min-width:0}
+.jr-st small{display:block;font-size:9.5px;opacity:.7}.jr-st b{font-size:13px;direction:ltr;display:block}
+.jr-tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line,#999);font-size:12px}
+.jr-tr:last-child{border-bottom:0}
+.jr-tr small{display:block;opacity:.7;font-size:10.5px;overflow-wrap:anywhere}
+.jr-tr b{direction:ltr}
+.jr-act{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.jr-act .btn{width:100%}
+/* مقایسه */
+.fc-t{width:100%;border-collapse:collapse;font-size:12px}
+.fc-t th,.fc-t td{padding:6px 4px;border-bottom:1px dashed var(--line,#999);text-align:center;vertical-align:middle}
+.fc-t th:first-child,.fc-t td:first-child{text-align:right;width:40%}
+.fc-t td.win{font-weight:800}
+.fc-t td small{display:block;opacity:.7;font-size:10px;direction:ltr}
+`;
+document.head.appendChild(st);
+
+/* ---------- 📓 ژورنال معاملات ---------- */
+const JK='radar.jr1';let J=[];try{J=JSON.parse(localStorage.getItem(JK))||[]}catch(e){}
+const jsave=()=>{try{localStorage.setItem(JK,JSON.stringify(J))}catch(e){}};
+let JDIR=1;
+const f2=(x,d=2)=>num(x)?(+x).toFixed(d):'—';
+const sg=x=>num(x)?(x>=0?'+':'')+(+x).toFixed(2):'—';
+function jstats(){
+  const n=J.length,w=J.filter(t=>t.pnl>0),l=J.filter(t=>t.pnl<0);
+  const gp=w.reduce((a,t)=>a+t.pnl,0),gl=-l.reduce((a,t)=>a+t.pnl,0),tot=J.reduce((a,t)=>a+t.pnl,0);
+  let eq=0,pk=0,dd=0;const pts=[0];J.forEach(t=>{eq+=t.pnl;pts.push(eq);if(eq>pk)pk=eq;if(pk-eq>dd)dd=pk-eq});
+  const rs=J.filter(t=>num(t.r));
+  return {n,wr:n?w.length/n*100:null,pf:gl>0?gp/gl:(gp>0?Infinity:null),tot,dd,exp:n?tot/n:null,avgR:rs.length?rs.reduce((a,t)=>a+t.r,0)/rs.length:null,pts,
+    aw:w.length?w.reduce((a,t)=>a+t.pct,0)/w.length:null,al:l.length?l.reduce((a,t)=>a+t.pct,0)/l.length:null};
+}
+function eqSvg(p){
+  if(p.length<2)return '<p class="note" style="margin:0">با ثبت معامله‌ها، منحنی سرمایه اینجا رسم می‌شود.</p>';
+  const W=300,Hh=80,mn=Math.min(0,...p),mx=Math.max(0,...p),rg=(mx-mn)||1,X=i=>(i/(p.length-1))*(W-8)+4,Y=v=>Hh-6-((v-mn)/rg)*(Hh-12);
+  const up=p[p.length-1]>=0,c=up?G:R,pts=p.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 ${W} ${Hh}" style="width:100%;height:80px;display:block"><line x1="0" x2="${W}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="rgba(127,127,127,.5)" stroke-dasharray="3 3"/><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(p.length-1).toFixed(1)}" cy="${Y(p[p.length-1]).toFixed(1)}" r="3.5" fill="${c}"/></svg>`;
+}
+function jhtml(){
+  const S=jstats(),PF=window.__jrPrefill||{};if(PF.dir)JDIR=PF.dir;window.__jrPrefill=null;
+  let h='<div class="jr">';
+  h+=`<div class="box"><h4>➕ ثبت معاملهٔ جدید</h4><div class="jr-f">
+   <label>نماد<input id="jSym" value="${H(PF.sym||TS.sym||'BTC')}" autocomplete="off" spellcheck="false"></label>
+   <label>جهت<div class="dir seg" id="jDir"><button data-jdir="1" class="${JDIR===1?'on':''}">لانگ</button><button data-jdir="-1" class="${JDIR===-1?'on':''}">شورت</button></div></label>
+   <label>اهرم<input id="jLev" inputmode="decimal" value="${H(PF.lev||1)}"></label>
+   <label>قیمت ورود<input id="jEn" inputmode="decimal" placeholder="0" value="${H(PF.en||'')}"></label>
+   <label>قیمت خروج<input id="jEx" inputmode="decimal" placeholder="0"></label>
+   <label>حد ضرر (اختیاری)<input id="jSl" inputmode="decimal" placeholder="0" value="${H(PF.sl||'')}"></label>
+   <label>سرمایه (USDT)<input id="jSz" inputmode="decimal" value="100"></label>
+   <label class="w2">دلیل ورود / یادداشت<input id="jNt" style="direction:rtl;text-align:right" placeholder="مثلاً شکست مقاومت + RSI" value="${H(PF.note||'')}"></label>
+   <div class="w3"><button class="btn" data-jadd style="width:100%">✅ ثبت در ژورنال</button></div></div></div>`;
+  h+=`<div class="jr-st"><div><small>معامله</small><b>${S.n}</b></div><div><small>نرخ برد</small><b>${S.wr==null?'—':S.wr.toFixed(0)+'٪'}</b></div><div><small>سود کل</small><b style="color:${S.tot>=0?G:R}">${S.n?sg(S.tot):'—'}</b></div><div><small>ضریب سود</small><b>${S.pf==null?'—':S.pf===Infinity?'∞':S.pf.toFixed(2)}</b></div>
+   <div><small>میانگین سود</small><b style="color:${G}">${S.aw==null?'—':sg(S.aw)+'٪'}</b></div><div><small>میانگین ضرر</small><b style="color:${R}">${S.al==null?'—':sg(S.al)+'٪'}</b></div><div><small>میانگین R</small><b>${S.avgR==null?'—':f2(S.avgR)}</b></div><div><small>بیشترین افت</small><b style="color:${R}">${S.n?'-'+f2(S.dd):'—'}</b></div></div>`;
+  h+=`<div class="box"><h4>📈 منحنی سرمایه (USDT)</h4>${eqSvg(S.pts)}</div>`;
+  h+=`<div class="box"><h4>🗒️ معاملات اخیر</h4>${J.length?J.slice().reverse().slice(0,25).map(t=>`<div class="jr-tr"><div><b dir="ltr">${H(t.sym)} ${t.dir>0?'▲':'▼'}${t.lev>1?' ×'+t.lev:''}</b><small>${H(t.en)} → ${H(t.ex)} · ${new Date(t.t).toLocaleDateString('fa-IR')}${num(t.r)?' · R '+f2(t.r):''}${t.note?' · '+H(t.note):''}</small></div><b style="color:${t.pnl>=0?G:R}">${sg(t.pnl)}<small style="direction:ltr">${sg(t.pct)}٪</small></b><button class="btn xs" data-jdel="${t.id}" aria-label="حذف">🗑</button></div>`).join(''):'<p class="note" style="margin:0">هنوز معامله‌ای ثبت نکرده‌ای.</p>'}</div>`;
+  h+=`<div class="jr-act"><button class="btn xs" data-jcsv>📋 کپی CSV</button><button class="btn xs off" data-jclr>🧹 پاک‌کردن همه</button><button class="btn xs" data-jrep style="grid-column:1/-1">📊 گزارش هفتگی (قابل کپی)</button></div><div id="jRep"></div>`;
+  h+='<p class="note">ژورنال فقط روی همین گوشی ذخیره می‌شود. «سود» برابر سرمایه × اهرم × درصد حرکت قیمت است و کارمزد را شامل نمی‌شود.</p></div>';
+  return h;
+}
+const jrender=()=>{const o=$e('tOut');if(o&&TS.tool==='jr')o.innerHTML=jhtml()};
+TFN.jr=async()=>jhtml();
+document.addEventListener('click',e=>{
+  const t=e.target.closest&&e.target.closest('#tOut [data-jdir],#tOut [data-jadd],#tOut [data-jdel],#tOut [data-jcsv],#tOut [data-jclr],#tOut [data-jrep],#tOut [data-jrepcopy]');if(!t||TS.tool!=='jr')return;
+  if(t.dataset.jdir){JDIR=+t.dataset.jdir;document.querySelectorAll('#jDir button').forEach(b=>b.classList.toggle('on',b===t));return}
+  if(t.hasAttribute('data-jadd')){
+    const v=id=>parseFloat(String($e(id).value).replace(/,/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
+    const sym=$e('jSym').value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,''),en=v('jEn'),ex=v('jEx'),sl=v('jSl'),lev=v('jLev')||1,sz=v('jSz')||0;
+    if(!sym||!(en>0)||!(ex>0)){toast('نماد، قیمت ورود و خروج را درست وارد کن.');return}
+    const mv=(ex/en-1)*JDIR*100,pct=mv*lev,pnl=sz*pct/100;
+    let r=null;if(sl>0&&sl!==en){const risk=Math.abs(en-sl)/en*100;if(risk>0)r=mv/risk}
+    J.push({id:Date.now().toString(36),t:Date.now(),sym,dir:JDIR,en,ex,sl:sl>0?sl:null,lev,sz,pct,pnl,r,note:($e('jNt').value||'').trim().slice(0,80)});jsave();jrender();toast('معامله ثبت شد ✓');return}
+  if(t.dataset.jdel){J=J.filter(x=>x.id!==t.dataset.jdel);jsave();jrender();return}
+  if(t.hasAttribute('data-jcsv')){
+    const csv='date,symbol,dir,entry,exit,sl,lev,size,pnl_pct,pnl_usdt,R,note\n'+J.map(x=>[new Date(x.t).toISOString().slice(0,10),x.sym,x.dir>0?'long':'short',x.en,x.ex,x.sl||'',x.lev,x.sz,x.pct.toFixed(2),x.pnl.toFixed(2),num(x.r)?x.r.toFixed(2):'','"'+(x.note||'').replace(/"/g,'""')+'"'].join(',')).join('\n');
+    (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(csv):Promise.reject()).then(()=>toast('CSV کپی شد ✓'),()=>toast('کپی نشد؛ دسترسی کلیپ‌بورد بسته است.'));return}
+  if(t.hasAttribute('data-jrepcopy')){(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(window.__jrepText||''):Promise.reject()).then(()=>toast('گزارش کپی شد ✓'),()=>toast('کپی نشد.'));return}
+  if(t.hasAttribute('data-jrep')){
+    const wk=Date.now()-7*864e5;let T=J.filter(x=>x.t>=wk),lbl='۷ روز اخیر';if(!T.length){T=J.slice();lbl='کل معاملات'}
+    const o=$e('jRep');if(!T.length){if(o)o.innerHTML='<div class="box"><p class="note" style="margin:0">برای گزارش، اول چند معامله ثبت کن.</p></div>';return}
+    const w=T.filter(x=>x.pnl>0),sum=T.reduce((a,x)=>a+x.pnl,0),best=T.reduce((a,x)=>x.pnl>a.pnl?x:a,T[0]),worst=T.reduce((a,x)=>x.pnl<a.pnl?x:a,T[0]);
+    const DN=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'],byD={};T.forEach(x=>{const d=(new Date(x.t).getDay());byD[d]=(byD[d]||0)+x.pnl});
+    const dk=Object.keys(byD).sort((a,b)=>byD[b]-byD[a]),bd=dk[0],wd=dk[dk.length-1];
+    const part=(d)=>{const a=T.filter(x=>x.dir===d);return a.length?`${a.length} معامله، برد ${Math.round(a.filter(x=>x.pnl>0).length/a.length*100)}٪، سود ${sg(a.reduce((p,x)=>p+x.pnl,0))}`:'—'};
+    const noSl=T.filter(x=>!x.sl).length,hiLev=T.filter(x=>x.lev>=10).length;
+    const tips=[];
+    if(noSl>0)tips.push(`${noSl} معامله بدون حد ضرر ثبت شده؛ برای هر معامله SL تعیین کن.`);
+    if(hiLev>T.length/2)tips.push('بیشتر معاملات با اهرم ۱۰× یا بالاتر بوده؛ اهرم را کمتر کن.');
+    const lw=T.filter(x=>x.pnl<0);if(lw.length&&w.length){const aw=w.reduce((p,x)=>p+x.pct,0)/w.length,al=Math.abs(lw.reduce((p,x)=>p+x.pct,0)/lw.length);if(al>aw)tips.push('میانگین ضررهایت از میانگین سودهایت بزرگ‌تر است؛ ضررها را زودتر ببند یا هدف سود را دورتر بگذار.')}
+    if(!tips.length)tips.push('اشتباه الگودار مشخصی دیده نشد؛ همین روش را ادامه بده و ثبت کن.');
+    const txt=`📊 گزارش ژورنال (${lbl})\nمعاملات: ${T.length} | نرخ برد: ${Math.round(w.length/T.length*100)}٪ | سود کل: ${sg(sum)} USDT\nبهترین: ${best.sym} ${sg(best.pnl)} | بدترین: ${worst.sym} ${sg(worst.pnl)}\nبهترین روز: ${DN[bd]} (${sg(byD[bd])}) | ضعیف‌ترین روز: ${DN[wd]} (${sg(byD[wd])})\nلانگ: ${part(1)}\nشورت: ${part(-1)}\n`+tips.map(x=>'• '+x).join('\n');
+    window.__jrepText=txt;
+    if(o)o.innerHTML=`<div class="box"><div style="white-space:pre-wrap;font-size:12.5px;line-height:1.9">${H(txt)}</div><button class="btn xs" data-jrepcopy style="width:100%;margin-top:8px">📋 کپی گزارش</button></div>`;return}
+  if(t.hasAttribute('data-jclr')){if(J.length&&confirm('همهٔ معاملات ژورنال پاک شود؟')){J=[];jsave();jrender()}}
+});
+
+/* ---------- ⚖️ مقایسهٔ فاندامنتال ---------- */
+const fcBar=()=>`<div class="tbar"><input id="fcSyms" value="${H(window.__fcLast||'BTC,ETH')}" aria-label="نمادها (۲ تا ۳ ارز با کاما)" autocomplete="off" spellcheck="false" style="direction:ltr"><button class="btn xs" id="tRun">مقایسه</button></div><p class="note" style="margin:6px 0 0">۲ یا ۳ نماد را با کاما بنویس؛ مثلاً SOL,AVAX,NEAR</p>`;
+const _tb=toolBar;toolBar=function(id){return id==='fcmp'?fcBar():id==='jr'?'':_tb(id)};
+TFN.fcmp=async()=>{
+  const inp=$e('fcSyms'),raw=inp?inp.value:(window.__fcLast||'BTC,ETH');
+  const syms=[...new Set(raw.toUpperCase().split(/[,،\s]+/).map(x=>x.replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'')).filter(Boolean))].slice(0,3);
+  window.__fcLast=syms.join(',');
+  if(syms.length<2)return '<div class="box"><p class="note">حداقل دو نماد وارد کن.</p></div>';
+  const L=window.__fundLoad,col=window.__fundCol,lab=window.__fundLab,D=[];
+  for(const s of syms){try{D.push(await L(s))}catch(e){return `<div class="box"><p class="note">${H(e&&e.fd?e.message:'دریافت داده انجام نشد.')}</p></div>`}await new Promise(r=>setTimeout(r,350))}
+  const keys=[];D.forEach(d=>d.M.forEach(m=>{if(!keys.includes(m.t))keys.push(m.t)}));
+  const best=Math.max(...D.map(d=>d.auto||0));
+  let h='<div class="fd" style="display:flex;flex-direction:column;gap:8px"><div class="box"><table class="fc-t"><thead><tr><th></th>'+D.map(d=>`<th dir="ltr">${H(d.sym)}</th>`).join('')+'</tr></thead><tbody>';
+  h+='<tr><td><b>امتیاز کل</b></td>'+D.map(d=>`<td class="${d.auto===best?'win':''}"><b style="font-size:17px;color:${col(d.auto||0)}">${d.auto==null?'—':d.auto}</b><small style="direction:rtl">${d.auto==null?'':lab(d.auto)}</small></td>`).join('')+'</tr>';
+  h+='<tr><td>رتبه / ارزش بازار</td>'+D.map(d=>`<td>${d.rank?'#'+d.rank:'—'}<small>${num(d.mc)?(d.mc>=1e9?(d.mc/1e9).toFixed(1)+'B':(d.mc/1e6).toFixed(0)+'M'):'—'}</small></td>`).join('')+'</tr>';
+  keys.forEach(k=>{const sc=D.map(d=>{const m=d.M.find(x=>x.t===k);return m||null}),mx=Math.max(...sc.map(m=>m?m.s:-1));
+    h+=`<tr><td>${H(sc.find(Boolean).i)} ${H(k.replace(/\s*\(.*\)/,''))}</td>`+sc.map(m=>m?`<td class="${m.s===mx&&sc.filter(Boolean).length>1?'win':''}" style="color:${col(m.s)}">${m.s}<small>${H(m.v)}</small></td>`:'<td>—</td>').join('')+'</tr>'});
+  h+='</tbody></table></div>';
+  const w=D.slice().sort((a,b)=>(b.auto||0)-(a.auto||0))[0];
+  h+=`<div class="box"><p style="margin:0;font-size:13px;line-height:1.8">🏆 از نظر شاخص‌های بنیادی، <b dir="ltr">${H(w.sym)}</b> با امتیاز <b>${w.auto}</b> جلوتر است. عدد بالاتر یعنی ساختار سالم‌تر، نه تضمین سود.</p></div><p class="note">منبع داده: CoinGecko · توصیهٔ مالی نیست.</p></div>`;
+  return h;
+};
+
+/* ---------- ثبت در منوی ☰ ---------- */
+const add=(id,ic,t,d,cat,after)=>{if(TOOLS.some(x=>x[0]===id))return;let i=TOOLS.findIndex(x=>x[0]===after);TOOLS.splice(i>=0?i+1:TOOLS.length,0,[id,ic,t,d,cat])};
+add('fcmp','⚖️','مقایسهٔ فاندامنتال','مقایسهٔ بنیادی ۲ تا ۳ ارز','تحلیل','fund');
+add('jr','📓','ژورنال معاملات','ثبت معامله، آمار و منحنی سرمایه','معامله','risk');
+/* دکمهٔ «تحلیل بیشتر» عمومی برای ابزارهای جدید لازم نیست */
+if(typeof window.openTool==='function'){const _o=window.openTool;window.openTool=async function(id){const r=await _o.apply(this,arguments);if(id==='fcmp'||id==='jr'){const b=document.querySelector('#tBody [data-emore]');if(b)b.remove()}return r}}
+})();
+
+</script>
+<script id="alertsCombo">
+/* ===== 🔔 هشدار هوشمند (بازنویسی) + 🧩 امتیاز ترکیبی + 🔗 اتصال سیگنال + 📲 نصب ===== */
+(()=>{
+if(typeof TOOLS==='undefined'||typeof TFN==='undefined'||typeof TS==='undefined'||typeof store==='undefined')return;
+const H=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=x=>x!=null&&isFinite(x);
+const $e=id=>document.getElementById(id);
+const AK='radar.alerts';
+const gA=()=>store.get(AK,[]),sA=v=>store.set(AK,v);
+const pn=x=>parseFloat(String(x==null?'':x).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/٫/g,'.').replace(/[,،\s]/g,''));
+const cleanSym=v=>String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'');
+const G='#0ecb81',R='#f6465d';
+
+const st=document.createElement('style');
+st.textContent=`
+.al-ban-w{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:99999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.al-ban{pointer-events:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;background:#fff;color:#000;border:2.5px solid #000;border-radius:14px;box-shadow:0 4px 0 #000;padding:9px 12px;font-size:13px;font-weight:800;line-height:1.6;animation:alIn .25s ease}
+.al-ban button{border:2px solid #000;background:var(--y,#f0b90b);border-radius:9px;min-height:30px;padding:2px 10px;font:inherit;font-size:12px;color:#000}
+@keyframes alIn{from{transform:translateY(-14px);opacity:0}to{opacity:1}}
+.al{display:flex;flex-direction:column;gap:8px;min-width:0}.al *{box-sizing:border-box}
+.al .box{margin:0;min-width:0}
+.al h4{margin:0 0 6px;font-size:13.5px}
+.al-f{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.al-f input,.al-f select{width:100%;min-width:0;min-height:34px;padding:3px 6px;font-size:16px;border:2px solid #000;border-radius:9px;background:#fff;color:#000}
+.al-f .c2{grid-column:span 2}.al-f .c3{grid-column:span 3}.al-f .c6{grid-column:1/-1}
+.al-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line,#999);font-size:12px}
+.al-r:last-child{border-bottom:0}
+.al-r small{display:block;opacity:.75;font-size:10.5px;overflow-wrap:anywhere}
+.al-r .bt{display:flex;gap:4px}
+.al-st{display:grid;grid-template-columns:1fr 1fr;gap:6px}.al-st .btn{width:100%}
+.cb{display:flex;flex-direction:column;gap:8px;min-width:0}.cb *{box-sizing:border-box}.cb .box{margin:0;min-width:0}
+.cb h4{margin:0 0 6px;font-size:13.5px}
+.cb-ring{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center}
+.cb-ring .c{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.cb-ring .c::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--surf,#fff)}
+.cb-ring .c *{position:relative;z-index:1}.cb-ring .c b{font-size:25px;line-height:1}.cb-ring .c small{font-size:10px;opacity:.7}
+.cb-bar{display:grid;grid-template-columns:62px minmax(0,1fr) 30px;gap:6px;align-items:center;font-size:12px;margin:5px 0}
+.cb-bar i{display:block;height:8px;border-radius:99px;background:rgba(127,127,127,.25);position:relative;overflow:hidden}.cb-bar i u{position:absolute;inset:0 auto 0 0;border-radius:99px}
+.cb-tb{width:100%;border-collapse:collapse;font-size:12px}.cb-tb th,.cb-tb td{padding:5px 3px;border-bottom:1px dashed var(--line,#999);text-align:center}.cb-tb th:first-child,.cb-tb td:first-child{text-align:right}
+.cb-ls{margin:0;padding:0;list-style:none;font-size:12px;line-height:1.8}
+`;
+document.head.appendChild(st);
+
+/* ---------- صدا / لرزش / اعلان ---------- */
+let AC=null;
+const unlock=()=>{try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}};
+['click','touchend'].forEach(ev=>document.addEventListener(ev,unlock,{passive:true}));
+function beep(){try{if(!AC)return;const t=AC.currentTime;[0,.18,.36].forEach((d,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=i===2?1175:880;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.35,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.16);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+.18)})}catch(e){}}
+function sysNotify(msg){
+  try{if(!('Notification' in window)||Notification.permission!=='granted')return;
+    const opt={body:msg,tag:'radar-alert-'+Date.now(),renotify:true,lang:'fa',dir:'rtl'};
+    if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration){navigator.serviceWorker.getRegistration().then(r=>{if(r&&r.showNotification)r.showNotification('رادار کریپتو',opt);else new Notification('رادار کریپتو',opt)}).catch(()=>{try{new Notification('رادار کریپتو',opt)}catch(e){}})}
+    else new Notification('رادار کریپتو',opt);
+  }catch(e){}
+}
+let titleT=null;const T0=document.title;
+function banner(msg){
+  let w=document.querySelector('.al-ban-w');if(!w){w=document.createElement('div');w.className='al-ban-w';document.body.appendChild(w)}
+  const b=document.createElement('div');b.className='al-ban';b.innerHTML=`<span>${H(msg)}</span><button>باشه</button>`;
+  b.querySelector('button').onclick=()=>b.remove();w.appendChild(b);while(w.children.length>3)w.firstChild.remove();
+  setTimeout(()=>{try{b.remove()}catch(e){}},45000);
+  if(document.hidden){clearInterval(titleT);let f=0;titleT=setInterval(()=>{document.title=(f++%2?'🔔 ':'')+(f%2?'هشدار!':T0);if(!document.hidden){clearInterval(titleT);document.title=T0}},900)}
+}
+function fire(a){
+  const up=a.dir==='up',v=a.hitv;let m;
+  if(!a.type||a.type==='price')m=`🔔 ${a.sym} ${up?'بالاتر از':'پایین‌تر از'} ${fmt(a.p)} رسید (اکنون ${fmt(v)})`;
+  else if(a.type==='rsi')m=`🔔 RSI ${a.sym} (${a.tf||'1h'}) ${up?'بالای':'زیر'} ${a.p} رسید (اکنون ${num(v)?v.toFixed(1):'—'})`;
+  else m=`🔔 تغییر ۲۴ساعتهٔ ${a.sym} ${up?'بالای':'زیر'} ${a.p}٪ رسید (اکنون ${num(v)?v.toFixed(1):'—'}٪)`;
+  try{toast(m)}catch(e){}banner(m);beep();try{navigator.vibrate&&navigator.vibrate([250,120,250,120,400])}catch(e){}sysNotify(m);
+}
+
+/* ---------- موتور هشدار ---------- */
+let busyA=false;
+async function wick(sym,since){
+  try{const lim=Math.min(500,Math.max(5,Math.ceil((Date.now()-since)/6e4)+2));
+    const d=await jget('https://data-api.binance.vision/api/v3/klines?symbol='+sym+'USDT&interval=1m&limit='+lim);
+    let hi=-Infinity,lo=Infinity;d.forEach(k=>{if(+k[0]+6e4>=since){hi=Math.max(hi,+k[2]);lo=Math.min(lo,+k[3])}});
+    return hi>-Infinity?{hi,lo}:null}catch(e){return null}
+}
+async function runAlerts(force){
+  if(busyA)return;busyA=true;
+  try{
+    let al=gA().filter(a=>!a.done);if(!al.length)return;
+    const ps=[...new Set(al.filter(a=>!a.type||a.type==='price').map(a=>a.sym))];
+    if(ps.length&&typeof SRC!=='undefined'){for(let k=0;k<SRC.length;k++){try{const m=await SRC[(lpIdx+k)%SRC.length].prices(ps);if(m){Object.keys(m).forEach(x=>{if(m[x]!=null)LP[x]=m[x]});break}}catch(e){}}}
+    const all=gA(),now=Date.now(),fired=[],wc={};
+    for(const a of all){
+      if(a.done)continue;if(!a.t)a.t=now;const since=a.lc||a.t;let cur=null,hit=false;
+      if(!a.type||a.type==='price'){
+        cur=LP[a.sym];if(cur!=null)hit=a.dir==='up'?cur>=a.p:cur<=a.p;
+        if(!hit&&now-since>90000){const w=wc[a.sym+':'+since]||(wc[a.sym+':'+since]=await wick(a.sym,since));if(w){hit=a.dir==='up'?w.hi>=a.p:w.lo<=a.p;if(hit)cur=a.dir==='up'?w.hi:w.lo}}
+      }else if(a.type==='rsi'){
+        if(force||now-(a.lk||0)>110000){a.lk=now;try{const K=await klines(a.sym,a.tf||'1h',120),c=K.slice(0,-1).map(k=>k.c);cur=rsiCalc(c,14).at(-1);if(cur!=null)hit=a.dir==='up'?cur>=a.p:cur<=a.p}catch(e){}}else cur=a.cur;
+      }else{
+        if(force||now-(a.lk||0)>110000){a.lk=now;try{const d=await jget('https://data-api.binance.vision/api/v3/ticker/24hr?symbol='+a.sym+'USDT');cur=+d.priceChangePercent;hit=a.dir==='up'?cur>=a.p:cur<=a.p}catch(e){}}else cur=a.cur;
+      }
+      if(cur!=null)a.cur=cur;a.lc=now;
+      if(hit){a.done=true;a.at=now;a.hitv=cur;fired.push(a)}
+    }
+    sA(all);fired.forEach(fire);
+    if(!$('#tools').hidden&&TS.tool==='watch'&&$e('tOut'))$e('tOut').innerHTML=watchHTML();
+  }finally{busyA=false}
+}
+checkAlerts=function(){runAlerts()};
+setInterval(()=>{if(!document.hidden)runAlerts()},30000);
+['visibilitychange','focus','online'].forEach(ev=>addEventListener(ev,()=>{if(!document.hidden)setTimeout(()=>runAlerts(true),400)}));
+setTimeout(()=>runAlerts(true),2500);
+
+/* ---------- رابط دیده‌بان و هشدار ---------- */
+const tn={price:'قیمت',rsi:'RSI',chg:'تغییر ۲۴س'};
+const desc=a=>{const up=a.dir==='up';return (a.sym)+' · '+(!a.type||a.type==='price'?(up?'قیمت ≥ ':'قیمت ≤ ')+fmt(a.p):a.type==='rsi'?'RSI('+(a.tf||'1h')+') '+(up?'≥ ':'≤ ')+a.p:'تغییر ۲۴س '+(up?'≥ ':'≤ ')+a.p+'٪')};
+const nowTxt=a=>{const c=(!a.type||a.type==='price')?LP[a.sym]:a.cur;if(!num(c))return '—';if(!a.type||a.type==='price')return fmt(c)+' ('+((a.p/c-1)*100>=0?'+':'')+((a.p/c-1)*100).toFixed(1)+'٪ تا هدف)';return c.toFixed(1)+(a.type==='chg'?'٪':'')};
+function notifState(){if(!('Notification' in window))return 'این مرورگر اعلان سیستمی ندارد؛ هشدار داخل برنامه (بنر + صدا + لرزش) کار می‌کند.';const p=Notification.permission;return p==='granted'?'اعلان سیستمی فعال است ✓':p==='denied'?'اعلان در تنظیمات مرورگر بسته شده؛ هشدار داخل برنامه همچنان کار می‌کند.':'اعلان سیستمی هنوز فعال نشده.'}
+watchHTML=function(){
+  const w=store.get('radar.watch',[]),al=gA(),act=al.filter(a=>!a.done),dn=al.filter(a=>a.done).sort((a,b)=>(b.at||0)-(a.at||0));
+  let h='<div class="al">';
+  h+=`<div class="box"><h4>➕ هشدار جدید</h4><div class="al-f">
+   <input class="c2" id="nSym" list="symlist" placeholder="نماد (SOL)" value="${H(TS.sym||'')}" autocomplete="off" spellcheck="false" style="direction:ltr">
+   <select class="c2" id="nType"><option value="price">قیمت</option><option value="rsi">RSI</option><option value="chg">تغییر ۲۴س ٪</option></select>
+   <select class="c2" id="nDir"><option value="auto">جهت خودکار</option><option value="up">بالاتر از</option><option value="dn">پایین‌تر از</option></select>
+   <input class="c3" id="nVal" inputmode="decimal" placeholder="قیمت هدف" style="direction:ltr">
+   <select class="c3" id="nTf" style="display:none"><option value="15m">15m</option><option value="1h" selected>1h</option><option value="4h">4h</option><option value="1d">1d</option></select>
+   <button class="btn c6" id="nAdd" style="width:100%">🔔 ثبت هشدار</button></div></div>`;
+  h+=`<div class="box"><h4>⏳ هشدارهای فعال (${act.length})</h4>${act.length?act.map(a=>`<div class="al-r"><div><b dir="ltr">${H(desc(a))}</b><small>اکنون: ${H(nowTxt(a))}</small></div><div class="bt"><button class="btn xs" data-an="${H(a.sym)}">📈</button><button class="btn xs off" data-ndel="${a.id}">🗑</button></div></div>`).join(''):'<p class="note" style="margin:0">هشدار فعالی نداری.</p>'}</div>`;
+  if(dn.length)h+=`<div class="box"><h4>✅ رسیده</h4>${dn.slice(0,12).map(a=>`<div class="al-r"><div><b dir="ltr">${H(desc(a))}</b><small>${a.at?new Date(a.at).toLocaleString('fa-IR'):''}${num(a.hitv)?' · مقدار '+(a.type&&a.type!=='price'?(+a.hitv).toFixed(1):fmt(a.hitv)):''}</small></div><div class="bt"><button class="btn xs" data-nre="${a.id}">🔁</button><button class="btn xs off" data-ndel="${a.id}">🗑</button></div></div>`).join('')}<button class="btn xs off" data-nclr style="width:100%;margin-top:6px">🧹 پاک‌کردن رسیده‌ها</button></div>`;
+  h+=`<div class="box"><h4>⭐ دیده‌بان</h4><div class="tbar"><input id="wSym" list="symlist" placeholder="مثلاً SOL" autocomplete="off" spellcheck="false" style="direction:ltr"><button class="btn xs" id="wAdd">افزودن</button></div>${w.length?w.map(s=>`<div class="al-r"><div><button class="btn xs" data-an="${H(s)}">${H(s)}</button> <b class="num" dir="ltr">${LP[s]?fmt(LP[s]):'—'}</b></div><div class="bt"><button class="btn xs off" data-wdel="${H(s)}">حذف</button></div></div>`).join(''):'<p class="note" style="margin:6px 0 0">فهرست خالی است.</p>'}</div>`;
+  h+=`<div class="box"><h4>📲 اعلان و نصب</h4><p class="note" style="margin:0 0 6px" id="nSt">${H(notifState())}</p><div class="al-st"><button class="btn xs" id="nPerm">🔔 فعال‌سازی اعلان</button><button class="btn xs" id="nTest">🧪 تست هشدار</button><button class="btn xs" id="nInst" style="grid-column:1/-1">📲 نصب روی گوشی (آیکون صفحهٔ اصلی)</button></div><p class="note" style="margin:6px 0 0">هشدارها هر ۳۰ ثانیه وقتی برنامه باز است بررسی می‌شوند. اگر برنامه بسته یا در پس‌زمینه بود، با باز کردن دوباره، شکست‌های این فاصله هم (با شمع‌های ۱ دقیقه‌ای) بررسی می‌شود. برای هشدار وقتی برنامه کاملاً بسته است، سرویس اعلان سرور لازم است که در یک فایل ساده ممکن نیست.</p></div>`;
+  return h+'</div>';
+};
+let DEF=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();DEF=e});
+document.addEventListener('change',e=>{
+  if(e.target&&e.target.id==='nType'){const t=e.target.value,v=$e('nVal'),tf=$e('nTf'),d=$e('nDir');if(tf)tf.style.display=t==='rsi'?'':'none';if(v)v.placeholder=t==='price'?'قیمت هدف':t==='rsi'?'عدد RSI (مثلاً 30)':'درصد تغییر (مثلاً -8)';if(d&&t!=='price'&&d.value==='auto')d.value='up'}
+});
+document.addEventListener('click',e=>{
+  const t=e.target.closest&&e.target.closest('#nAdd,[data-ndel],[data-nre],[data-nclr],#nPerm,#nTest,#nInst');if(!t)return;
+  const re=()=>{const o=$e('tOut');if(o&&TS.tool==='watch')o.innerHTML=watchHTML()};
+  if(t.id==='nAdd'){
+    const sym=cleanSym($e('nSym').value),type=$e('nType').value,val=pn($e('nVal').value);let dir=$e('nDir').value,tf=$e('nTf').value;
+    if(!sym||!isFinite(val)){toast('نماد و عدد هدف را درست وارد کن.');return}
+    if(type==='price'&&!(val>0)){toast('قیمت هدف باید بزرگ‌تر از صفر باشد.');return}
+    if(type==='rsi'&&(val<=0||val>=100)){toast('RSI باید بین ۱ تا ۹۹ باشد.');return}
+    if(!('Notification' in window)||Notification.permission!=='default'){}else{try{Notification.requestPermission()}catch(er){}}
+    unlock();
+    const finish=(cur)=>{
+      if(dir==='auto'){if(!(cur>0)){toast('قیمت فعلی این نماد پیدا نشد؛ جهت را دستی انتخاب کن.');return}dir=val>=cur?'up':'dn'}
+      const al=gA();al.push({id:'a'+Date.now(),sym,type,dir,p:val,tf:type==='rsi'?tf:undefined,done:false,t:Date.now()});sA(al);re();toast('هشدار ثبت شد ✓');runAlerts(true)};
+    if(type==='price'&&dir==='auto')priceOf(sym).then(finish);else{if(dir==='auto')dir='up';finish(null)}
+    return}
+  if(t.dataset.ndel){sA(gA().filter(a=>a.id!==t.dataset.ndel));re();return}
+  if(t.dataset.nre){const al=gA(),a=al.find(x=>x.id===t.dataset.nre);if(a){a.done=false;a.t=Date.now();a.lc=0;delete a.at;delete a.hitv;sA(al);re();runAlerts(true)}return}
+  if(t.hasAttribute('data-nclr')){sA(gA().filter(a=>!a.done));re();return}
+  if(t.id==='nPerm'){try{Notification.requestPermission().then(p=>{toast(p==='granted'?'اعلان فعال شد ✓':'اجازهٔ اعلان داده نشد.');const s=$e('nSt');if(s)s.textContent=notifState()})}catch(er){toast('این مرورگر اعلان را پشتیبانی نمی‌کند.')}return}
+  if(t.id==='nTest'){unlock();fire({sym:'TEST',type:'price',dir:'up',p:100,hitv:101});return}
+  if(t.id==='nInst'){if(DEF){DEF.prompt();DEF=null}else toast('آیفون: دکمهٔ Share ← Add to Home Screen · اندروید: منوی ⋮ ← Install app / Add to Home screen');return}
+});
+
+/* ---------- 🧩 امتیاز ترکیبی ---------- */
+const col=s=>s>=75?G:s>=55?'#8bd450':s>=40?'#f0b90b':R;
+let CW=[.5,.5];
+const lightFund=c=>{
+  const M=[];const mc=c.market_cap,v=c.total_volume,r=c.market_cap_rank;
+  if(r)M.push([r<=10?95:r<=30?85:r<=100?70:r<=250?55:40,18]);
+  if(mc&&v){const x=v/mc*100;M.push([x<.3?20:x<1?40:x<2?60:x<=20?90:x<=40?65:40,12])}
+  const base=c.max_supply||c.total_supply;if(c.circulating_supply&&base){const p=c.circulating_supply/base*100;M.push([p>=90?95:p>=75?80:p>=55?62:p>=35?45:28,14])}
+  if(c.fully_diluted_valuation&&mc){const x=c.fully_diluted_valuation/mc;M.push([x<=1.15?95:x<=1.5?80:x<=2.5?60:x<=4?40:25,12])}
+  if(num(c.ath_change_percentage)){const a=c.ath_change_percentage;M.push([a>=-25?75:a>=-60?60:a>=-85?42:28,6])}
+  let sw=0,ss=0;M.forEach(m=>{sw+=m[1];ss+=m[0]*m[1]});return sw?Math.round(ss/sw):null;
+};
+function ring(s){const c=col(s);return `<div class="c" style="background:conic-gradient(${c} ${s*3.6}deg,rgba(127,127,127,.25) 0)"><b style="color:${c}">${s}</b><small>از ۱۰۰</small></div>`}
+const bar=(n,s)=>`<div class="cb-bar"><span>${n}</span><i><u style="width:${s==null?0:s}%;background:${s==null?'#888':col(s)}"></u></i><b>${s==null?'—':s}</b></div>`;
+let CB=null;
+function cbHTML(){
+  const D=CB;if(!D)return '';
+  const {sym,tech,fund,an,fe}=D;let comb=null;
+  if(tech!=null&&fund!=null)comb=Math.round(tech*CW[0]+fund*CW[1]);else comb=tech!=null?tech:fund;
+  let v='';
+  if(tech!=null&&fund!=null){
+    v=tech>=62&&fund>=62?'✅ هم‌راستا و قوی: هم نمودار و هم بنیان پروژه حمایت می‌کنند.':tech>=60&&fund<45?'⚠️ تضاد: نمودار خوب ولی بنیان ضعیف؛ فقط معاملهٔ کوتاه‌مدت با حد ضرر محکم.':tech<45&&fund>=62?'ℹ️ بنیان خوب ولی نمودار ضعیف؛ صبر کن یا پله‌پله وارد شو.':tech<45&&fund<45?'⛔ هر دو ضعیف؛ فعلاً دور بمان.':'➖ حالت متوسط و خنثی؛ منتظر تأیید بیشتر بمان.'}
+  else if(tech==null)v='داده‌ی تکنیکال کافی نبود.';else v='داده‌ی بنیادی دریافت نشد (فقط امتیاز تکنیکال نشان داده شد).';
+  const vs=(an&&an.votes||[]).slice().sort((a,b)=>b.vote-a.vote),pos=vs.filter(x=>x.vote>.15).slice(0,4),neg=vs.slice().reverse().filter(x=>x.vote<-.15).slice(0,4);
+  let h='<div class="cb">';
+  h+=`<div class="box"><div class="cb-ring">${comb==null?'':ring(comb)}<div><b dir="ltr" style="font-size:15px">${H(sym)}</b>${bar('تکنیکال',tech)}${bar('بنیادی',fund)}</div></div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.8">${v}</p>
+   <div class="seg" style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:8px"><button data-cw="50" class="${CW[0]===.5?'on':''}">۵۰/۵۰</button><button data-cw="70" class="${CW[0]===.7?'on':''}">تکنیکال بیشتر</button><button data-cw="30" class="${CW[0]===.3?'on':''}">بنیادی بیشتر</button></div></div>`;
+  if(pos.length||neg.length)h+=`<div class="box"><h4>🔬 اندیکاتورهای اثرگذار</h4><ul class="cb-ls">${pos.map(x=>`<li>🟢 ${H(x.name)}</li>`).join('')}${neg.map(x=>`<li>🔴 ${H(x.name)}</li>`).join('')}</ul></div>`;
+  if(fe)h+=`<div class="box"><p class="note" style="margin:0">${H(fe)}</p></div>`;
+  h+=`<div class="al-st"><button class="btn xs" data-an="${H(sym)}">📈 تحلیل کامل</button><button class="btn xs" data-tool="fund">🏦 فاندامنتال</button><button class="btn xs" data-cbrank style="grid-column:1/-1">🏆 رتبه‌بندی ترکیبی بازار (۲۰ ارز برتر)</button></div><div id="cbRank"></div><p class="note">امتیاز تکنیکال از رأی اندیکاتورها (تایم‌فریم ۴ ساعته) و امتیاز بنیادی از CoinGecko است. توصیهٔ مالی نیست.</p></div>`;
+  return h;
+}
+TFN.combo=async()=>{
+  const sym=TS.sym;let tech=null,fund=null,an=null,fe=null;
+  try{const K=await klines(sym,'4h',300),cl=cl2(K,'4h');an=analyze(cl.slice(-300));if(an&&an.votes&&an.votes.length){const net=an.votes.reduce((a,v)=>a+v.vote,0)/an.votes.length;tech=Math.round(Math.max(0,Math.min(1,(net+1)/2))*100)}}catch(e){}
+  try{const f=await window.__fundLoad(sym);fund=f.auto}catch(e){fe=e&&e.fd?e.message:'داده‌ی بنیادی دریافت نشد.'}
+  if(tech==null&&fund==null)return '<div class="box"><p class="note">دریافت داده انجام نشد. نماد یا اینترنت را بررسی کن.</p></div>';
+  CB={sym,tech,fund,an,fe};return cbHTML();
+};
+document.addEventListener('click',async e=>{
+  const t=e.target.closest&&e.target.closest('#tOut [data-cw],#tOut [data-cbrank]');if(!t||TS.tool!=='combo')return;
+  if(t.dataset.cw){CW=t.dataset.cw==='70'?[.7,.3]:t.dataset.cw==='30'?[.3,.7]:[.5,.5];const o=$e('tOut');if(o)o.innerHTML=cbHTML();return}
+  const box=$e('cbRank');if(!box)return;box.innerHTML=window.SKEL();
+  try{
+    const rows=await scanData(box);
+    const mk=await jget('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
+    const fm={};mk.forEach(c=>{const s=String(c.symbol).toUpperCase();if(!fm[s])fm[s]=lightFund(c)});
+    const L=rows.map(r=>{const tc=Math.round(Math.max(0,Math.min(1,(r.net+1)/2))*100),f=fm[r.s];return f==null?null:{s:r.s,t:tc,f,c:Math.round(tc*CW[0]+f*CW[1])}}).filter(Boolean).sort((a,b)=>b.c-a.c).slice(0,20);
+    box.innerHTML=L.length?`<div class="box" style="margin-top:8px"><h4>🏆 برترین‌ها (تکنیکال × بنیادی)</h4><div class="scroll"><table class="cb-tb"><thead><tr><th>ارز</th><th>تکنیکال</th><th>بنیادی</th><th>ترکیبی</th></tr></thead><tbody>${L.map(r=>`<tr><td><button class="btn xs" data-an="${H(r.s)}">${H(r.s)}</button></td><td style="color:${col(r.t)}">${r.t}</td><td style="color:${col(r.f)}">${r.f}</td><td><b style="color:${col(r.c)}">${r.c}</b></td></tr>`).join('')}</tbody></table></div><p class="note" style="margin:6px 0 0">امتیاز بنیادی اینجا نسخهٔ سبک است (رتبه، نقدشوندگی، عرضه، FDV، سقف تاریخی)؛ برای دقیق‌ترش روی هر ارز «فاندامنتال» را بزن.</p></div>`:'<p class="note">داده‌ی کافی برای رتبه‌بندی پیدا نشد.</p>';
+  }catch(er){box.innerHTML='<p class="note">دریافت داده انجام نشد؛ اینترنت یا VPN را بررسی کن و کمی بعد دوباره امتحان کن.</p>'}
+});
+
+/* ---------- 🔗 سیگنال ← ماشین‌حساب ریسک / ژورنال ---------- */
+const findSig=id=>(typeof ALL!=='undefined'&&ALL.find(x=>String(x.id)===String(id)))||(typeof HIST!=='undefined'&&HIST&&HIST[id])||null;
+document.addEventListener('click',e=>{
+  const t=e.target.closest&&e.target.closest('[data-sigrisk],[data-sigjr]');if(!t)return;
+  const id=t.dataset.sigrisk||t.dataset.sigjr,s=findSig(id);if(!s){toast('سیگنال پیدا نشد.');return}
+  TS.sym=s.sym;const lev=typeof levOf==='function'?levOf(s):1;
+  if(t.dataset.sigjr){window.__jrPrefill={sym:s.sym,dir:s.dir==='LONG'?1:-1,en:s.entry,sl:s.sl,lev,note:'سیگنال '+s.score+(s.tier?' ('+s.tier+')':'')};openTools('jr');return}
+  openTools('risk');let n=0;const iv=setInterval(()=>{n++;const E=$e('rkE');if(E){clearInterval(iv);E.value=s.entry;$e('rkS').value=s.sl;$e('rkT').value=s.tp&&s.tp[0]||'';$e('rkL').value=lev;try{riskCalc()}catch(er){}}else if(n>40)clearInterval(iv)},50);
+});
+
+/* ---------- ثبت ابزار + پاک‌سازی دکمهٔ عمومی ---------- */
+if(!TOOLS.some(x=>x[0]==='combo')){const i=TOOLS.findIndex(x=>x[0]==='fcmp');TOOLS.splice(i>=0?i+1:TOOLS.length,0,['combo','🧩','امتیاز ترکیبی','تکنیکال + فاندامنتال در یک عدد','تحلیل'])}
+const _tb=toolBar;toolBar=function(id){return id==='combo'?symBar(0):_tb(id)};
+if(typeof window.openTool==='function'){const _o=window.openTool;window.openTool=async function(id){const r=await _o.apply(this,arguments);if(id==='combo'){const b=document.querySelector('#tBody [data-emore]');if(b)b.remove()}return r}}
+
+/* ---------- 📲 PWA ---------- */
+try{
+  const hd=document.head,mt=(n,c)=>{if(!document.querySelector('meta[name="'+n+'"]')){const m=document.createElement('meta');m.name=n;m.content=c;hd.appendChild(m)}};
+  mt('theme-color','#f0b90b');mt('mobile-web-app-capable','yes');mt('apple-mobile-web-app-capable','yes');mt('apple-mobile-web-app-title','رادار');mt('apple-mobile-web-app-status-bar-style','default');
+  if(!document.querySelector('link[rel="manifest"]')&&location.protocol.startsWith('http')){
+    const ic='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#f0b90b"/><circle cx="96" cy="96" r="62" fill="none" stroke="#000" stroke-width="10"/><circle cx="96" cy="96" r="38" fill="none" stroke="#000" stroke-width="10"/><circle cx="96" cy="96" r="14" fill="#000"/></svg>');
+    const mf={name:'رادار تحلیل کریپتو',short_name:'رادار',start_url:location.href.split('#')[0],scope:location.href.split('#')[0].replace(/[^/]*$/,''),display:'standalone',background_color:'#ffffff',theme_color:'#f0b90b',lang:'fa',dir:'rtl',icons:[{src:ic,sizes:'192x192',type:'image/svg+xml',purpose:'any'}]};
+    const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));hd.appendChild(l);
+    if(!document.querySelector('link[rel="apple-touch-icon"]')){const a=document.createElement('link');a.rel='apple-touch-icon';a.href=ic;hd.appendChild(a)}
+  }
+}catch(e){}
+})();
+
+</script>
+<script id="srMtf">
+/* ===== 🧱 حمایت/مقاومت چندتایم‌فریمی روی چارت ===== */
+(()=>{
+if(typeof drawChart!=='function'||typeof LAY==='undefined'||typeof srLevels!=='function')return;
+const st=document.createElement('style');
+st.textContent=`.mtfi{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 2px;font-size:11px;line-height:1.5}
+.mtfi:empty{display:none}
+.mtfi span{border:1.5px solid var(--line,#000);border-radius:9px;padding:2px 7px;white-space:nowrap;direction:ltr}
+.mtfi .sm{flex:1 0 100%;border:0;padding:0;white-space:normal;direction:rtl;opacity:.85}`;
+document.head.appendChild(st);
+const TFS=[['1h',1],['4h',2],['1d',3]],MT={};let loading=null;
+const RED='#f6465d',GRN='#0ecb81';
+async function build(sym){
+  const raw=[];let price=null;
+  for(const [tf,w] of TFS){
+    try{const K=await klines(sym,tf,500),cl=cl2(K,tf).slice(-300);if(cl.length<60)continue;
+      const an=analyze(cl),atr=an&&an.atr?an.atr:cl.at(-1).c*.01;price=K.at(-1).c;
+      const r=srLevels(cl,atr);[...r.sup,...r.res].forEach(q=>raw.push({p:q.p,tf,w,t:q.touches}));
+    }catch(e){}
+  }
+  if(!raw.length||!price)return null;
+  raw.sort((a,b)=>a.p-b.p);
+  const tol=price*.004,groups=[];
+  raw.forEach(q=>{const g=groups[groups.length-1];if(g&&q.p-g.max<=tol){g.it.push(q);g.max=q.p}else groups.push({it:[q],max:q.p})});
+  const lv=groups.map(g=>{
+    const it=g.it,sw=it.reduce((a,q)=>a+q.w+Math.min(3,q.t)*.5,0),ws=it.reduce((a,q)=>a+q.w,0),p=it.reduce((a,q)=>a+q.p*q.w,0)/ws;
+    return {p,tfs:[...new Set(it.map(q=>q.tf))],sw,s:sw>=7?3:sw>=4?2:1,w:Math.min(6,sw/2),z:Math.max(.0012,(g.max-it[0].p)/p/2+.0012)};
+  });
+  const pick=(arr)=>arr.sort((a,b)=>b.sw-a.sw).slice(0,3);
+  return [...pick(lv.filter(l=>l.p>price)),...pick(lv.filter(l=>l.p<=price))];
+}
+function info(M){
+  const el=document.getElementById('mtfInfo');if(!el)return;
+  if(!LAY.sr||!LAY.mtf||!M.mtf||M.mtfSym!==M.sym||!M.mtf.length){el.innerHTML='';return}
+  const lp=LP[M.sym]??M.K[M.K.length-1].c;
+  const L=M.mtf.slice().sort((a,b)=>b.p-a.p);
+  const up=L.filter(l=>l.p>lp).sort((a,b)=>a.p-b.p)[0],dn=L.filter(l=>l.p<=lp).sort((a,b)=>b.p-a.p)[0];
+  const d=(l)=>((l.p/lp-1)*100).toFixed(1)+'٪';
+  let h='<div class="sm">'+(up?`نزدیک‌ترین مقاومت: <b dir="ltr">${fmt(up.p)}</b> (${d(up)}) `:'')+(dn?`· نزدیک‌ترین حمایت: <b dir="ltr">${fmt(dn.p)}</b> (${d(dn)})`:'')+'</div>';
+  h+=L.map(l=>`<span style="border-color:${l.p>lp?RED:GRN}">${l.p>lp?'R':'S'}${'★'.repeat(l.s)} ${fmt(l.p)} · ${l.tfs.join('+')}</span>`).join('');
+  el.innerHTML=h;
+}
+function ensure(){
+  const M=CT;if(!M||!M.sym)return;
+  if(!LAY.sr||!LAY.mtf){info(M);return}
+  const c=MT[M.sym];
+  if(c&&Date.now()-c.t<6e5){M.mtf=c.lv;M.mtfSym=M.sym;info(M);return}
+  if(loading===M.sym)return;
+  loading=M.sym;const sym=M.sym;
+  build(sym).then(lv=>{
+    loading=null;MT[sym]={t:lv?Date.now():Date.now()-57e4,lv};
+    if(CT&&CT.sym===sym){CT.mtf=lv;CT.mtfSym=sym;info(CT);if(TAB==='chart')drawChart()}
+  }).catch(()=>{loading=null;MT[sym]={t:Date.now()-57e4,lv:null}});
+}
+const _dc=drawChart;
+drawChart=function(){try{if(TAB==='chart')ensure()}catch(e){}return _dc.apply(this,arguments)};
+})();
+
+</script>
+<script id="sigTab">
+/* ===== 🆓 سیگنال رایگان: ۶ سیگنال هر ۱۰ ساعت + یادگیری و بک‌تست خودکار وزن‌ها ===== */
+(()=>{
+if(typeof learnAsOf!=='function'||typeof renderActive!=='function'||typeof IND==='undefined'||typeof ALL==='undefined')return;
+const H=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SHOW=6,OK='radar.wopt1',ids=IND.map(x=>x[0]),NM=Object.fromEntries(IND);
+const FXN={mtf:'تایم‌فریم‌ها',news:'اخبار',deriv:'فاندینگ',smc:'اسمارت مانی',btc:'فیلتر بیت‌کوین'};
+const st=document.createElement('style');
+st.textContent=`
+.nav{grid-template-columns:repeat(5,1fr)!important;gap:4px!important;padding-left:6px!important;padding-right:6px!important}
+.nav button{font-size:10.5px!important;padding:5px 1px!important}
+#tab-sig .sg{display:flex;flex-direction:column;gap:10px;min-width:0}
+#tab-sig .sg *{box-sizing:border-box}
+#tab-sig .box{margin:0;min-width:0}
+#tab-sig h3.sec{margin:0 0 4px}
+.sg-hd{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12.5px;font-weight:800}
+.sg-meter{height:9px;border:2px solid #000;border-radius:99px;overflow:hidden;background:#fff;margin:8px 0 4px}
+.sg-meter i{display:block;height:100%;background:var(--y,#f0b90b);transition:width .5s}
+.sg-act{display:grid;grid-template-columns:1fr 1fr;gap:6px}.sg-act .btn{width:100%}
+.sg-k{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.sg-k div{border:1.5px solid var(--line,#000);border-radius:10px;padding:6px 4px;text-align:center;min-width:0}
+.sg-k small{display:block;font-size:10px;opacity:.75}.sg-k b{font-size:15px;direction:ltr;display:block}
+.sg-w{display:grid;grid-template-columns:96px minmax(0,1fr) 42px;gap:6px;align-items:center;font-size:12px;margin:4px 0}
+.sg-w i{display:block;height:8px;border-radius:99px;background:rgba(127,127,127,.25);position:relative;overflow:hidden}
+.sg-w i u{position:absolute;inset:0 auto 0 0;border-radius:99px}
+.sg-w b{direction:ltr;text-align:left;font-size:11.5px}
+.sg-ls{margin:0;padding:0;list-style:none;font-size:12px;line-height:1.8}
+.sg h4{margin:0 0 6px;font-size:13.5px}
+`;
+document.head.appendChild(st);
+
+/* ---------- بهینه‌ساز وزن‌ها (آزمون‌وخطای کنترل‌شده با اعتبارسنجی) ---------- */
+let OPT={cur:null,next:null,tried:null,last:null};
+try{OPT=Object.assign(OPT,JSON.parse(localStorage.getItem(OK))||{})}catch(e){}
+const osave=()=>{try{localStorage.setItem(OK,JSON.stringify(OPT))}catch(e){}};
+const _la=learnAsOf;
+learnAsOf=function(all,T){
+  const k=Math.floor(Date.now()/CYC);
+  if(OPT.next&&OPT.next.k<k){OPT.cur=OPT.next;OPT.next=null;osave()}
+  const r=_la(all,T),m=OPT.cur&&OPT.cur.m;
+  if(m&&r&&r.w)for(const id in m)r.w[id]=(r.w[id]!=null?r.w[id]:1)*m[id];
+  return r;
+};
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function rate(prof,set){
+  const al=set.map(s=>{const sg=s.dir==='LONG'?1:-1;let a=0,z=0;ids.forEach((id,i)=>{const v=s.votes[id];if(v!=null){a+=prof[i]*v;z+=Math.abs(prof[i])}});return [z?a/z*sg:0,s.win?1:0]}).sort((x,y)=>y[0]-x[0]);
+  const n=Math.max(4,Math.ceil(al.length*.6)),top=al.slice(0,n);return {r:top.reduce((a,x)=>a+x[1],0)/top.length,n:top.length};
+}
+function optimize(){
+  const S=ALL.filter(s=>s.votes&&s.learnT!=null&&typeof s.win==='boolean').sort((a,b)=>a.learnT-b.learnT);
+  if(S.length<30)return {skip:'کم‌بودن داده',n:S.length};
+  const base=_la(ALL,Infinity).w,B=ids.map(id=>base[id]!=null?base[id]:1),cut=Math.floor(S.length*.7),TR=S.slice(0,cut),VA=S.slice(cut);
+  const R=rng(Math.floor(Date.now()/CYC)),g=()=>{const u=Math.max(R(),1e-9),v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+  const b0=rate(B,TR);let best=B,br=b0.r;
+  for(let c=0;c<400;c++){const p=B.map(w=>Math.min(3,Math.max(.25,w*Math.exp(g()*.3)))),x=rate(p,TR);if(x.r>br+1e-9){br=x.r;best=p}}
+  const v0=rate(B,VA),v1=rate(best,VA);
+  const info={n:S.length,trBase:b0.r,trBest:br,vaBase:v0.r,vaBest:v1.r,vaN:v0.n,t:Date.now()};
+  if(br-b0.r>=.05&&v1.r-v0.r>=.1&&v0.n>=8){
+    const m={};ids.forEach((id,i)=>{const x=1+(best[i]/B[i]-1)*.5;m[id]=Math.min(1.6,Math.max(.6,+x.toFixed(3)))});
+    info.ok=true;return {m,info};
+  }
+  info.ok=false;return {info};
+}
+function maybeOpt(){
+  try{
+    const k=K_NOW;if(busy||!ALL.length||OPT.tried===k)return;
+    OPT.tried=k;const r=optimize();
+    if(r.skip)OPT.last={skip:r.skip,n:r.n,t:Date.now()};
+    else{OPT.last=r.info;if(r.m)OPT.next={k,m:r.m,info:r.info}}
+    osave();
+  }catch(e){console.error(e)}
+}
+
+/* ---------- نمایش ---------- */
+const col=v=>v>=1.15?'#0ecb81':v>=.9?'#8bd450':v>=.7?'#f0b90b':'#f6465d';
+let CACHE={key:'',html:''};
+function learnHTML(){
+  const key=[ALL.length,K_NOW,OPT.cur&&OPT.cur.k,OPT.last&&OPT.last.t].join('|');if(CACHE.key===key)return CACHE.html;
+  const eff=learnAsOf(ALL,Infinity),sm=summarize(ALL),P=eff.params||{};
+  const vals=ids.map(id=>[id,eff.w[id]!=null?eff.w[id]:1]),mean=vals.reduce((a,x)=>a+x[1],0)/vals.length||1;
+  const rel=vals.map(([id,v])=>[id,v/mean]).sort((a,b)=>b[1]-a[1]);
+  const bar=(n,v)=>`<div class="sg-w"><span>${H(n)}</span><i><u style="width:${Math.min(100,v/2.2*100)}%;background:${col(v)}"></u></i><b>${Math.round(v*100)}٪</b></div>`;
+  const fx=Object.keys(FXN).map(id=>[id,(eff.fxw&&eff.fxw[id]!=null?eff.fxw[id]:1)]);const fm=fx.reduce((a,x)=>a+x[1],0)/fx.length||1;
+  let h='<div class="box sg"><h4>🧠 وزن‌هایی که خودش یاد گرفته</h4><p class="note" style="margin:0 0 6px">۱۰۰٪ یعنی اهمیت متوسط. هر سیگنالی که به سود یا استاپ برسد، وزن اندیکاتورهایی که با آن هم‌جهت بودند را کمی بالا یا پایین می‌برد.</p>';
+  h+='<b style="font-size:12px">قوی‌ترین‌ها</b>'+rel.slice(0,5).map(([id,v])=>bar(NM[id]||id,v)).join('');
+  h+='<b style="font-size:12px;display:block;margin-top:6px">ضعیف‌ترین‌ها</b>'+rel.slice(-3).reverse().map(([id,v])=>bar(NM[id]||id,v)).join('');
+  h+='<b style="font-size:12px;display:block;margin-top:6px">عوامل کمکی</b>'+fx.map(([id,v])=>bar(FXN[id],v/fm)).join('')+'</div>';
+  const rate=sm.rate==null?'—':Math.round(sm.rate*100)+'٪';
+  h+=`<div class="box sg"><h4>🔬 بک‌تست خودکار</h4><div class="sg-k"><div><small>سیگنال ارزیابی‌شده</small><b>${sm.n}</b></div><div><small>نرخ برد</small><b>${rate}</b></div><div><small>حد ضرر (ATR)</small><b>${P.slAtr!=null?P.slAtr:'—'}</b></div></div>
+   <p class="note" style="margin:8px 0 0">در هر بار تحلیل، ${LITE?2:R_DEF} دورهٔ قبل از نو ساخته و روی کندل‌های ۱۵ دقیقه‌ای شبیه‌سازی می‌شود و نتیجه به وزن‌ها برمی‌گردد؛ پس سیگنال دورهٔ بعد با وزن‌های تازه ساخته می‌شود.</p>`;
+  if(sm.best&&sm.best.length)h+='<ul class="sg-ls" style="margin-top:6px">'+sm.best.map(x=>`<li>🟢 ${H(x.name)} — ${Math.round(x.rate*100)}٪ برد</li>`).join('')+(sm.worst||[]).map(x=>`<li>🔴 ${H(x.name)} — ${Math.round(x.rate*100)}٪ برد</li>`).join('')+'</ul>';
+  const log=(eff.tuneLog||[]).slice(-3).reverse();
+  if(log.length)h+='<b style="font-size:12px;display:block;margin-top:6px">آخرین تنظیم SL/TP</b><ul class="sg-ls">'+log.map(l=>`<li>• ${H(l.notes.join('، '))}</li>`).join('')+'</ul>';
+  h+='</div>';
+  const L=OPT.last,pc=x=>Math.round(x*100)+'٪';
+  let ob='<div class="box sg"><h4>🧪 بهینه‌ساز وزن‌ها</h4>';
+  if(!L)ob+='<p class="note" style="margin:0">بعد از اولین تحلیل کامل اجرا می‌شود.</p>';
+  else if(L.skip)ob+=`<p class="note" style="margin:0">فعلاً ${L.n} نتیجه داریم؛ برای آزمایش مطمئن حداقل ۳۰ لازم است. تا آن موقع وزن‌ها فقط با یادگیری عادی تغییر می‌کنند.</p>`;
+  else ob+=`<div class="sg-k"><div><small>برد فعلی (اعتبارسنجی)</small><b>${pc(L.vaBase)}</b></div><div><small>بهترین ترکیب</small><b>${pc(L.vaBest)}</b></div><div><small>نتیجه</small><b style="font-size:12px;direction:rtl">${L.ok?'پذیرفته شد':'رد شد'}</b></div></div><p class="note" style="margin:8px 0 0">۴۰۰ ترکیب وزن روی ۷۰٪ قدیمی‌تر سیگنال‌ها امتحان شد و بهترینش روی ۳۰٪ جدیدتر (که ندیده بود) سنجیده شد. ${L.ok?'چون روی داده‌ی ندیده هم بهتر بود، از دورهٔ بعد نصف‌به‌نصف اعمال می‌شود.':'چون روی داده‌ی ندیده برتری قانع‌کننده نداشت، وزن‌ها تغییر نکردند (جلوگیری از بیش‌برازش).'}</p>`;
+  ob+=(OPT.cur?`<p class="note" style="margin:6px 0 0">✅ ضرایب بهینه‌ساز در حال استفاده: ${Object.entries(OPT.cur.m).filter(([,v])=>Math.abs(v-1)>=.05).sort((a,b)=>Math.abs(b[1]-1)-Math.abs(a[1]-1)).slice(0,3).map(([id,v])=>H(NM[id]||id)+' ×'+v.toFixed(2)).join('، ')||'—'}</p>`:'')+(OPT.next?'<p class="note" style="margin:6px 0 0">⏳ ضرایب جدید از دورهٔ بعد اعمال می‌شوند.</p>':'')+'</div>';
+  CACHE={key,html:h+ob};return CACHE.html;
+}
+function renderSig(){
+  const el=document.getElementById('tab-sig');if(!el)return;
+  const now=Date.now(),k=K_NOW,T=k*CYC,left=Math.max(0,T+CYC-now),hh=Math.floor(left/36e5),mi=Math.floor(left%36e5/6e4);
+  const board=ALL.filter(s=>s.cyc===k).sort(byScore).slice(0,SHOW);
+  const old=allSigs().filter(s=>s.cyc<k).length;
+  let h='<div class="sg">';
+  if(errMsg)h+=`<div class="box"><p class="note" style="margin:0;color:#f6465d">${H(errMsg)} <button class="btn xs" id="btnRetry">تلاش دوباره</button></p></div>`;
+  if(busy)h+=`<div class="box"><b style="font-size:12.5px">${H(PG.t||'در حال تحلیل بازار…')}</b><div class="sg-meter"><i style="width:${Math.round((PG.f||0)*100)}%"></i></div><p class="note" style="margin:0">بار اول چند دقیقه طول می‌کشد (تحلیل ارزها و بک‌تست دوره‌های قبل). صفحه را نبند.</p></div>`;
+  h+=`<div class="box"><div class="sg-hd"><span>🆓 ${fa(board.length)} از ${fa(SHOW)} سیگنال این دوره</span><span style="direction:rtl">${fa(hh)}س ${fa(mi)}د مانده</span></div><div class="sg-meter"><i style="width:${Math.min(100,(now-T)/CYC*100)}%"></i></div><p class="note" style="margin:0">هر ۱۰ ساعت ${fa(SHOW)} سیگنال تازه ساخته می‌شود و سیگنال‌های دورهٔ قبل از این بخش پاک می‌شوند. فقط نتیجه‌شان برای یادگیری نگه داشته می‌شود (${fa(old)} مورد).</p></div>`;
+  const slots=[];for(let i=0;i<SHOW;i++)slots.push(board[i]?(statusOf(board[i])==='SL'&&typeof stoppedTile==='function'?stoppedTile(board[i]):card(board[i],now)):ph(i+1,busy?'در حال تحلیل':(ALL.some(s=>s.cyc===k)?'بازار شرایط کافی نداد':'بدون داده')));
+  h+=`<div class="grid2">${slots.join('')}</div>`;
+  if(!busy&&board.length&&board.length<SHOW)h+=`<p class="note">فقط ${fa(board.length)} سیگنال از فیلتر کیفیت گذشت؛ برای پر کردن جا، سیگنال ضعیف ساخته نمی‌شود.</p>`;
+  h+=`<div class="sg-act"><button class="btn xs y" id="sgCopy">📋 کپی همهٔ سیگنال‌ها</button><button class="btn xs" id="sgRe">🔄 تحلیل و بک‌تست دوباره</button></div>`;
+  h+=ALL.length?learnHTML():'<div class="box"><p class="note" style="margin:0">پس از پایان تحلیل، وزن‌های یادگرفته و نتیجهٔ بک‌تست اینجا نمایش داده می‌شود.</p></div>';
+  h+='<p class="note">⚠️ سیگنال‌ها آموزشی‌اند و توصیهٔ مالی نیستند؛ نرخ برد گذشته آینده را تضمین نمی‌کند.</p></div>';
+  el.innerHTML=h;
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest&&e.target.closest('#sgCopy,#sgRe');if(!t)return;
+  if(t.id==='sgCopy'){const b=ALL.filter(s=>s.cyc===K_NOW&&statusOf(s)!=='SL').sort(byScore).slice(0,SHOW);if(b.length)copyText(b.map(sigText).join('\n\n'),t);else toast('سیگنالی برای کپی نیست.');return}
+  if(t.id==='sgRe'){if(busy){toast('تحلیل در حال انجام است.');return}CACHE.key='';OPT.tried=null;main();toast('تحلیل و بک‌تست دوباره شروع شد…')}
+});
+const _ra=renderActive;
+renderActive=function(){_ra();try{maybeOpt()}catch(e){}if(TAB==='sig')safe(renderSig)};
+/* ---------- فعال‌سازی دوبارهٔ تولید سیگنال (در فایل اصلی main خالی بود) ---------- */
+let PG={t:'',f:0},PGT=0;
+main=async function(){
+  if(busy)return;
+  errMsg='';K_NOW=Math.floor(Date.now()/CYC);
+  let c=null;try{c=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  const OFF='اتصال برقرار نشد؛ آخرین تحلیل ذخیره‌شده نمایش داده می‌شود و با وصل شدن اینترنت خودکار به‌روز می‌شود.';
+  const useCache=()=>{if(c&&c.signals&&c.signals.length){ALL=c.signals;SUMM=c.summ;limited=!!c.limited;try{mergeHist()}catch(e){}return true}return false};
+  busy=true;ALL=[];SUMM=null;PG={t:'شروع تحلیل…',f:0};
+  PROG=(txt,f)=>{PG={t:txt,f:f||0};const p=document.getElementById('prog');if(p)p.textContent=txt;const b=document.getElementById('cycleBar');if(b)b.style.width=Math.round((f||0)*100)+'%';if(TAB==='sig'&&!PGT)PGT=setTimeout(()=>{PGT=0;safe(renderSig)},500)};
+  safe(renderActive);
+  try{
+    if(c&&c.k===K_NOW&&useCache()){try{await simulateSigs(ALL.filter(s=>!s.closed))}catch(e){}}
+    else{ALL=await computeAll(K_NOW);limited=(lastSrc===SRC.length-1)}
+    SUMM=summarize(ALL);
+    try{localStorage.setItem(KEY,JSON.stringify({k:K_NOW,t:Date.now(),signals:ALL,summ:SUMM,limited}))}catch(e){}
+    try{mergeHist();localStorage.setItem(HK,JSON.stringify(HIST))}catch(e){}
+  }catch(e){
+    console.error(e);
+    if(useCache())errMsg=OFF;
+    else errMsg=e&&e.code==='GEO'?'منبع قیمت از موقعیت فعلی بسته است؛ VPN را روشن کن و دوباره امتحان کن.':e&&e.code==='RATE'?'منبع داده موقتاً محدود کرده؛ چند دقیقه بعد دوباره امتحان کن.':OFF;
+  }
+  busy=false;PROG=()=>{};
+  const p=document.getElementById('prog');if(p)p.textContent='';
+  safe(renderActive);
+  try{pollLive().then(()=>futCatchup()).then(()=>safe(renderActive))}catch(e){}
+};
+if(!busy)main();
+if(TAB==='sig')renderActive();
+})();
+
 </script>
 </body>
 </html>
