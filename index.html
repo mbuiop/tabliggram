@@ -2942,7 +2942,6 @@ function lineChartSVG(series){
 }
 /* ---------- ابزارهای جدید ---------- */
 const TOOLS_V3=[
- ['go-ind','🧪','اندیکاتورها','فهرست کامل اندیکاتورها با به‌روزرسانی خودکار','تحلیل'],['go-full','🏛️','تحلیل جامع','چند تایم‌فریم + نقشهٔ معامله','تحلیل'],
  ['mtf','🧭','چند تایم‌فریم','هم‌جهتی ۱۵m تا ۱d','تحلیل'],['fib','📐','فیبوناچی و پیوت','اصلاح و پیوت روزانه','تحلیل'],['sr','🧱','حمایت و مقاومت','سطوح ترکیبی چند تایم‌فریم','تحلیل'],['vp','📊','پروفایل حجم','POC و محدودهٔ ارزش','تحلیل'],
  ['isc','🎯','اسکنر اندیکاتوری','شکست، اسکوییز، واگرایی، کراس','اسکنر'],['scan','🔎','اسکنر بازار','RSI، تغییر و قدرت','اسکنر'],['heat','🗺️','نقشهٔ حرارتی','کارت‌های بزرگ با نمودار؛ قبلی/بعدی','اسکنر'],['cor','🔗','همبستگی با BTC','تنوع‌بخشی پرتفوی','اسکنر'],
  ['bt','🧬','بک‌تست استراتژی','آزمون روی داده گذشته','آزمایشگاه'],['cmp','⚖️','مقایسهٔ ارزها','عملکرد نرمال‌شده تا ۴ ارز','آزمایشگاه'],['hrs','🕒','ساعت‌های پرنوسان','بهترین ساعت‌ها برای معامله','آزمایشگاه'],
@@ -5565,7 +5564,7 @@ st.textContent=`
 document.head.appendChild(st);
 
 /* منوی ☰: یک کاشی جدید بعد از «تحلیل جامع» */
-if(!TOOLS.some(t=>t[0]==='fund')){const i=TOOLS.findIndex(t=>t[0]==='go-full');TOOLS.splice(i>=0?i+1:0,0,['fund','🏦','تحلیل فاندامنتال','ارزش بازار، عرضه، توسعه، جامعه + چک‌لیست خودت','تحلیل'])}
+if(!TOOLS.some(t=>t[0]==='fund')){const i=TOOLS.findIndex(t=>t[0]==='vp');TOOLS.splice(i>=0?i+1:TOOLS.length,0,['fund','🏦','تحلیل فاندامنتال','ارزش بازار، عرضه، توسعه، جامعه + چک‌لیست خودت','تحلیل'])}
 /* نوار نماد برای این ابزار */
 const _tb=typeof toolBar==='function'?toolBar:null;
 toolBar=function(id){return id==='fund'?symBar(0):(_tb?_tb(id):'')};
@@ -6244,9 +6243,10 @@ function renderSig(){
   const now=Date.now(),k=K_NOW,T=k*CYC,left=Math.max(0,T+CYC-now),hh=Math.floor(left/36e5),mi=Math.floor(left%36e5/6e4);
   const board=ALL.filter(s=>s.cyc===k).sort(byScore).slice(0,SHOW);
   const old=allSigs().filter(s=>s.cyc<k).length;
+  const board0=board.length>0;
   let h='<div class="sg">';
   if(errMsg)h+=`<div class="box"><p class="note" style="margin:0;color:#f6465d">${H(errMsg)} <button class="btn xs" id="btnRetry">تلاش دوباره</button></p></div>`;
-  if(busy)h+=`<div class="box"><b style="font-size:12.5px">${H(PG.t||'در حال تحلیل بازار…')}</b><div class="sg-meter"><i style="width:${Math.round((PG.f||0)*100)}%"></i></div><p class="note" style="margin:0">بار اول چند دقیقه طول می‌کشد (تحلیل ارزها و بک‌تست دوره‌های قبل). صفحه را نبند.</p></div>`;
+  if(busy)h+=`<div class="box"><b style="font-size:12.5px">${H(PG.t||'در حال تحلیل بازار…')}</b><div class="sg-meter"><i style="width:${Math.round((PG.f||0)*100)}%"></i></div>${board0?'<p class="note" style="margin:0">سیگنال‌ها آماده‌اند و قابل استفاده‌اند؛ فقط یادگیری وزن‌ها در حال تکمیل است.</p>':'<p class="note" style="margin:0">بار اول کمی طول می‌کشد؛ صفحه را نبند.</p>'}</div>`;
   h+=`<div class="box"><div class="sg-hd"><span>🆓 ${fa(board.length)} از ${fa(SHOW)} سیگنال این دوره</span><span style="direction:rtl">${fa(hh)}س ${fa(mi)}د مانده</span></div><div class="sg-meter"><i style="width:${Math.min(100,(now-T)/CYC*100)}%"></i></div><p class="note" style="margin:0">هر ۱۰ ساعت ${fa(SHOW)} سیگنال تازه ساخته می‌شود و سیگنال‌های دورهٔ قبل از این بخش پاک می‌شوند. فقط نتیجه‌شان برای یادگیری نگه داشته می‌شود (${fa(old)} مورد).</p></div>`;
   const slots=[];for(let i=0;i<SHOW;i++)slots.push(board[i]?(statusOf(board[i])==='SL'&&typeof stoppedTile==='function'?stoppedTile(board[i]):card(board[i],now)):ph(i+1,busy?'در حال تحلیل':(ALL.some(s=>s.cyc===k)?'بازار شرایط کافی نداد':'بدون داده')));
   h+=`<div class="grid2">${slots.join('')}</div>`;
@@ -6276,7 +6276,25 @@ main=async function(){
   safe(renderActive);
   try{
     if(c&&c.k===K_NOW&&useCache()){try{await simulateSigs(ALL.filter(s=>!s.closed))}catch(e){}}
-    else{ALL=await computeAll(K_NOW);limited=(lastSrc===SRC.length-1)}
+    else{
+      /* مرحلهٔ ۱ (سریع): فقط سیگنال‌های همین دوره با وزن‌های ذخیره‌شده؛ بلافاصله نمایش داده می‌شود */
+      const prev=(c&&c.signals||[]).filter(s=>s.cyc<K_NOW&&s.votes);
+      PROG('ساخت سیگنال‌های این دوره…',.1);
+      const board=await buildBoardAt(K_NOW,learnAsOf(prev,K_NOW*CYC),prev);
+      ALL=[...prev,...board];PG.t='سیگنال‌ها آماده شد؛ بک‌تست و یادگیری در پس‌زمینه…';safe(renderActive);
+      await simulateSigs(board);safe(renderActive);
+      limited=(lastSrc===SRC.length-1);
+      /* مرحلهٔ ۲ (پس‌زمینه): بازسازی دوره‌های قبل برای یادگیری وزن‌ها؛ سیگنال‌های همین دوره دست نمی‌خورند */
+      try{
+        let R=LITE?2:R_DEF;const b=await getK('BTC','1h');while(R>0&&sliceAt(b,'1h',(K_NOW-R)*CYC,300).length<280)R--;
+        const past=[];
+        for(let j=K_NOW-R;j<K_NOW;j++){
+          PROG(`بک‌تست و یادگیری از دوره‌های قبل (${fa(j-(K_NOW-R)+1)} از ${fa(R)})`,(j-(K_NOW-R))/Math.max(1,R));
+          const W=learnAsOf(past,j*CYC),bd=await buildBoardAt(j,W,past);await simulateSigs(bd);past.push(...bd);await sleep0();
+        }
+        ALL=[...past,...board];
+      }catch(e){console.error('learn',e)}
+    }
     SUMM=summarize(ALL);
     try{localStorage.setItem(KEY,JSON.stringify({k:K_NOW,t:Date.now(),signals:ALL,summ:SUMM,limited}))}catch(e){}
     try{mergeHist();localStorage.setItem(HK,JSON.stringify(HIST))}catch(e){}
