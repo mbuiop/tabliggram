@@ -3,6 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<script>
+/* گرفتن زودهنگام پیشنهاد نصب (قبل از لود بقیهٔ اسکریپت‌ها) */
+window.__DEF=null;
+addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__DEF=e;try{dispatchEvent(new Event('rc-installable'))}catch(x){}});
+addEventListener('appinstalled',function(){window.__DEF=null;window.__rcDone=1;try{dispatchEvent(new Event('rc-installed'))}catch(x){}});
+/* لایهٔ شبکهٔ مشترک: درخواست تکراری یکی می‌شود، تعداد هم‌زمان محدود است تا بخش‌ها همدیگر را قفل/محدود نکنند */
+(function(){var F=window.fetch;if(!F||window.__rcNet)return;window.__rcNet=1;var MAX=8,run=0,q=[],inf={};
+function pump(){while(run<MAX&&q.length){run++;q.shift()()}}
+window.fetch=function(u,o){
+ var url=typeof u==='string'?u:(u&&u.url)||'',m=String((o&&o.method)||(u&&u.method)||'GET').toUpperCase();
+ if(m!=='GET'||(o&&(o.body||o.signal))||!/^https?:/i.test(url))return F.apply(this,arguments);
+ var p=inf[url];
+ if(!p){p=new Promise(function(res,rej){q.push(function(){F.call(window,u,o).then(res,rej)});pump()});
+  var done=function(){delete inf[url];run--;pump()};p.then(done,done);inf[url]=p}
+ return p.then(function(r){return r.clone()});
+};})();
+</script>
 <title>رادار تحلیل کریپتو</title>
 <style>
 :root{
@@ -720,6 +737,63 @@ html body .rc-sp.rc-sp .rc-spt.rc-spt,html body .rc-sp.rc-sp .rc-spt.rc-spt *{co
 html body .rc-ov .rc-btn.rc-btn:not(.ghost),html body .rc-adm .rc-btn.rc-btn:not(.ghost),html body .rc-adm .rc-sm.rc-sm,html body .rc-ov .rc-sm.rc-sm,html body .rc-adm .rc-tabs button.on.on,html body .rc-lk.rc-lk{color:#000!important}
 html body #rcAdmToast,html body #rcToast{color:#fff!important}
 
+</style>
+
+<style id="rcFixCss">
+/* ===== طراحی فشرده و مدرن (لایهٔ نهایی) ===== */
+html body{font-size:13.5px;line-height:1.6}
+html body .wrap{max-width:1180px;padding:8px 12px calc(84px + env(safe-area-inset-bottom,0px))}
+html body .hero{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:6px 10px;gap:8px;margin-bottom:4px}
+html body .hero .brand h1{font-size:17px;line-height:1.3}
+html body .hero .brand p{font-size:11px;opacity:.75}
+html body .card,html body .box,html body .cycle{border-width:1.5px!important;border-radius:14px!important}
+html body .box{padding:9px 11px}
+html body .tickers{padding:2px 0 6px}
+/* --- نوار پایین: فشرده و حرفه‌ای --- */
+html body .nav{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important;width:min(560px,calc(100vw - 16px))!important;padding:5px 5px calc(5px + env(safe-area-inset-bottom,0px))!important;bottom:calc(6px + env(safe-area-inset-bottom,0px))!important;border-radius:20px!important;border-width:1.5px!important}
+html body .nav button{min-height:46px!important;min-width:0!important;padding:4px 1px!important;gap:1px!important;border-width:1.5px!important;border-radius:14px!important;font-size:10px!important;font-weight:700!important;line-height:1.2!important;letter-spacing:-.2px;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;display:flex!important;flex-direction:column;align-items:center;justify-content:center;transform:none!important}
+html body .nav button i{font-size:16px!important;line-height:1!important;filter:none!important}
+html body .nav button.on{border-width:2px!important}
+@media(max-width:380px){html body .nav button{font-size:9px!important;letter-spacing:-.4px}html body .nav button i{font-size:15px!important}}
+/* --- منوی ابزارها: دقیقاً ۳ دکمه در هر ردیف، بدون جای خالی --- */
+html body #tBody .tgrid{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:6px!important;margin-bottom:6px!important}
+html body #tBody .tgrid>.tile{grid-column:span 2!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:66px!important;height:100%;padding:7px 3px!important;gap:2px!important;border-radius:13px!important;width:auto!important;margin:0!important}
+html body #tBody .tgrid>.tile:last-child:nth-child(3n+1){grid-column:span 6!important}
+html body #tBody .tgrid>.tile:last-child:nth-child(3n+2),html body #tBody .tgrid>.tile:nth-last-child(2):nth-child(3n+1){grid-column:span 3!important}
+html body #tBody .tgrid>.tile i{font-size:20px!important;line-height:1!important}
+html body #tBody .tgrid>.tile b{font-size:11px!important;line-height:1.3!important;white-space:normal}
+html body #tBody .tgrid>.tile span{display:none!important}
+/* --- نوار پیشرفت تحلیل --- */
+#rcAn{position:sticky;top:calc(env(safe-area-inset-top,0px) + 4px);z-index:45;margin:4px 0 8px;padding:9px 12px;border-radius:14px;background:var(--card);border:1.5px solid var(--c1);overflow:hidden}
+#rcAn[hidden]{display:none}
+#rcAn .r{display:flex;align-items:center;gap:8px;font-size:12.5px}
+#rcAn .r b{flex:1;font-weight:800}
+#rcAn .r em{font-style:normal;font-variant-numeric:tabular-nums;direction:ltr;font-size:12px}
+#rcAn .sp{width:15px;height:15px;border-radius:50%;border:2.5px solid var(--c1);border-top-color:transparent;animation:rcSpin .8s linear infinite;flex:none}
+#rcAn .bar{height:6px;border-radius:99px;background:#d7f3f8;margin:7px 0 5px;overflow:hidden}
+#rcAn .bar i{display:block;height:100%;width:0;border-radius:99px;background:var(--c1);transition:width .4s}
+#rcAn .bar.ind i{width:35%!important;animation:rcInd 1.2s ease-in-out infinite}
+#rcAn small{display:block;font-size:11px;opacity:.8;line-height:1.6}
+@keyframes rcSpin{to{transform:rotate(360deg)}}@keyframes rcInd{0%{margin-inline-start:-35%}100%{margin-inline-start:100%}}
+/* --- نوار پیشنهاد نصب --- */
+#rcInst{position:fixed;z-index:44;inset-inline:10px;bottom:calc(66px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:16px;background:var(--card);border:1.5px solid var(--c1);font-size:12.5px}
+#rcInst[hidden]{display:none}
+#rcInst span{flex:1;font-weight:700}
+#rcInst button{border:1.5px solid #000;border-radius:10px;background:var(--y);color:#000;font:700 12px inherit;font-family:inherit;padding:6px 12px;cursor:pointer}
+#rcInst button.g{background:transparent;color:inherit;border-color:var(--line);padding:6px 9px}
+.rc-steps{margin:6px 0 0;padding-inline-start:20px;font-size:13px;line-height:2}
+/* --- لپ‌تاب: چیدمان چندستونه و منظم --- */
+@media(min-width:900px){
+ html body .wrap{padding-top:10px}
+ html body .grid2{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px}
+ html body .nav{width:min(640px,60vw)!important}
+ html body .tools{max-width:960px;margin-inline:auto}
+ html body #tBody .tgrid{grid-template-columns:repeat(12,minmax(0,1fr))!important}
+ html body #tBody .tgrid>.tile{grid-column:span 2!important;min-height:74px!important}
+ html body #tBody .tgrid>.tile:last-child:nth-child(6n+1){grid-column:span 12!important}
+ html body #tBody .tgrid>.tile:last-child:nth-child(3n+1):not(:nth-child(6n+1)),html body #tBody .tgrid>.tile:last-child:nth-child(3n+2){grid-column:span 2!important}
+}
+@media(min-width:600px) and (max-width:899px){html body .grid2{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 </style>
 </head>
 <body>
@@ -2942,6 +3016,7 @@ function lineChartSVG(series){
 }
 /* ---------- ابزارهای جدید ---------- */
 const TOOLS_V3=[
+ ['go-ind','🧪','اندیکاتورها','فهرست کامل اندیکاتورها با به‌روزرسانی خودکار','تحلیل'],['go-full','🏛️','تحلیل جامع','چند تایم‌فریم + نقشهٔ معامله','تحلیل'],
  ['mtf','🧭','چند تایم‌فریم','هم‌جهتی ۱۵m تا ۱d','تحلیل'],['fib','📐','فیبوناچی و پیوت','اصلاح و پیوت روزانه','تحلیل'],['sr','🧱','حمایت و مقاومت','سطوح ترکیبی چند تایم‌فریم','تحلیل'],['vp','📊','پروفایل حجم','POC و محدودهٔ ارزش','تحلیل'],
  ['isc','🎯','اسکنر اندیکاتوری','شکست، اسکوییز، واگرایی، کراس','اسکنر'],['scan','🔎','اسکنر بازار','RSI، تغییر و قدرت','اسکنر'],['heat','🗺️','نقشهٔ حرارتی','کارت‌های بزرگ با نمودار؛ قبلی/بعدی','اسکنر'],['cor','🔗','همبستگی با BTC','تنوع‌بخشی پرتفوی','اسکنر'],
  ['bt','🧬','بک‌تست استراتژی','آزمون روی داده گذشته','آزمایشگاه'],['cmp','⚖️','مقایسهٔ ارزها','عملکرد نرمال‌شده تا ۴ ارز','آزمایشگاه'],['hrs','🕒','ساعت‌های پرنوسان','بهترین ساعت‌ها برای معامله','آزمایشگاه'],
@@ -3180,7 +3255,6 @@ async function main(){
 {let t='free';try{t=localStorage.getItem('radar.tab')||'free';}catch(e){}if(t==='prev')t='free';if(!['free','sig','demo','chart','ind'].includes(t))t='free';TAB=t;}
 setNavH();
 setTab(TAB);
-main();
 setInterval(()=>{if(document.hidden)return;if(Math.floor(Date.now()/CYC)!==K_NOW)main();else pollLive();},30000);
 setInterval(()=>{if(!document.hidden&&(TAB==='demo'||TAB==='chart'))pollLive();},5000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(Math.floor(Date.now()/CYC)!==K_NOW)main();else renderActive();}});
@@ -5364,14 +5438,14 @@ const T=$('#tools');if(T){let sx=0,sy=0;T.addEventListener('touchstart',e=>{sx=e
 /* ---------- رادار سه‌بعدی ورودی ---------- */
 function splash(done){let seen=0;try{seen=sessionStorage.getItem('rc.sp')}catch(e){}
  if(seen||matchMedia('(prefers-reduced-motion:reduce)').matches){done();return}try{sessionStorage.setItem('rc.sp','1')}catch(e){}
- const o=ce('div','rc-sp','<canvas></canvas><div class="rc-spt"><b>رادار تحلیل کریپتو</b><span>در حال باز کردن قفل…</span><div class="rc-pb"><i></i></div></div>');document.body.appendChild(o);
+ const o=ce('div','rc-sp','<canvas></canvas><div class="rc-spt"><b>رادار تحلیل کریپتو</b><span>در حال آماده‌سازی تحلیل…</span><div class="rc-pb"><i></i></div></div>');document.body.appendChild(o);
  const cv=o.firstChild,g=cv.getContext('2d'),bar=o.querySelector('.rc-pb i'),txt=o.querySelector('.rc-spt span'),dpr=Math.min(devicePixelRatio||1,2);let W,H,B;
  const fit=()=>{W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';g.setTransform(dpr,0,0,dpr,0,0);B=Math.min(W*.36,H*.21,170)};fit();addEventListener('resize',fit);
  /* سه حلقهٔ تو در تو مثل دایال گاوصندوق؛ هر کدوم خلاف دیگری می‌چرخه و یکی‌یکی روی جاش قفل می‌شه */
  const RG=[{r:1,w:.15,dir:1,turns:2.6,tl:1500,n:48,c:[0,248,248]},{r:.71,w:.15,dir:-1,turns:3.2,tl:2150,n:36,c:[60,170,255]},{r:.44,w:.15,dir:1,turns:3.8,tl:2800,n:24,c:[235,235,0]}];
  const D=3900,GAP=.55,TAU=Math.PI*2,t0=performance.now();let ended=0,raf;
- const end=()=>{if(ended)return;ended=1;cancelAnimationFrame(raf);removeEventListener('resize',fit);o.classList.add('out');setTimeout(()=>{o.remove();done()},450)};o.addEventListener('click',end);
- const fr=now=>{const e=now-t0,k=Math.min(e/D,1),cx=W/2,cy=H*.4;
+ const end=()=>{if(ended)return;ended=1;cancelAnimationFrame(raf);removeEventListener('resize',fit);o.classList.add('out');setTimeout(()=>{o.remove();done()},450)};o.addEventListener('click',end);setTimeout(end,2500);
+ const fr=now=>{const e=(now-t0)*2.4,k=Math.min(e/D,1),cx=W/2,cy=H*.4;
   g.globalCompositeOperation='source-over';g.clearRect(0,0,W,H);g.globalCompositeOperation='lighter';
   const open=Math.max(0,Math.min(1,(e-3150)/500)),zoom=1+.06*open;
   RG.forEach((q,i)=>{
@@ -5564,7 +5638,7 @@ st.textContent=`
 document.head.appendChild(st);
 
 /* منوی ☰: یک کاشی جدید بعد از «تحلیل جامع» */
-if(!TOOLS.some(t=>t[0]==='fund')){const i=TOOLS.findIndex(t=>t[0]==='vp');TOOLS.splice(i>=0?i+1:TOOLS.length,0,['fund','🏦','تحلیل فاندامنتال','ارزش بازار، عرضه، توسعه، جامعه + چک‌لیست خودت','تحلیل'])}
+if(!TOOLS.some(t=>t[0]==='fund')){const i=TOOLS.findIndex(t=>t[0]==='go-full');TOOLS.splice(i>=0?i+1:0,0,['fund','🏦','تحلیل فاندامنتال','ارزش بازار، عرضه، توسعه، جامعه + چک‌لیست خودت','تحلیل'])}
 /* نوار نماد برای این ابزار */
 const _tb=typeof toolBar==='function'?toolBar:null;
 toolBar=function(id){return id==='fund'?symBar(0):(_tb?_tb(id):'')};
@@ -5991,9 +6065,9 @@ document.addEventListener('click',e=>{
   if(t.dataset.ndel){sA(gA().filter(a=>a.id!==t.dataset.ndel));re();return}
   if(t.dataset.nre){const al=gA(),a=al.find(x=>x.id===t.dataset.nre);if(a){a.done=false;a.t=Date.now();a.lc=0;delete a.at;delete a.hitv;sA(al);re();runAlerts(true)}return}
   if(t.hasAttribute('data-nclr')){sA(gA().filter(a=>!a.done));re();return}
-  if(t.id==='nPerm'){try{Notification.requestPermission().then(p=>{toast(p==='granted'?'اعلان فعال شد ✓':'اجازهٔ اعلان داده نشد.');const s=$e('nSt');if(s)s.textContent=notifState()})}catch(er){toast('این مرورگر اعلان را پشتیبانی نمی‌کند.')}return}
+  if(t.id==='nPerm'){window.__rcNotify();return}
   if(t.id==='nTest'){unlock();fire({sym:'TEST',type:'price',dir:'up',p:100,hitv:101});return}
-  if(t.id==='nInst'){if(DEF){DEF.prompt();DEF=null}else toast('آیفون: دکمهٔ Share ← Add to Home Screen · اندروید: منوی ⋮ ← Install app / Add to Home screen');return}
+  if(t.id==='nInst'){window.__rcInstall();return}
 });
 
 /* ---------- 🧩 امتیاز ترکیبی ---------- */
@@ -6067,7 +6141,7 @@ if(typeof window.openTool==='function'){const _o=window.openTool;window.openTool
 try{
   const hd=document.head,mt=(n,c)=>{if(!document.querySelector('meta[name="'+n+'"]')){const m=document.createElement('meta');m.name=n;m.content=c;hd.appendChild(m)}};
   mt('theme-color','#f0b90b');mt('mobile-web-app-capable','yes');mt('apple-mobile-web-app-capable','yes');mt('apple-mobile-web-app-title','رادار');mt('apple-mobile-web-app-status-bar-style','default');
-  if(!document.querySelector('link[rel="manifest"]')&&location.protocol.startsWith('http')){
+  if(false){
     const ic='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#f0b90b"/><circle cx="96" cy="96" r="62" fill="none" stroke="#000" stroke-width="10"/><circle cx="96" cy="96" r="38" fill="none" stroke="#000" stroke-width="10"/><circle cx="96" cy="96" r="14" fill="#000"/></svg>');
     const mf={name:'رادار تحلیل کریپتو',short_name:'رادار',start_url:location.href.split('#')[0],scope:location.href.split('#')[0].replace(/[^/]*$/,''),display:'standalone',background_color:'#ffffff',theme_color:'#f0b90b',lang:'fa',dir:'rtl',icons:[{src:ic,sizes:'192x192',type:'image/svg+xml',purpose:'any'}]};
     const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));hd.appendChild(l);
@@ -6243,10 +6317,9 @@ function renderSig(){
   const now=Date.now(),k=K_NOW,T=k*CYC,left=Math.max(0,T+CYC-now),hh=Math.floor(left/36e5),mi=Math.floor(left%36e5/6e4);
   const board=ALL.filter(s=>s.cyc===k).sort(byScore).slice(0,SHOW);
   const old=allSigs().filter(s=>s.cyc<k).length;
-  const board0=board.length>0;
   let h='<div class="sg">';
   if(errMsg)h+=`<div class="box"><p class="note" style="margin:0;color:#f6465d">${H(errMsg)} <button class="btn xs" id="btnRetry">تلاش دوباره</button></p></div>`;
-  if(busy)h+=`<div class="box"><b style="font-size:12.5px">${H(PG.t||'در حال تحلیل بازار…')}</b><div class="sg-meter"><i style="width:${Math.round((PG.f||0)*100)}%"></i></div>${board0?'<p class="note" style="margin:0">سیگنال‌ها آماده‌اند و قابل استفاده‌اند؛ فقط یادگیری وزن‌ها در حال تکمیل است.</p>':'<p class="note" style="margin:0">بار اول کمی طول می‌کشد؛ صفحه را نبند.</p>'}</div>`;
+  if(busy)h+=`<div class="box"><b style="font-size:12.5px">${H(PG.t||'در حال تحلیل بازار…')}</b><div class="sg-meter"><i style="width:${Math.round((PG.f||0)*100)}%"></i></div><p class="note" style="margin:0">بار اول چند دقیقه طول می‌کشد (تحلیل ارزها و بک‌تست دوره‌های قبل). صفحه را نبند.</p></div>`;
   h+=`<div class="box"><div class="sg-hd"><span>🆓 ${fa(board.length)} از ${fa(SHOW)} سیگنال این دوره</span><span style="direction:rtl">${fa(hh)}س ${fa(mi)}د مانده</span></div><div class="sg-meter"><i style="width:${Math.min(100,(now-T)/CYC*100)}%"></i></div><p class="note" style="margin:0">هر ۱۰ ساعت ${fa(SHOW)} سیگنال تازه ساخته می‌شود و سیگنال‌های دورهٔ قبل از این بخش پاک می‌شوند. فقط نتیجه‌شان برای یادگیری نگه داشته می‌شود (${fa(old)} مورد).</p></div>`;
   const slots=[];for(let i=0;i<SHOW;i++)slots.push(board[i]?(statusOf(board[i])==='SL'&&typeof stoppedTile==='function'?stoppedTile(board[i]):card(board[i],now)):ph(i+1,busy?'در حال تحلیل':(ALL.some(s=>s.cyc===k)?'بازار شرایط کافی نداد':'بدون داده')));
   h+=`<div class="grid2">${slots.join('')}</div>`;
@@ -6271,30 +6344,12 @@ main=async function(){
   let c=null;try{c=JSON.parse(localStorage.getItem(KEY))}catch(e){}
   const OFF='اتصال برقرار نشد؛ آخرین تحلیل ذخیره‌شده نمایش داده می‌شود و با وصل شدن اینترنت خودکار به‌روز می‌شود.';
   const useCache=()=>{if(c&&c.signals&&c.signals.length){ALL=c.signals;SUMM=c.summ;limited=!!c.limited;try{mergeHist()}catch(e){}return true}return false};
-  busy=true;ALL=[];SUMM=null;PG={t:'شروع تحلیل…',f:0};
-  PROG=(txt,f)=>{PG={t:txt,f:f||0};const p=document.getElementById('prog');if(p)p.textContent=txt;const b=document.getElementById('cycleBar');if(b)b.style.width=Math.round((f||0)*100)+'%';if(TAB==='sig'&&!PGT)PGT=setTimeout(()=>{PGT=0;safe(renderSig)},500)};
+  busy=true;ALL=[];SUMM=null;PG={t:'شروع تحلیل…',f:0};window.__rb=1;window.__rp=PG;
+  PROG=(txt,f)=>{PG={t:txt,f:f||0};window.__rp=PG;const p=document.getElementById('prog');if(p)p.textContent=txt;const b=document.getElementById('cycleBar');if(b)b.style.width=Math.round((f||0)*100)+'%';if(TAB==='sig'&&!PGT)PGT=setTimeout(()=>{PGT=0;safe(renderSig)},500)};
   safe(renderActive);
   try{
     if(c&&c.k===K_NOW&&useCache()){try{await simulateSigs(ALL.filter(s=>!s.closed))}catch(e){}}
-    else{
-      /* مرحلهٔ ۱ (سریع): فقط سیگنال‌های همین دوره با وزن‌های ذخیره‌شده؛ بلافاصله نمایش داده می‌شود */
-      const prev=(c&&c.signals||[]).filter(s=>s.cyc<K_NOW&&s.votes);
-      PROG('ساخت سیگنال‌های این دوره…',.1);
-      const board=await buildBoardAt(K_NOW,learnAsOf(prev,K_NOW*CYC),prev);
-      ALL=[...prev,...board];PG.t='سیگنال‌ها آماده شد؛ بک‌تست و یادگیری در پس‌زمینه…';safe(renderActive);
-      await simulateSigs(board);safe(renderActive);
-      limited=(lastSrc===SRC.length-1);
-      /* مرحلهٔ ۲ (پس‌زمینه): بازسازی دوره‌های قبل برای یادگیری وزن‌ها؛ سیگنال‌های همین دوره دست نمی‌خورند */
-      try{
-        let R=LITE?2:R_DEF;const b=await getK('BTC','1h');while(R>0&&sliceAt(b,'1h',(K_NOW-R)*CYC,300).length<280)R--;
-        const past=[];
-        for(let j=K_NOW-R;j<K_NOW;j++){
-          PROG(`بک‌تست و یادگیری از دوره‌های قبل (${fa(j-(K_NOW-R)+1)} از ${fa(R)})`,(j-(K_NOW-R))/Math.max(1,R));
-          const W=learnAsOf(past,j*CYC),bd=await buildBoardAt(j,W,past);await simulateSigs(bd);past.push(...bd);await sleep0();
-        }
-        ALL=[...past,...board];
-      }catch(e){console.error('learn',e)}
-    }
+    else{ALL=await computeAll(K_NOW);limited=(lastSrc===SRC.length-1)}
     SUMM=summarize(ALL);
     try{localStorage.setItem(KEY,JSON.stringify({k:K_NOW,t:Date.now(),signals:ALL,summ:SUMM,limited}))}catch(e){}
     try{mergeHist();localStorage.setItem(HK,JSON.stringify(HIST))}catch(e){}
@@ -6303,13 +6358,192 @@ main=async function(){
     if(useCache())errMsg=OFF;
     else errMsg=e&&e.code==='GEO'?'منبع قیمت از موقعیت فعلی بسته است؛ VPN را روشن کن و دوباره امتحان کن.':e&&e.code==='RATE'?'منبع داده موقتاً محدود کرده؛ چند دقیقه بعد دوباره امتحان کن.':OFF;
   }
-  busy=false;PROG=()=>{};
+  busy=false;window.__rb=0;PROG=()=>{};
   const p=document.getElementById('prog');if(p)p.textContent='';
   safe(renderActive);
   try{pollLive().then(()=>futCatchup()).then(()=>safe(renderActive))}catch(e){}
 };
-if(!busy)main();
+setTimeout(function(){if(!busy)main()},700);
 if(TAB==='sig')renderActive();
+})();
+
+</script>
+
+<div id="rcAnHost" hidden></div>
+<div id="rcInst" hidden><span>📲 رادار را روی دستگاهت نصب کن</span><button id="rcInstGo">نصب</button><button class="g" id="rcInstX" aria-label="بستن">✕</button></div>
+<script id="rcFix">
+(function(){'use strict';
+var $=function(s,r){return(r||document).querySelector(s)},LS={g:function(k){try{return localStorage.getItem(k)}catch(e){return null}},s:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+var fa=function(n){return String(n).replace(/\d/g,function(d){return'۰۱۲۳۴۵۶۷۸۹'[d]})};
+function toast(m){var o=$('.rc-toast.rcf');if(!o){o=document.createElement('div');o.className='rc-toast rcf';document.body.appendChild(o)}o.textContent=m;o.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){o.classList.remove('on')},3500)}
+function modal(title,html){var o=document.createElement('div');o.className='rc-ov';o.innerHTML='<div class="rc-md"><h3></h3><div>'+html+'</div><button class="rc-btn">باشه</button></div>';o.querySelector('h3').textContent=title;
+ var c=function(){o.remove()};o.querySelector('button').onclick=c;o.addEventListener('click',function(e){if(e.target===o)c()});document.body.appendChild(o)}
+var standalone=function(){return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true};
+var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+
+/* ---------- نصب (PWA): مانیفست با آیکون PNG واقعی ---------- */
+try{
+ var cv=document.createElement('canvas'),icons=[];
+ [192,512].forEach(function(z){cv.width=cv.height=z;var g=cv.getContext('2d'),k=z/192;
+  g.fillStyle='#f0b90b';g.beginPath();g.roundRect?g.roundRect(0,0,z,z,40*k):g.rect(0,0,z,z);g.fill();
+  g.strokeStyle='#000';g.lineWidth=10*k;g.beginPath();g.arc(96*k,96*k,62*k,0,7);g.stroke();g.beginPath();g.arc(96*k,96*k,38*k,0,7);g.stroke();
+  g.fillStyle='#000';g.beginPath();g.arc(96*k,96*k,14*k,0,7);g.fill();
+  icons.push({src:cv.toDataURL('image/png'),sizes:z+'x'+z,type:'image/png',purpose:'any'});
+  if(z===192){var a=document.createElement('link');a.rel='apple-touch-icon';a.href=icons[0].src;document.head.appendChild(a)}});
+ if(/^https?:$/.test(location.protocol)&&!$('link[rel="manifest"]')){
+  var base=location.href.split('#')[0].split('?')[0];
+  var mf={name:'رادار تحلیل کریپتو',short_name:'رادار',id:base,start_url:base,scope:base.replace(/[^/]*$/,''),display:'standalone',orientation:'portrait',background_color:'#ffffff',theme_color:'#f0b90b',lang:'fa',dir:'rtl',icons:icons.concat([{src:icons[1].src,sizes:'512x512',type:'image/png',purpose:'maskable'}])};
+  var l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));document.head.appendChild(l)}
+}catch(e){}
+
+window.__rcInstall=function(){
+ if(standalone()||window.__rcDone){toast('برنامه قبلاً نصب شده است ✓');return}
+ var d=window.__DEF;
+ if(d){d.prompt();d.userChoice.then(function(c){if(c&&c.outcome==='accepted')toast('نصب شروع شد ✓');window.__DEF=null;hideInst()}).catch(function(){});return}
+ if(location.protocol==='file:'){modal('نصب نیاز به آدرس اینترنتی دارد','<p>این فایل مستقیم از حافظهٔ گوشی باز شده؛ مرورگرها نصب را فقط برای سایت‌های <b>https</b> فعال می‌کنند. فایل را روی یک هاست (مثل GitHub Pages یا Netlify) بگذار و از همان آدرس باز کن.</p>');return}
+ if(isIOS)modal('نصب روی آیفون','<ol class="rc-steps"><li>صفحه را در <b>Safari</b> باز کن.</li><li>دکمهٔ <b>Share</b> (مربع با فلش) را بزن.</li><li>گزینهٔ <b>Add to Home Screen</b> را انتخاب کن.</li></ol>');
+ else modal('نصب برنامه','<p>مرورگر هنوز پیشنهاد نصب را آماده نکرده. چند ثانیه بعد دوباره بزن، یا:</p><ol class="rc-steps"><li>منوی <b>⋮</b> مرورگر را باز کن.</li><li><b>Install app</b> یا <b>Add to Home screen</b> را بزن.</li></ol><p class="rc-s">در Chrome/Edge باید سایت با https باز شده باشد.</p>')
+};
+function hideInst(){var b=$('#rcInst');if(b)b.hidden=true}
+function showInst(){if(standalone()||window.__rcDone||+LS.g('rc.instX')>Date.now())return;var b=$('#rcInst');if(b)b.hidden=false}
+$('#rcInstGo').onclick=function(){window.__rcInstall()};
+$('#rcInstX').onclick=function(){hideInst();LS.s('rc.instX',Date.now()+3*864e5)};
+addEventListener('rc-installable',function(){setTimeout(showInst,4000)});
+addEventListener('rc-installed',hideInst);
+if(window.__DEF)setTimeout(showInst,4000);else if(isIOS&&!standalone())setTimeout(showInst,9000);
+
+/* ---------- اعلان مرورگر ---------- */
+window.__rcNotify=function(){
+ var st=function(){var s=$('#nSt');if(s&&typeof window.Notification!=='undefined'){var p=Notification.permission;s.textContent=p==='granted'?'اعلان فعال است ✓':p==='denied'?'اعلان مسدود است (از تنظیمات مرورگر باز کن)':'اعلان هنوز فعال نشده'}};
+ if(!('Notification' in window)){modal('اعلان در این حالت ممکن نیست',isIOS?'<p>آیفون فقط وقتی اعلان می‌دهد که برنامه را به <b>Home Screen</b> اضافه کرده باشی (iOS 16.4 به بالا). اول نصب کن، بعد از داخل برنامه فعالش کن.</p>':'<p>این مرورگر اعلان را پشتیبانی نمی‌کند.</p>');return}
+ if(Notification.permission==='denied'){modal('اعلان مسدود است','<p>روی آیکون قفل کنار آدرس بزن ← <b>Notifications</b> ← <b>Allow</b>، بعد صفحه را رفرش کن.</p>');return}
+ if(Notification.permission==='granted'){toast('اعلان از قبل فعال است ✓');st();return}
+ var done=function(p){toast(p==='granted'?'اعلان فعال شد ✓':'اجازهٔ اعلان داده نشد.');st()};
+ try{var r=Notification.requestPermission(function(p){done(p)});if(r&&r.then)r.then(done)}catch(e){toast('درخواست اعلان انجام نشد.')}
+};
+
+/* ---------- نوار «در حال تحلیل واقعی» ---------- */
+var host=document.createElement('div');host.id='rcAn';host.hidden=true;
+host.innerHTML='<div class="r"><span class="sp"></span><b id="rcAnT">در حال تحلیل بازار…</b><em id="rcAnP"></em></div><div class="bar ind" id="rcAnB"><i></i></div><small id="rcAnS"></small>';
+var tk=$('#tickers');if(tk&&tk.parentNode)tk.parentNode.insertBefore(host,tk.nextSibling);
+var t0=0,last='';
+var STEPS=['دریافت قیمت و کندل‌ها از صرافی‌ها','محاسبهٔ ۲۸ اندیکاتور روی هر ارز','بررسی ساختار بازار و نقدینگی','ترکیب تایم‌فریم‌ها و امتیازدهی','بک‌تست دوره‌های قبل و فیلتر کیفیت'];
+function tick(){
+ var busy=!!window.__rb;
+ if(!busy){if(!host.hidden){host.hidden=true;t0=0}return}
+ if(host.hidden){host.hidden=false;t0=Date.now()}
+ var p=window.__rp||{},f=Math.max(0,Math.min(1,+p.f||0)),sec=Math.round((Date.now()-t0)/1000),bar=$('#rcAnB');
+ var title=(p.t&&p.t!=='شروع تحلیل…')?p.t:'در حال تحلیل بازار…',step=STEPS[Math.floor(sec/6)%STEPS.length];
+ var key=title+'|'+Math.round(f*100)+'|'+sec+'|'+step;if(key===last)return;last=key;
+ $('#rcAnT').textContent=title;
+ $('#rcAnP').textContent=f>0?fa(Math.round(f*100))+'٪':fa(sec)+' ثانیه';
+ bar.classList.toggle('ind',f<=0);bar.firstChild.style.width=f>0?Math.round(f*100)+'%':'';
+ $('#rcAnS').textContent='⏳ تحلیل واقعی در حال انجام است، لطفاً صبر کن و صفحه را نبند. الان: '+step+'. بار اول ممکن است تا چند دقیقه طول بکشد.'
+}
+setInterval(tick,500);tick();
+
+/* ---------- لودینگ اولیه: اگر هر چیزی گیر کرد، صفحه آزاد شود ---------- */
+setTimeout(function(){document.querySelectorAll('.rc-sp').forEach(function(e){e.classList.add('out');setTimeout(function(){e.remove()},500)});document.body.classList.remove('lock')},4500);
+})();
+</script>
+<script id="proPack">
+(function(){'use strict';
+if(typeof TOOLS==='undefined'||typeof TFN==='undefined'||typeof klines!=='function'||typeof analyze!=='function')return;
+var E=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var fa=function(n){return String(n).replace(/\d/g,function(d){return'۰۱۲۳۴۵۶۷۸۹'[d]})};
+var f2=function(x,d){return isFinite(x)?(+x).toFixed(d==null?2:d):'—'};
+var pc=function(x,d){return isFinite(x)?(x*100).toFixed(d==null?1:d)+'٪':'—'};
+var el=function(id){return document.getElementById(id)};
+var G='#0ecb81',R='#f6465d';
+var mean=function(a){return a.length?a.reduce(function(s,x){return s+x},0)/a.length:0};
+var sd=function(a){var m=mean(a);return Math.sqrt(mean(a.map(function(x){return(x-m)*(x-m)})))};
+var pct=function(s,p){return s[Math.min(s.length-1,Math.max(0,Math.floor(p*s.length)))]};
+var tick=function(){return new Promise(function(r){setTimeout(r,0)})};
+var css=document.createElement('style');
+css.textContent='.pk{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px;margin:6px 0}.pk div{border:1.5px solid var(--line,#7fc3d3);border-radius:12px;padding:6px 8px;background:var(--card,#fff)}.pk small{display:block;font-size:10.5px;opacity:.75}.pk b{font-size:15px;font-variant-numeric:tabular-nums;direction:ltr;display:inline-block}.pv{padding:7px 10px;border-radius:12px;font-weight:800;font-size:12.5px;border:1.5px solid #000;margin:6px 0}.pc{width:100%;height:auto;display:block}.pt{width:100%;border-collapse:collapse;font-size:11.5px;text-align:center}.pt td,.pt th{padding:5px 3px;border:1px solid var(--line,#7fc3d3);font-variant-numeric:tabular-nums}.pt th{font-weight:800}.pw{overflow-x:auto}';
+document.head.appendChild(css);
+
+/* ===== هستهٔ بک‌تست: امضای ۲۸ اندیکاتور، بدون نگاه به آینده، با کارمزد و لغزش ===== */
+async function runBT(K,progress){
+ var W=300,STEP=3,TH=.25,SLM=1.5,TPM=2.5,HOLD=48,COST=.003,RISK=.01,tr=[],i=W,k=0;
+ while(i<K.length-2){
+  var an=analyze(K.slice(i-W,i)),dir=0,atr=an&&an.atr;
+  if(an&&an.votes&&an.votes.length&&atr>0){var net=mean(an.votes.map(function(v){return v.vote}));dir=net>=TH?1:net<=-TH?-1:0}
+  if(!dir){i+=STEP}else{
+   var en=K[i].o,sl=en-dir*SLM*atr,tp=en+dir*TPM*atr,ex=null,j=i;
+   for(;j<Math.min(i+HOLD,K.length);j++){var b=K[j],hs=dir>0?b.l<=sl:b.h>=sl,ht=dir>0?b.h>=tp:b.l<=tp;if(hs){ex=sl;break}if(ht){ex=tp;break}}
+   if(ex==null){j=Math.min(i+HOLD,K.length)-1;ex=K[j].c}
+   var risk=SLM*atr;tr.push({R:(dir*(ex-en)-COST*en)/risk,dir:dir,t:K[j].t});i=j+1}
+  if(progress&&++k%5===0){progress(i/K.length);await tick()}
+ }
+ return{tr:tr,W:W,RISK:RISK,K:K}
+}
+function stats(res){
+ var tr=res.tr,K=res.K,n=tr.length,RISK=res.RISK;if(!n)return null;
+ var eq=[1],pk=1,dd=0,gw=0,gl=0,w=0;
+ tr.forEach(function(x){var e=eq[eq.length-1]*(1+RISK*x.R);eq.push(e);pk=Math.max(pk,e);dd=Math.max(dd,1-e/pk);if(x.R>0){gw+=x.R;w++}else gl-=x.R});
+ var days=Math.max(1,(K[K.length-1].t-K[res.W].t)/864e5),tpy=n/days*365,r=tr.map(function(x){return RISK*x.R}),m=mean(r),s=sd(r);
+ var dn=Math.sqrt(mean(r.map(function(x){return Math.min(x,0)*Math.min(x,0)})));
+ var tot=eq[eq.length-1]-1,ann=Math.pow(Math.max(eq[eq.length-1],1e-6),365/days)-1;
+ var fin=[],mdd=[];
+ for(var q=0;q<800;q++){var e=1,p=1,d=0;for(var z=0;z<n;z++){e*=1+RISK*tr[Math.floor(Math.random()*n)].R;p=Math.max(p,e);d=Math.max(d,1-e/p)}fin.push(e-1);mdd.push(d)}
+ fin.sort(function(a,b){return a-b});mdd.sort(function(a,b){return a-b});
+ return{n:n,wr:w/n,avgR:mean(tr.map(function(x){return x.R})),pf:gl>0?gw/gl:Infinity,sharpe:s>0?m/s*Math.sqrt(tpy):0,sortino:dn>0?m/dn*Math.sqrt(tpy):0,dd:dd,tot:tot,ann:ann,calmar:dd>0?ann/dd:0,bh:K[K.length-1].c/K[res.W].c-1,days:days,eq:eq,
+  mc:{p5:pct(fin,.05),med:pct(fin,.5),p95:pct(fin,.95),loss:fin.filter(function(x){return x<0}).length/fin.length,dd95:pct(mdd,.95)}}
+}
+function curve(eq){var W=300,H=90,mn=Math.min.apply(0,eq),mx=Math.max.apply(0,eq),sp=mx-mn||1;
+ var P=eq.map(function(v,i){return(i/(eq.length-1||1)*W).toFixed(1)+','+(H-4-(v-mn)/sp*(H-8)).toFixed(1)}).join(' '),y1=(H-4-(1-mn)/sp*(H-8)).toFixed(1);
+ return'<svg class="pc" viewBox="0 0 300 90" preserveAspectRatio="none"><line x1="0" x2="300" y1="'+y1+'" y2="'+y1+'" stroke="#999" stroke-dasharray="3 3"/><polyline fill="none" stroke="'+(eq[eq.length-1]>=1?G:R)+'" stroke-width="2" points="'+P+'"/></svg>'}
+function card(l,v,c){return'<div><small>'+l+'</small><b'+(c?' style="color:'+c+'"':'')+'>'+v+'</b></div>'}
+
+TFN.pbt=async function(){
+ var sym=TS.sym,tf=TS.tf||'1h',o=el('tOut');
+ var K=await klines(sym,tf,1000);K=typeof cl2==='function'?cl2(K,tf):K.slice(0,-1);
+ if(K.length<420)return'<div class="box"><p class="note">داده برای بک‌تست کافی نیست؛ تایم‌فریم یا نماد دیگری امتحان کن.</p></div>';
+ var res=await runBT(K,function(p){if(o&&el('tOut')===o)o.innerHTML='<div class="box"><b>⏳ بک‌تست واقعی در حال اجراست… '+fa(Math.round(p*100))+'٪</b><p class="note" style="margin:4px 0 0">هر نقطه با اندیکاتورهای همان لحظه تحلیل می‌شود (بدون نگاه به آینده).</p></div>'});
+ var s=stats(res);if(!s)return'<div class="box"><p class="note">در این بازه هیچ سیگنالی با شرایط کافی ساخته نشد.</p></div>';
+ var ok=s.n>=30,good=ok&&s.pf>1.3&&s.sharpe>1&&s.dd<.25,mid=ok&&s.pf>1.05&&s.sharpe>.3;
+ var v=!ok?['نمونهٔ آماری کم است (کمتر از ۳۰ معامله)؛ نتیجه قابل اتکا نیست.','#fff7a0']:good?['عملکرد قابل قبول با ریسک کنترل‌شده روی این بازه.','#b9f5d0']:mid?['عملکرد مرزی؛ قبل از استفاده روی بازه‌ها و ارزهای دیگر هم بسنج.','#fff7a0']:['لبهٔ آماری مثبت دیده نشد؛ روی این بازه به‌تنهایی سودده نیست.','#ffb4b4'];
+ return'<div class="box"><b>🏦 بک‌تست حرفه‌ای · '+E(sym)+' · '+E(tf)+'</b><p class="note" style="margin:2px 0 0">'+fa(s.n)+' معامله در '+fa(Math.round(s.days))+' روز · ورود کندل بعد · SL ۱.۵×ATR و TP ۲.۵×ATR · ریسک ۱٪ هر معامله · کارمزد+لغزش ۰٫۳٪ رفت‌وبرگشت</p>'+curve(s.eq)+
+ '<div class="pk">'+card('بازده کل',pc(s.tot),s.tot>=0?G:R)+card('خرید و نگهداری',pc(s.bh),s.bh>=0?G:R)+card('Sharpe',f2(s.sharpe),s.sharpe>1?G:s.sharpe<0?R:'')+card('Sortino',f2(s.sortino))+card('حداکثر افت',pc(s.dd),s.dd>.25?R:'')+card('Calmar',f2(s.calmar))+card('Profit Factor',isFinite(s.pf)?f2(s.pf):'∞',s.pf>1.3?G:s.pf<1?R:'')+card('نرخ برد',pc(s.wr,0))+card('میانگین R',f2(s.avgR),s.avgR>0?G:R)+'</div>'+
+ '<div class="pv" style="background:'+v[1]+'">'+v[0]+'</div>'+
+ '<b style="font-size:12.5px">🎲 مونت‌کارلو (۸۰۰ بار جابه‌جایی ترتیب معاملات)</b><div class="pk">'+card('بازده بدترین ۵٪',pc(s.mc.p5),s.mc.p5>=0?G:R)+card('بازده میانه',pc(s.mc.med))+card('بازده بهترین ۵٪',pc(s.mc.p95))+card('احتمال زیان',pc(s.mc.loss,0),s.mc.loss>.4?R:'')+card('افت ۹۵٪ سناریوها',pc(s.mc.dd95),s.mc.dd95>.3?R:'')+'</div>'+
+ '<p class="note">⚠️ این بک‌تست فقط روی داده‌ی اخیر و با رأی‌گیری پیش‌فرض اندیکاتورهاست و بهینه‌سازی نشده. نتیجه‌ی گذشته آینده را تضمین نمی‌کند و توصیه‌ی مالی نیست.</p></div>'
+};
+
+/* ===== ریسک پورتفوی ===== */
+async function loadRet(s){var K=await klines(s,'1d',200);K=typeof cl2==='function'?cl2(K,'1d'):K.slice(0,-1);
+ var r=[],tr=[];for(var i=1;i<K.length;i++){r.push(Math.log(K[i].c/K[i-1].c));tr.push(Math.max(K[i].h-K[i].l,Math.abs(K[i].h-K[i-1].c),Math.abs(K[i].l-K[i-1].c)))}
+ return{s:s,r:r,atrp:mean(tr.slice(-14))/K[K.length-1].c}}
+var corr=function(a,b){var n=Math.min(a.length,b.length),x=a.slice(-n),y=b.slice(-n),mx=mean(x),my=mean(y),c=0,vx=0,vy=0;for(var i=0;i<n;i++){c+=(x[i]-mx)*(y[i]-my);vx+=(x[i]-mx)*(x[i]-mx);vy+=(y[i]-my)*(y[i]-my)}return c/Math.sqrt(vx*vy||1)};
+var prBar=function(){return'<div class="tbar"><input id="prSyms" value="'+E(window.__prSyms||'BTC,ETH,SOL,BNB')+'" aria-label="نمادها" autocomplete="off" spellcheck="false" style="direction:ltr"><input id="prCap" value="'+E(window.__prCap||10000)+'" inputmode="decimal" aria-label="سرمایه دلاری" style="direction:ltr;max-width:90px"><button class="btn xs" id="tRun">محاسبه</button></div><p class="note" style="margin:6px 0 0">۲ تا ۸ نماد با کاما + سرمایه به دلار. ریسک هر معامله ۱٪ فرض می‌شود.</p>'};
+TFN.prk=async function(){
+ var raw=(el('prSyms')||{}).value||window.__prSyms||'BTC,ETH,SOL,BNB',cap=parseFloat(String((el('prCap')||{}).value||window.__prCap||10000).replace(/[^\d.]/g,''))||10000;
+ var syms=[];raw.toUpperCase().split(/[,،\s]+/).forEach(function(x){x=x.replace(/[^A-Z0-9]/g,'').replace(/USDT$/,'');if(x&&syms.indexOf(x)<0)syms.push(x)});syms=syms.slice(0,8);
+ window.__prSyms=syms.join(',');window.__prCap=cap;
+ if(syms.length<2)return'<div class="box"><p class="note">حداقل دو نماد وارد کن.</p></div>';
+ var D=[];for(var q=0;q<syms.length;q++){try{var d=await loadRet(syms[q]);if(d.r.length>60)D.push(d)}catch(e){}}
+ if(D.length<2)return'<div class="box"><p class="note">داده‌ی کافی برای دست‌کم دو نماد دریافت نشد.</p></div>';
+ var n=D.length,L=Math.min.apply(0,D.map(function(d){return d.r.length})),pr=[];
+ for(var t=0;t<L;t++)pr.push(mean(D.map(function(d){return d.r[d.r.length-L+t]})));
+ var sorted=pr.slice().sort(function(a,b){return a-b}),k=Math.max(1,Math.floor(sorted.length*.05)),var95=-sorted[k],cvar=-mean(sorted.slice(0,k));
+ var e=1,pk=1,mdd=0;pr.forEach(function(x){e*=Math.exp(x);pk=Math.max(pk,e);mdd=Math.max(mdd,1-e/pk)});
+ var pairs=[],head='<tr><th></th>'+D.map(function(d){return'<th>'+E(d.s)+'</th>'}).join('')+'</tr>',rows='';
+ D.forEach(function(a,i){rows+='<tr><th>'+E(a.s)+'</th>';D.forEach(function(b,j){var c=i===j?1:corr(a.r,b.r);if(j>i)pairs.push(c);var al=Math.max(0,c);rows+='<td style="background:rgba(246,70,93,'+(al*.55).toFixed(2)+')">'+f2(c)+'</td>'});rows+='</tr>'});
+ var ac=mean(pairs),eff=n/(1+(n-1)*Math.max(0,ac)),w=cap/n;
+ var vt=D.map(function(d){return sd(d.r)*Math.sqrt(365)});
+ var sz=D.map(function(d,i){var stop=2*d.atrp,size=cap*.01/stop;return'<tr><th>'+E(d.s)+'</th><td>'+pc(vt[i],0)+'</td><td>'+pc(stop)+'</td><td>$'+Math.round(Math.min(size,cap)).toLocaleString('en-US')+'</td><td>'+f2(Math.min(size,cap)/cap)+'×</td></tr>'}).join('');
+ var warn=ac>.75?'همبستگی بسیار بالاست؛ این پورتفوی عملاً یک شرط واحد است و تنوع واقعی ندارد.':ac>.5?'همبستگی نسبتاً بالاست؛ هم‌جهت‌بودن چند سیگنال را یک ریسک حساب کن.':'همبستگی قابل قبول است و تنوع نسبی وجود دارد.';
+ return'<div class="box"><b>🛡️ ریسک پورتفوی وزن‌برابر · '+fa(n)+' دارایی · ۲۰۰ روز</b><div class="pk">'+card('VaR ۹۵٪ روزانه',pc(var95,2)+' ($'+Math.round(var95*cap).toLocaleString('en-US')+')',R)+card('CVaR (متوسط بدترین ۵٪)',pc(cvar,2),R)+card('حداکثر افت تاریخی',pc(mdd),mdd>.3?R:'')+card('میانگین همبستگی',f2(ac),ac>.6?R:'')+card('تعداد شرط مستقل',f2(eff,1))+card('سهم هر دارایی','$'+Math.round(w).toLocaleString('en-US'))+'</div><div class="pv" style="background:'+(ac>.75?'#ffb4b4':ac>.5?'#fff7a0':'#b9f5d0')+'">'+warn+'</div>'+
+ '<b style="font-size:12.5px">ماتریس همبستگی</b><div class="pw"><table class="pt">'+head+rows+'</table></div><b style="font-size:12.5px;display:block;margin-top:8px">اندازهٔ پوزیشن (ریسک ۱٪ سرمایه، استاپ ۲×ATR روزانه)</b><div class="pw"><table class="pt"><tr><th>ارز</th><th>نوسان سالانه</th><th>فاصلهٔ استاپ</th><th>حجم</th><th>اهرم مؤثر</th></tr>'+sz+'</table></div>'+
+ '<p class="note">VaR و CVaR به روش تاریخی از بازده‌های روزانه‌اند و دم‌های سنگین یا بحران‌های ندیده را کامل پوشش نمی‌دهند. توصیه‌ی مالی نیست.</p></div>'
+};
+
+/* ===== ثبت در منو ===== */
+var cat=(TOOLS.find(function(t){return t[0]==='scan'})||[])[4]||'تحلیل',at=TOOLS.findIndex(function(t){return t[0]==='go-full'});
+TOOLS.splice(at<0?0:at+1,0,['pbt','🏦','بک‌تست حرفه‌ای','Sharpe، افت سرمایه، مونت‌کارلو',cat],['prk','🛡️','ریسک پورتفوی','همبستگی، VaR، حجم پوزیشن',cat]);
+var _tb=toolBar;toolBar=function(id){return id==='prk'?prBar():id==='pbt'?symBar(1):_tb(id)};
+window.__pro={runBT:runBT,stats:stats};
 })();
 
 </script>
