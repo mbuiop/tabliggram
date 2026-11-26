@@ -7500,7 +7500,7 @@ async function fill(first){var b=$('cmb');if(!b||!ME)return;
 async function act(a,d){var er=function(m){var e=$('cme');if(e)e.textContent=fe(m)};
  try{if(a==='open'){draw();clearInterval(tm);tm=setInterval(function(){if(!document.hidden&&(tab==='ch'||(tab==='dm'&&peer)))fill()},6000)}
  else if(a==='close'){$('cm').classList.remove('on');clearInterval(tm)}
- else if(a==='login'||a==='signup'){await auth(a==='login');NF=0;tab='ch';peer=null;fk='';draw()}
+ else if(a==='login'||a==='signup'){await auth(a==='login');NF=0;tab='ch';peer=null;fk='';clearInterval(tm);$('cm').classList.remove('on')}
  else if(a==='tab'){tab=d.t;peer=null;fk='';draw()}
  else if(a==='peer'){peer={id:d.i,u:d.u};fk='';fill(1)}
  else if(a==='back'){peer=null;fk='';fill(1)}
