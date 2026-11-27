@@ -7451,9 +7451,9 @@ var _tb=toolBar;toolBar=function(id){if(id!=='hub'||typeof symBar!=='function')r
 })();
 </script>
 <script>
-/* انجمن v2: کانال، لایک، ثبت‌نام، پنل ادمین (Supabase) */
+/* انجمن v3: اکسپلور، کانال، دعوت، تخفیف، آمار، مدیریت (Supabase) */
 (function(){
-var U='https://sooofyjdkpptvfhnbqsn.supabase.co',K='sb_publishable_2FMqpbrXRT5iHbgOtmUVlQ_Lv4XJ1Os',D='@radar-user.com',S=null,ME=null,tab='ch',tm=0,tt=0,fk='',NF=0,LK={},PEND=null,MEM=0,LIVE=0;
+var U='https://sooofyjdkpptvfhnbqsn.supabase.co',K='sb_publishable_2FMqpbrXRT5iHbgOtmUVlQ_Lv4XJ1Os',D='@radar-user.com',S=null,ME=null,tab='ex',tm=0,tt=0,fk='',NF=0,LK={},PEND=null,MEM=0,LIVE=0;
 try{S=JSON.parse(localStorage.getItem('cm_s')||'null')}catch(e){}
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})},
 fa=function(n){return String(n).replace(/\d/g,function(d){return'۰۱۲۳۴۵۶۷۸۹'[d]})},
@@ -7470,7 +7470,7 @@ async function api(p,o){await ensure();return raw(p,o)}
 async function me(){if(!ME&&S){try{ME=(await api('/rest/v1/profiles?id=eq.'+S.user.id+'&select=*'))[0]}catch(e){}}return ME}
 async function auth(login){var u=($('cmu').value||'').trim().toLowerCase(),p=$('cmp').value||'';
  if(!/^[a-z0-9_]{3,20}$/.test(u))throw new Error('نام کاربری: ۳ تا ۲۰ حرف انگلیسی کوچک، عدد یا _');
- var s=login?await raw('/auth/v1/token?grant_type=password',{m:'POST',b:{email:u+D,password:p}}):await raw('/auth/v1/signup',{m:'POST',b:{email:u+D,password:p,data:{username:u}}});
+ var s=login?await raw('/auth/v1/token?grant_type=password',{m:'POST',b:{email:u+D,password:p}}):await raw('/auth/v1/signup',{m:'POST',b:{email:u+D,password:p,data:{username:u,ref:(($('cmr')&&$('cmr').value)||'').trim().toUpperCase()}}});
  if(!s||!s.access_token)throw new Error('در Supabase گزینهٔ Confirm email را خاموش کن.');ME=null;save(s)}
 async function up(f){var ext=(f.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5),p=new Date().toISOString().slice(0,7)+'/'+Date.now()+Math.random().toString(36).slice(2,6)+'.'+ext;await ensure();
  var r=await fetch(U+'/storage/v1/object/media/'+p,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+S.access_token,'Content-Type':f.type||'application/octet-stream'},body:f});
@@ -7481,53 +7481,84 @@ function lb(t){var x=LK[t]||{n:0,me:false};return'<button class="cml'+(x.me?' on
 function paint(){document.querySelectorAll('.cml[data-t]').forEach(function(b){var x=LK[b.dataset.t]||{n:0,me:false};b.classList.toggle('on',!!x.me);b.textContent=(x.me?'❤️':'🤍')+' '+fa(x.n)})}
 async function tg(t){var x=LK[t]||(LK[t]={n:0,me:false});x.me=!x.me;x.n+=x.me?1:-1;paint();try{await api('/rest/v1/rpc/toggle_like',{m:'POST',b:{t:t}})}catch(e){x.me=!x.me;x.n+=x.me?1:-1;paint()}}
 function bars(){['free','sig','demo','ind','chart'].forEach(function(k){var p=$('tab-'+k);if(!p)return;var mk=function(){if(!p.querySelector(':scope>.cmlb')){var d=document.createElement('div');d.className='cmlb';d.innerHTML='<span>این ابزار برایت مفید بود؟</span>'+lb('tool:'+k);p.appendChild(d)}};mk();new MutationObserver(mk).observe(p,{childList:true})})}
+var V=0,M=true,EQ=[],PL={},EN={'a:open':'باز کردن کانال','a:like':'لایک','a:claim':'امتیاز روزانه','a:share':'اشتراک کد دعوت','a:view':'دیدن پست اکسپلور','a:tab:ex':'تب اکسپلور','a:tab:ch':'تب کانال','a:tab:me':'تب حساب','a:mute':'قطع/وصل صدا','a:mepts':'نمایش امتیاز'};
+function en(n){if(EN[n])return EN[n];if(n.indexOf('tab:')===0){var b=document.querySelector('#nav [data-tab="'+n.slice(4)+'"]');return b?'منو: '+b.textContent.trim():n}return n}
+function trk(n){EQ.push(String(n).slice(0,40))}
+async function flush(){if(!S||!EQ.length)return;var q=EQ.splice(0,50);try{await api('/rest/v1/rpc/track_batch',{m:'POST',b:{n:q}})}catch(e){}}
+setInterval(flush,20000);addEventListener('pagehide',flush);
 async function bar(){var b=$('cmbar');if(!b){var h=document.querySelector('header.top');if(!h)return;b=document.createElement('button');b.id='cmbar';b.className='cmbar';b.setAttribute('data-a','open');h.insertAdjacentElement('afterend',b)}
  var sub='جدیدترین خبرها و ویدیوها',dot=false;
- if(S){try{var r=await api('/rest/v1/posts?select=id,body,media_type&order=id.desc&limit=1');if(r[0]){var q=r[0];sub=q.body?q.body.slice(0,60):(q.media_type==='video'?'🎬 ویدیوی جدید':'📷 عکس جدید');dot=q.id>(+localStorage.getItem('cm_seen')||0)}}catch(e){}}
- b.innerHTML='<span class="cma">📣</span><span class="cmbt"><b>کانال رسمی</b><small>'+esc(sub)+'</small></span>'+(dot?'<i class="cmdot"></i>':'')}
-function live(){if(LIVE||!S)return;LIVE=1;lk().then(bars);bar()}
+ if(S){try{var r=await api('/rest/v1/posts?select=id,body,media_type&order=id.desc&limit=1');if(r[0]){var q=r[0];sub=q.body?q.body.slice(0,60):(q.media_type==='video'?'🎬 ویدیوی جدید':q.media_type==='image'?'📷 عکس جدید':'📄 فایل جدید');dot=q.id>(+localStorage.getItem('cm_seen')||0)}}catch(e){}}
+ b.innerHTML='<span class="cma">📣</span><span class="cmbt"><b>کانال رسمی</b><small>'+esc(sub)+'</small></span>'+(ME?'<span class="cmpt" data-a="mepts">⭐ '+fa(ME.points)+'</span>':'')+(dot?'<i class="cmdot"></i>':'')}
+function live(){if(LIVE||!S)return;LIVE=1;lk().then(bars);me().then(bar)}
 function hd(t,s,c){return'<div class="cmh"><span class="cma">📣</span><span class="cmbt"><b>'+t+'</b><small>'+s+'</small></span>'+(c?'<button data-a="close" aria-label="بستن">✕</button>':'')+'</div>'}
 function ov(){var o=$('cm');if(!o){o=document.createElement('div');o.id='cm';document.body.appendChild(o)}return o}
 async function draw(){var o=ov();o.classList.add('on');
- if(!S){o.innerHTML=hd('ثبت‌نام در برنامه','یک نام کاربری و رمز انتخاب کن',NF)+'<div class="cmb"><p class="cmn">با ثبت‌نام، عضو کانال رسمی می‌شوی و ویدیوها و خبرها را می‌بینی. حساب داری؟ همان را وارد کن و «ورود» بزن.</p><input id="cmu" placeholder="نام کاربری (انگلیسی)" dir="ltr" autocapitalize="off" autocomplete="username"><input id="cmp" type="password" placeholder="رمز عبور (حداقل ۶ حرف)" dir="ltr" autocomplete="current-password"><div class="cmr"><button class="cmx" data-a="login">ورود</button><button class="cmx" data-a="signup">ساخت حساب</button></div><p id="cme" class="cme">'+(NF?'اتصال به سرور برقرار نشد؛ VPN را روشن کن یا فعلاً با ✕ ببند.':'')+'</p></div>';return}
+ if(!S){o.innerHTML=hd('ثبت‌نام در برنامه','یک نام کاربری و رمز انتخاب کن',NF)+'<div class="cmb"><p class="cmn">با ثبت‌نام، عضو کانال رسمی می‌شوی و ویدیوها و خبرها را می‌بینی. حساب داری؟ همان را وارد کن و «ورود» بزن.</p><input id="cmu" placeholder="نام کاربری (انگلیسی)" dir="ltr" autocapitalize="off" autocomplete="username"><input id="cmp" type="password" placeholder="رمز عبور (حداقل ۶ حرف)" dir="ltr" autocomplete="current-password"><input id="cmr" placeholder="کد معرف (اختیاری، ۲۰ امتیاز هدیه)" dir="ltr" autocapitalize="characters"><div class="cmr"><button class="cmx" data-a="login">ورود</button><button class="cmx" data-a="signup">ساخت حساب</button></div><p id="cme" class="cme">'+(NF?'اتصال به سرور برقرار نشد؛ VPN را روشن کن یا فعلاً با ✕ ببند.':'')+'</p></div>';return}
  if(!await me()){save(null);return draw()}
- var T=[['ch','کانال'],['me','حساب']];if(ME.role==='admin')T.push(['ad','پنل']);
+ var T=[['ex','اکسپلور'],['ch','کانال'],['me','حساب']];if(ME.role==='admin')T.push(['ad','پنل']);
  o.innerHTML=hd('کانال رسمی',MEM?fa(MEM)+' عضو':'&nbsp;',1)+'<div class="cmtabs">'+T.map(function(t){return'<button data-a="tab" data-t="'+t[0]+'" class="'+(t[0]===tab?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div><div id="cmb" class="cmb"></div><div id="cmf"></div>';
  fk='';fill(1)}
 function setf(k,h){var f=$('cmf');if(f&&fk!==k){fk=k;f.innerHTML=h}}
-function card(p){var m=p.media_url?(p.media_type==='video'?'<video src="'+esc(p.media_url)+'" controls playsinline preload="metadata"></video>':'<img src="'+esc(p.media_url)+'" loading="lazy" alt="">'):'';
- return'<article class="cmp">'+m+(p.body?'<div class="cmt2">'+esc(p.body)+'</div>':'')+'<footer><span>'+dt(p.created_at)+'</span><span>'+lb('post:'+p.id)+(ME.role==='admin'?'<button class="cmd" data-a="del" data-i="'+p.id+'" aria-label="حذف">🗑</button>':'')+'</span></footer></article>'}
+function comp(){return'<div id="cmpend" class="cmn"></div><div class="cmc"><button class="cmi" data-a="pick" aria-label="پیوست">📎</button><input id="cmt" placeholder="'+(tab==='ex'?'کپشن (همراه عکس یا ویدیو)…':'متن یا فایل برای کانال…')+'" maxlength="2000"><button class="cmx" data-a="send">ارسال</button><input id="cmfile" type="file" hidden></div>'}
+function media(p){if(p.media_type==='video')return'<div class="cmvw"><video src="'+esc(p.media_url)+'" loop playsinline preload="metadata"></video><button class="cmm" data-a="mute">'+(M?'🔇':'🔊')+'</button></div>';if(p.media_type==='image')return'<img src="'+esc(p.media_url)+'" loading="lazy" alt="">';if(p.media_type==='file')return'<a class="cmfl" href="'+esc(p.media_url)+'" target="_blank" rel="noopener" download>📄 '+esc(p.media_name||'دانلود فایل')+'</a>';return''}
+function card(p){return'<article class="cmp">'+media(p)+(p.body?'<div class="cmt2">'+esc(p.body)+'</div>':'')+'<footer><span>'+dt(p.created_at)+'</span><span>'+lb('post:'+p.id)+(ME.role==='admin'?'<button class="cmd" data-a="edit" data-i="'+p.id+'" aria-label="ویرایش">✏️</button><button class="cmd" data-a="del" data-i="'+p.id+'" aria-label="حذف">🗑</button>':'')+'</span></footer></article>'}
+function th(p){var x=LK['post:'+p.id]||{n:0};return'<button class="cmg3" data-a="view" data-i="'+p.id+'">'+(p.media_type==='video'?'<video src="'+esc(p.media_url)+'#t=0.1" preload="metadata" muted playsinline></video><i>▶</i>':'<img src="'+esc(p.media_url)+'" loading="lazy" alt="">')+'<b>❤ '+fa(x.n)+'</b></button>'}
+function vp(){var vs=document.querySelectorAll('#cmb video[loop]');if(!vs.length)return;var io=new IntersectionObserver(function(es){es.forEach(function(x){var v=x.target;v.muted=M;x.isIntersecting?v.play().catch(function(){}):v.pause()})},{threshold:.6});vs.forEach(function(v){io.observe(v)})}
 async function fill(first){var b=$('cmb');if(!b||!ME)return;
  if(Date.now()-tt>60000){tt=Date.now();api('/rest/v1/rpc/touch',{m:'POST',b:{}}).catch(function(){})}
  try{var nb=b.scrollHeight-b.scrollTop-b.clientHeight<120,h='';
-  if(tab==='ch'){var R=await Promise.all([api('/rest/v1/posts?select=*&order=id.desc&limit=40'),lk(),MEM?0:api('/rest/v1/rpc/members',{m:'POST',b:{}}).catch(function(){return 0})]),m=R[0].reverse();
+  if(tab==='ex'||tab==='ch'){var q=tab==='ex'?'media_type=in.(image,video)':'or=(media_type.is.null,media_type.eq.file)',
+   R=await Promise.all([api('/rest/v1/posts?select=*&'+q+'&order=id.desc&limit=60'),lk(),MEM?0:api('/rest/v1/rpc/members',{m:'POST',b:{}}).catch(function(){return 0})]),m=R[0];
+   m.forEach(function(p){PL[p.id]=p});
    if(R[2]){MEM=R[2];var sm=document.querySelector('#cm .cmh small');if(sm)sm.textContent=fa(MEM)+' عضو'}
-   h=m.map(card).join('')||'<p class="cmn">هنوز پستی در کانال نیست.</p>';
-   if(m.length)try{localStorage.setItem('cm_seen',m[m.length-1].id)}catch(e){}
-   setf('ch',ME.role==='admin'?'<div id="cmpend" class="cmn"></div><div class="cmc"><button class="cmi" data-a="pick" aria-label="پیوست">📎</button><input id="cmt" placeholder="پست جدید…" maxlength="2000"><button class="cmx" data-a="send">ارسال</button><input id="cmfile" type="file" accept="image/*,video/*" hidden></div>':'')}
-  else if(tab==='me'){setf('me','');h='<div class="cmp"><div class="cmt2"><b>'+esc(ME.username)+'</b><br>'+fa(ME.points)+' امتیاز<div class="cmn">هر روز ۱۰ امتیاز رایگان می‌گیری. این امتیازها بعداً در بخش‌های پولی قابل استفاده است.</div></div></div><button class="cmx" data-a="claim">دریافت ۱۰ امتیاز امروز</button><p id="cme" class="cme"></p><button class="cmk" data-a="out">خروج از حساب</button>'}
-  else if(tab==='ad'){setf('ad','');var s=await api('/rest/v1/rpc/admin_stats',{m:'POST',b:{}});
-   h='<button class="cmx" data-a="legacy">⚙️ پنل مدیریت اپ (متن‌ها، پرداخت، بخش‌های پولی)</button><div class="cmq"><div><b>'+fa(s.total)+'</b>کل کاربران</div><div><b>'+fa(s.today)+'</b>فعال ۲۴ ساعت</div><div><b>'+fa(s.online)+'</b>آنلاین</div><div><b>'+fa(s.msgs)+'</b>پیام قدیمی</div></div><div class="cmw"><table><tr><th>نام کاربری</th><th>امتیاز</th><th>آخرین بازدید</th><th>عضویت</th></tr>'+s.users.map(function(u){return'<tr><td dir="ltr">'+esc(u.username)+'</td><td>'+fa(u.points)+'</td><td>'+dt(u.last_seen)+'</td><td>'+dt(u.created_at)+'</td></tr>'}).join('')+'</table></div>'}
-  b.innerHTML=h;if(nb||first)b.scrollTop=b.scrollHeight;
+   if(m.length)try{localStorage.setItem('cm_seen',Math.max(+localStorage.getItem('cm_seen')||0,m[0].id))}catch(e){}
+   if(tab==='ex'){if(V&&PL[V])h='<button class="cmk" data-a="back">‹ بازگشت</button>'+card(PL[V]);else{V=0;h=m.length?'<div class="cmgrid">'+m.map(th).join('')+'</div>':'<p class="cmn">هنوز عکس یا ویدیویی در اکسپلور نیست.</p>'}}
+   else h=m.slice().reverse().map(card).join('')||'<p class="cmn">هنوز پستی در کانال نیست.</p>';
+   setf('c'+tab,ME.role==='admin'?comp():'')}
+  else if(tab==='me'){setf('me','');var m0=ME;ME=null;await me();ME=ME||m0;var cp=await api('/rest/v1/coupons?select=code,percent,expires_at&order=id.desc').catch(function(){return[]});
+   h='<div class="cmp"><div class="cmt2"><b>'+esc(ME.username)+'</b><br>⭐ '+fa(ME.points)+' امتیاز<div class="cmn">هر روز ۱۰ امتیاز رایگان می‌گیری. این امتیازها بعداً در بخش‌های پولی قابل استفاده است.</div></div></div><button class="cmx" data-a="claim">دریافت ۱۰ امتیاز امروز</button>'
+   +'<div class="cmp"><div class="cmt2">کد دعوت تو: <b dir="ltr">'+esc(ME.ref_code||'—')+'</b><div class="cmn">هر دوستی که با این کد ثبت‌نام کند، ۲۰ امتیاز برای هر دو.</div></div></div><button class="cmx" data-a="share">اشتراک‌گذاری کد دعوت</button>'
+   +(cp.length?'<b class="cmn">کدهای تخفیف تو</b>'+cp.map(function(c){return'<div class="cmp"><div class="cmt2"><b dir="ltr">'+esc(c.code)+'</b> · '+fa(c.percent)+'٪ تخفیف'+(c.expires_at?'<div class="cmn">اعتبار تا '+dt(c.expires_at)+'</div>':'')+'</div></div>'}).join(''):'')+'<p id="cme" class="cme"></p><button class="cmk" data-a="out">خروج از حساب</button>'}
+  else if(tab==='ad'){setf('ad','');var s=await api('/rest/v1/rpc/admin_stats',{m:'POST',b:{}}),ev=await api('/rest/v1/rpc/admin_events',{m:'POST',b:{}}),cc=await api('/rest/v1/coupons?select=id,code,percent,profiles(username)&order=id.desc&limit=30');
+   h='<button class="cmx" data-a="legacy">⚙️ پنل مدیریت اپ (متن‌ها، پرداخت، بخش‌های پولی)</button><div class="cmq"><div><b>'+fa(s.total)+'</b>کل کاربران</div><div><b>'+fa(s.today)+'</b>فعال ۲۴ ساعت</div><div><b>'+fa(s.online)+'</b>آنلاین</div><div><b>'+fa(s.msgs)+'</b>پیام قدیمی</div></div>'
+   +'<b class="cmn">پرکاربردترین دکمه‌ها (۷ روز اخیر)</b><div class="cmp"><div class="cmt2">'+(ev.length?ev.map(function(x){return'<div class="cmrow"><span>'+esc(en(x.name))+'</span><b>'+fa(x.n)+' بار · '+fa(x.u)+' نفر</b></div>'}).join(''):'هنوز داده‌ای نیست.')+'</div></div>'
+   +'<b class="cmn">ساخت کد تخفیف</b><div class="cmp"><div class="cmt2"><input id="cpu" placeholder="نام کاربری (خالی = عمومی)" dir="ltr"><input id="cpp" type="number" placeholder="درصد تخفیف (۱ تا ۱۰۰)"><input id="cpd" type="number" placeholder="اعتبار به روز (پیش‌فرض ۳۰)"><button class="cmx" data-a="cpn">ساخت کد</button><p id="cme" class="cme"></p>'
+   +cc.map(function(c){return'<div class="cmrow"><span dir="ltr">'+esc(c.code)+' · '+fa(c.percent)+'% · '+esc(c.profiles?c.profiles.username:'همه')+'</span><button class="cmd" data-a="cpx" data-i="'+c.id+'">🗑</button></div>'}).join('')+'</div></div>'
+   +'<b class="cmn">کاربران</b><div class="cmw"><table><tr><th>نام کاربری</th><th>نقش</th><th>امتیاز</th><th>آخرین بازدید</th><th>عملیات</th></tr>'+s.users.map(function(u){return'<tr><td dir="ltr">'+esc(u.username)+'</td><td>'+(u.role==='admin'?'ادمین':'کاربر')+'</td><td>'+fa(u.points)+'</td><td>'+dt(u.last_seen)+'</td><td>'+(u.id===ME.id?'—':'<button class="cmd" data-a="role" data-i="'+u.id+'" data-r="'+(u.role==='admin'?'user':'admin')+'" aria-label="تغییر نقش">'+(u.role==='admin'?'⬇️':'👑')+'</button><button class="cmd" data-a="rm" data-i="'+u.id+'" data-u="'+esc(u.username)+'" aria-label="حذف کاربر">🗑</button>')+'</td></tr>'}).join('')+'</table></div>'}
+  b.innerHTML=h;if(tab==='ch'&&(nb||first))b.scrollTop=b.scrollHeight;if(tab==='ex')vp();
  }catch(e){b.innerHTML='<p class="cme">'+esc(fe(e.message))+'</p>'}}
 async function act(a,d){var er=function(m){var e=$('cme');if(e)e.textContent=fe(m)};
- try{if(a==='open'){draw();clearInterval(tm);tm=setInterval(function(){if(!document.hidden&&tab==='ch'&&!PEND)fill()},8000)}
+ try{if(a==='open'){if(d.t)tab=d.t;draw();clearInterval(tm);tm=setInterval(function(){if(!document.hidden&&(tab==='ex'||tab==='ch')&&!PEND&&!V)fill()},8000)}
+ else if(a==='mepts'){tab='me';act('open',{})}
  else if(a==='close'){$('cm').classList.remove('on');clearInterval(tm);bar()}
- else if(a==='login'||a==='signup'){await auth(a==='login');NF=0;tab='ch';fk='';clearInterval(tm);$('cm').classList.remove('on');live();bar()}
- else if(a==='tab'){tab=d.t;fk='';draw()}
+ else if(a==='login'||a==='signup'){await auth(a==='login');NF=0;tab='ex';fk='';V=0;clearInterval(tm);$('cm').classList.remove('on');live();me().then(bar)}
+ else if(a==='tab'){tab=d.t;fk='';V=0;PEND=null;draw()}
  else if(a==='like')tg(d.t);
+ else if(a==='view'){V=+d.i;fill(1)}
+ else if(a==='back'){V=0;fill(1)}
+ else if(a==='mute'){M=!M;document.querySelectorAll('#cmb video').forEach(function(v){v.muted=M});document.querySelectorAll('.cmm').forEach(function(x){x.textContent=M?'🔇':'🔊'})}
  else if(a==='out'){save(null);ME=null;LIVE=0;draw()}
  else if(a==='legacy'){$('cm').classList.remove('on');if(window.rcAdminOpen)window.rcAdminOpen()}
- else if(a==='claim'){var p=await api('/rest/v1/rpc/claim_daily',{m:'POST',b:{}});if(p<0)er('امتیاز امروز را قبلاً گرفته‌ای؛ فردا دوباره بیا.');else{ME.points=p;fill(1)}}
+ else if(a==='claim'){var p=await api('/rest/v1/rpc/claim_daily',{m:'POST',b:{}});if(p<0)er('امتیاز امروز را قبلاً گرفته‌ای؛ فردا دوباره بیا.');else{ME.points=p;fill(1);bar()}}
+ else if(a==='share'){var tx='با کد دعوت '+ME.ref_code+' در برنامه ثبت‌نام کن و ۲۰ امتیاز هدیه بگیر:\n'+location.origin+location.pathname;if(navigator.share){try{await navigator.share({text:tx})}catch(e){}}else{try{await navigator.clipboard.writeText(tx);er('متن دعوت کپی شد.')}catch(e){er(tx)}}}
  else if(a==='pick'){$('cmfile').click()}
- else if(a==='del'){if(confirm('این پست حذف شود؟')){await api('/rest/v1/posts?id=eq.'+d.i,{m:'DELETE'});fill()}}
+ else if(a==='del'){if(confirm('این پست حذف شود؟')){await api('/rest/v1/posts?id=eq.'+d.i,{m:'DELETE'});V=0;fill(1)}}
+ else if(a==='edit'){var o=PL[d.i],n=prompt('ویرایش متن',(o&&o.body)||'');if(n!==null){try{await api('/rest/v1/posts?id=eq.'+d.i,{m:'PATCH',b:{body:n.trim()||null}});fill(1)}catch(e){alert(fe(e.message))}}}
+ else if(a==='role'){await api('/rest/v1/rpc/admin_set_role',{m:'POST',b:{uid:d.i,r:d.r}});fill(1)}
+ else if(a==='rm'){if(confirm('کاربر '+d.u+' برای همیشه حذف شود؟')){await api('/rest/v1/rpc/admin_delete_user',{m:'POST',b:{uid:d.i}});fill(1)}}
+ else if(a==='cpn'){var pc=+$('cpp').value,dy=+$('cpd').value||30,cd=Math.random().toString(36).slice(2,6)+Math.random().toString(36).slice(2,6);if(!(pc>=1&&pc<=100))throw new Error('درصد تخفیف باید ۱ تا ۱۰۰ باشد.');
+  await api('/rest/v1/rpc/admin_make_coupon',{m:'POST',b:{uname:($('cpu').value||'').trim().toLowerCase(),pc:pc,dy:dy,cd:cd}});fill(1)}
+ else if(a==='cpx'){await api('/rest/v1/coupons?id=eq.'+d.i,{m:'DELETE'});fill(1)}
  else if(a==='send'){var i=$('cmt'),t=(i.value||'').trim(),pe=$('cmpend');if(!t&&!PEND)return;i.disabled=true;
-  try{var mu=null,mt=null;if(PEND){if(PEND.size>5e7)throw new Error('حداکثر حجم فایل ۵۰ مگابایت است.');pe.textContent='در حال آپلود…';mu=await up(PEND);mt=PEND.type.indexOf('video')===0?'video':'image'}
-   await api('/rest/v1/posts',{m:'POST',b:{body:t||null,media_url:mu,media_type:mt}});i.value='';PEND=null;pe.textContent=''}catch(e){alert(fe(e.message));if(pe)pe.textContent=PEND?'📎 '+PEND.name:''}i.disabled=false;fill(1)}
+  try{var mu=null,ty=null,nm=null;if(PEND){if(PEND.size>5e7)throw new Error('حداکثر حجم فایل ۵۰ مگابایت است.');pe.textContent='در حال آپلود…';mu=await up(PEND);ty=/^video\//.test(PEND.type)?'video':/^image\//.test(PEND.type)?'image':'file';nm=PEND.name}
+   await api('/rest/v1/posts',{m:'POST',b:{body:t||null,media_url:mu,media_type:ty,media_name:nm}});i.value='';PEND=null;pe.textContent=''}catch(e){alert(fe(e.message));if(pe)pe.textContent=PEND?'📎 '+PEND.name:''}i.disabled=false;V=0;fill(1)}
  }catch(e){if(!S&&/Failed to fetch|NetworkError/i.test(e.message)){NF=1;draw();return}er(e.message)}}
-document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-a]');if(t)act(t.dataset.a,t.dataset)});
+document.addEventListener('click',function(e){if(!e.target.closest)return;var x=e.target.closest('#nav [data-tab],[data-a]'),pb=e.target.closest('.pane button');
+ if(x)trk(x.dataset.tab?'tab:'+x.dataset.tab:'a:'+x.dataset.a+(x.dataset.a==='tab'?':'+x.dataset.t:''));else if(pb)trk('btn:'+(pb.textContent||'').trim().slice(0,28));
+ var t=e.target.closest('[data-a]');if(t)act(t.dataset.a,t.dataset)},true);
 document.addEventListener('change',function(e){if(e.target.id==='cmfile'){PEND=e.target.files[0]||null;var pe=$('cmpend');if(pe)pe.textContent=PEND?'📎 '+PEND.name+' ('+fa(Math.round(PEND.size/1048576*10)/10)+' مگابایت)':''}});
-document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='cmt')act('send',{});if(e.key==='Enter'&&e.target.id==='cmp')act('login',{})});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='cmt')act('send',{});if(e.key==='Enter'&&(e.target.id==='cmp'||e.target.id==='cmr'))act('login',{})});
 window.rcPublish=async function(c){await me();if(!ME||ME.role!=='admin')throw new Error('ابتدا با حساب ادمین وارد شو');
  var r=await api('/rest/v1/app_config?key=eq.cfg&select=value'),rv=r&&r[0]&&r[0].value?+r[0].value.rev||0:0;c.rev=Math.max(+c.rev||0,rv+1);
  await api('/rest/v1/app_config?on_conflict=key',{m:'POST',h:{Prefer:'resolution=merge-duplicates,return=minimal'},b:{key:'cfg',value:c,updated_at:new Date().toISOString()}});
@@ -7546,7 +7577,11 @@ var st=document.createElement('style');st.textContent='#cm{display:none;position
 +'.cmlb{display:flex;justify-content:space-between;align-items:center;margin:12px;padding:10px 14px;background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.08)}'
 +'.cmbar{display:flex;align-items:center;gap:10px;width:calc(100% - 24px);margin:10px 12px 0;padding:10px 12px;border:0;border-radius:18px;background:#fff7a0;box-shadow:0 2px 10px rgba(0,0,0,.1);cursor:pointer;text-align:start;position:relative}.cmdot{position:absolute;top:12px;inset-inline-end:14px;width:10px;height:10px;border-radius:50%;background:#e11d48}'
 +'#nav.nav{left:50%!important;right:auto!important;transform:translateX(-50%);width:min(560px,calc(100vw - 20px))!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;border:0!important;border-radius:24px!important;padding:6px!important;gap:4px!important;box-shadow:0 8px 28px rgba(0,0,0,.2)!important}#nav.nav button{border-width:2px!important;border-radius:18px!important;min-height:50px!important}'
-+'#cm,#cm *:not(svg *),.cmlb,.cmlb *,.cmbar,.cmbar *{color:#111!important}#cm ::placeholder{color:rgba(0,0,0,.7)!important}#cm .cme{color:#b00020!important}';
++'#cm,#cm *:not(svg *),.cmlb,.cmlb *,.cmbar,.cmbar *{color:#111!important}#cm ::placeholder{color:rgba(0,0,0,.7)!important}#cm .cme{color:#b00020!important}'
++'.cmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.cmg3{position:relative;aspect-ratio:1;border:0;padding:0;background:#000;overflow:hidden;cursor:pointer;border-radius:6px}.cmg3 img,.cmg3 video{width:100%;height:100%;object-fit:cover;display:block}.cmg3 i,.cmg3 b{position:absolute;inset-inline-start:6px;font-style:normal;text-shadow:0 1px 3px #000}.cmg3 i{top:6px}.cmg3 b{bottom:4px;font-size:11px}'
++'.cmvw{position:relative}.cmvw video{display:block;width:100%;max-height:70vh;background:#000}.cmm{position:absolute;bottom:10px;inset-inline-end:10px;border:0;border-radius:50%;width:38px;height:38px;background:rgba(0,0,0,.55);font-size:17px;cursor:pointer}.cmfl{display:block;padding:12px 14px;font-weight:700;text-decoration:underline}'
++'.cmpt{margin-inline-start:auto;background:#fff;border-radius:999px;padding:5px 10px;font-weight:800;font-size:12.5px;white-space:nowrap}.cmrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #e1ecef;font-size:12.5px}#cm .cmt2 input{margin-bottom:8px}'
++'#cm .cmg3 i,#cm .cmg3 b{color:#fff!important}#cm .cmm{color:#fff!important}';
 document.head.appendChild(st);
 bar();live();if(!S)act('open',{});
 })();
